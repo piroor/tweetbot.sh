@@ -6,6 +6,7 @@ tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 logfile="$work_dir/handle_follow.log"
 
 log() {
+  echo "$*" 1>&2
   echo "[$(date)] $*" >> "$logfile"
 }
 
