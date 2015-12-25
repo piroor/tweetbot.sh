@@ -15,7 +15,16 @@ log() {
 
 while read -r tweet
 do
-  screen_name="$(echo "$event" | jq -r .user.screen_name)"
+  screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
   log "Quoted by $screen_name"
-  log "$tweet"
+
+  log " => follow $screen_name"
+  "$tweet_sh" follow $screen_name > /dev/null
+
+  id="$(echo "$tweet" | jq -r .id_str)"
+  url="https://twitter.com/$screen_name/status/$id"
+  log " => favorite $url"
+  "$tweet_sh" favorite $url > /dev/null
+  log " => retweet $url"
+  "$tweet_sh" retweet $url > /dev/null
 done

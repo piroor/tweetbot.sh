@@ -15,7 +15,7 @@ log() {
 
 while read -r tweet
 do
-  screen_name="$(echo "$event" | jq -r .user.screen_name)"
+  screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
   log "Retweeted by $screen_name"
   log "$tweet"
 done
