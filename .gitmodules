@@ -1,0 +1,3 @@
+[submodule "tweet.sh"]
+	path = tweet.sh
+	url = https://github.com/piroor/tweet.sh.git
