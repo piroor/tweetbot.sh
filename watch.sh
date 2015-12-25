@@ -6,7 +6,8 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/tweet.sh/tweet.sh"
 load_keys
 
-trap 'kill $(jobs -p)' EXIT
+trap 'jobs="$(jobs -p)"; [ "$jobs" = "" ] || kill $jobs' QUIT KILL TERM
+
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -m "$tools_dir/handle_mention.sh" \
@@ -30,5 +31,6 @@ then
 else
   echo "There is no search query at \"$queries_file\"" 1>&2
 fi
+
 
 wait
