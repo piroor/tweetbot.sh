@@ -18,15 +18,17 @@ trap 'kill $(jobs -p)' EXIT
 queries_file="$work_dir/queries.txt"
 if [ -f "$queries_file" ]
 then
-  ehco "Reading search queries from "$queries_file"
-  cat "$queries_file" | while read -r query
+  echo "Reading search queries from \"$queries_file\"" 1>&2
+  grep -v '^\s*#' "$queries_file" | \
+    grep -v '^\s*$' | \
+    while read -r query
   do
     "$tools_dir/tweet.sh/tweet.sh" search \
       -q "$query" \
       -h "$tools_dir/handle_search_result.sh" &
   done
 else
-  ehco "There is no search query at "$queries_file"
+  echo "There is no search query at \"$queries_file\"" 1>&2
 fi
 
 wait
