@@ -5,3 +5,9 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 
 source "$tools_dir/tweet.sh"
 load_keys
+
+echo "QUOTED"
+while read tweet
+do
+  echo "$tweet"
+done

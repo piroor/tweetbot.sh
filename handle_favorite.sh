@@ -5,3 +5,9 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 
 source "$tools_dir/tweet.sh"
 load_keys
+
+echo "FAVORITED	"
+while read event
+do
+  echo "$event"
+done
