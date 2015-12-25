@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 tweet_sh="$tools_dir/tweet.sh/tweet.sh"
-logfile="$work_dir/handle_retweet.log"
+
+base_dir="$TWEET_BASE_DIR"
+log_dir="$TWEET_BASE_DIR/logs"
+logfile="$log_dir/handle_retweet.log"
 
 source "$tweet_sh"
 load_keys

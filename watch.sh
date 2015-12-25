@@ -31,8 +31,8 @@ fi
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$queries" \
-  -m "$tools_dir/handle_mention.sh" \
-  -r "$tools_dir/handle_retweet.sh" \
-  -q "$tools_dir/handle_quotation.sh" \
-  -f "$tools_dir/handle_follow.sh" \
-  -s "$tools_dir/handle_search_result.sh"
+  -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
+  -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
+  -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
+  -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
+  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
