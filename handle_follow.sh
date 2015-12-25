@@ -10,6 +10,7 @@ load_keys
 echo "FOLLOWED" 1>&2
 while read event
 do
+  echo "$event"
   screen_name="$(echo "$event" | jq -r .source.screen_name)"
   echo "by $screen_name" 1>&2
   echo "follow back $screen_name" 1>&2
