@@ -13,6 +13,8 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
+me="$("$tweet_sh" whoami)"
+
 while read -r tweet
 do
   screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
@@ -25,6 +27,14 @@ do
   url="https://twitter.com/$screen_name/status/$id"
   log " => favorite $url"
   "$tweet_sh" favorite $url > /dev/null
-  log " => retweet $url"
-  "$tweet_sh" retweet $url > /dev/null
+
+  body="$(echo "$tweet" | "$tweet_sh" body)"
+  if echo "$body" | grep "^@$me" > /dev/null
+  then
+    log "Seems to be a reply."
+  else
+    log "Seems to be an RT with quotation."
+    log " => retweet $url"
+    "$tweet_sh" retweet $url > /dev/null
+  fi
 done
