@@ -13,8 +13,9 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
-echo "MENTIONED"
 while read tweet
 do
-  echo "$tweet"
+  screen_name="$(echo "$event" | jq -r .user.screen_name)"
+  log "Mentioned by $screen_name"
+  log "$tweet"
 done
