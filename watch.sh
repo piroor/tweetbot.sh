@@ -20,7 +20,7 @@ then
 fi
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
-  -k "$queries"
+  -k "$queries" \
   -m "$tools_dir/handle_mention.sh" \
   -r "$tools_dir/handle_retweet.sh" \
   -q "$tools_dir/handle_quotation.sh" \
