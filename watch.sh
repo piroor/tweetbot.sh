@@ -24,4 +24,5 @@ fi
   -m "$tools_dir/handle_mention.sh" \
   -r "$tools_dir/handle_retweet.sh" \
   -q "$tools_dir/handle_quotation.sh" \
-  -f "$tools_dir/handle_follow.sh"
+  -f "$tools_dir/handle_follow.sh" \
+  -s "$tools_dir/handle_search_result.sh"
