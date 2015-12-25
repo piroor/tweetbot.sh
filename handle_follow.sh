@@ -13,7 +13,7 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
-while read event
+while read -r event
 do
   echo "$event" 1>&2
   screen_name="$(echo "$event" | jq -r .source.screen_name)"
