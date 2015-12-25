@@ -7,8 +7,18 @@ tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 source "$tweet_sh"
 load_keys
 
+if [ "$TWEET_BASE_DIR" != '' ]
+then
+  TWEET_BASE_DIR="$(cd "$TWEET_BASE_DIR" && pwd)"
+else
+  TWEET_BASE_DIR="$work_dir"
+fi
 
-queries_file="$work_dir/queries.txt"
+logs_dir="$TWEET_BASE_DIR/logs"
+mkdir -p "$logs_dir"
+
+
+queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
 if [ -f "$queries_file" ]
 then
@@ -17,6 +27,7 @@ then
                grep -v '^\s*$' | \
                paste -s -d ",")"
 fi
+
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$queries" \
