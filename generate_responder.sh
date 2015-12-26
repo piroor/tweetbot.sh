@@ -70,13 +70,17 @@ done
 last_file="$(ls ./responses/* |
                sort |
                tail -n 1)"
-cat << FIN >> "$responder"
-# fallback to the last pattern
-if echo "\$input" | egrep "$matcher" > /dev/null
+if [ -f "$last_file" ]
 then
-  extract_response "\$base_dir/$last_file"
-  exit 0
-fi
+  cat << FIN >> "$responder"
+# fallback to the last pattern
+extract_response "\$base_dir/$last_file"
+exit 0
+FIN
+else
+  cat << FIN >> "$responder"
+echo ""
+exit 1
 FIN
 
 chmod +x "$responder"
