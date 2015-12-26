@@ -38,6 +38,6 @@ do
   log " response: $response"
   if [ "$response" != '' ]
   then
-    "$tweet_sh" reply "$url" "@$screen_name $response"
+    "$tweet_sh" reply "$url" "@$screen_name $response" > /dev/null
   fi
 done
