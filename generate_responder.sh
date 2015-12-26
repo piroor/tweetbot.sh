@@ -62,6 +62,7 @@ then
             -e '/^\s*$/d' |
         # concate them to a list of patterns
         paste -s -d '|')"
+    [ "$matcher" = '' ] && continue
     cat << FIN >> "$responder"
 if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
