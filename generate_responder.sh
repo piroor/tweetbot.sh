@@ -34,6 +34,9 @@ extract_response() {
   local responses="\$(cat "\$source" |
                         grep -v '^#' |
                         grep -v '^\s*\$')"
+
+  [ "\$responses" = '' ] && return 1
+
   local n_responses="\$(echo "\$responses" | wc -l)"
   local index=\$(((\$RANDOM % \$n_responses) + 1))
   echo "\$responses" | sed -n "\${index}p"
@@ -63,7 +66,7 @@ then
 if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
   extract_response "\$base_dir/$path"
-  exit 0
+  exit $?
 fi
 
 FIN
