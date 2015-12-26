@@ -40,7 +40,7 @@ do
     log " response: $response"
     if [ "$response" != '' ]
     then
-      "$tweet.sh" reply "$url" "$response"
+      "$tweet_sh" reply "$url" "$response"
     fi
   else
     log "Seems to be an RT with quotation."
