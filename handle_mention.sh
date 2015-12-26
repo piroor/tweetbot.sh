@@ -5,7 +5,7 @@ tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 
 base_dir="$TWEET_BASE_DIR"
 log_dir="$TWEET_BASE_DIR/logs"
-logfile="$log_dir/handle_search_result.log"
+logfile="$log_dir/handle_mention.log"
 
 source "$tweet_sh"
 load_keys
