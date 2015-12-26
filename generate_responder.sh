@@ -82,5 +82,6 @@ else
 echo ""
 exit 1
 FIN
+fi
 
 chmod +x "$responder"
