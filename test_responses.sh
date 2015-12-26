@@ -30,4 +30,5 @@ do
     do
       "$tweet_sh" post "@$me $response"
     done
+  sleep 3s
 done
