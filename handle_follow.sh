@@ -25,7 +25,7 @@ do
   result="$("$tweet_sh" follow $screen_name)"
   if [ $? != 0 ]
   then
-    log '  => failed to follow $screen_name'
+    log "  => failed to follow $screen_name"
     log "     result: $result"
   fi
 done
