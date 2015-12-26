@@ -80,6 +80,7 @@ extract_response "\$base_dir/$last_file"
 exit 0
 
 FIN
+  fi
 fi
 
 cat << FIN >> "$responder"
