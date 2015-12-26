@@ -45,21 +45,21 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./responses ]
 then
-ls ./responses/* |
-  sort |
-  while read path
-do
-  matcher="$(\
-    # first, convert CR+LF => LF
-    nkf -Lu "$path" |
-      # extract comment lines as definitions of matching patterns
-      grep '^#' |
-      # remove comment marks
-      sed -e 's/^#\s*//' \
-          -e '/^\s*$/d' |
-      # concate them to a list of patterns
-      paste -s -d '|')"
-  cat << FIN >> "$responder"
+  ls ./responses/* |
+    sort |
+    while read path
+  do
+    matcher="$(\
+      # first, convert CR+LF => LF
+      nkf -Lu "$path" |
+        # extract comment lines as definitions of matching patterns
+        grep '^#' |
+        # remove comment marks
+        sed -e 's/^#\s*//' \
+            -e '/^\s*$/d' |
+        # concate them to a list of patterns
+        paste -s -d '|')"
+    cat << FIN >> "$responder"
 if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
   extract_response "\$base_dir/$path"
@@ -67,14 +67,14 @@ then
 fi
 
 FIN
-done
+  done
 
-last_file="$(ls ./responses/* |
-               sort |
-               tail -n 1)"
-if [ -f "$last_file" ]
-then
-  cat << FIN >> "$responder"
+  last_file="$(ls ./responses/* |
+                 sort |
+                 tail -n 1)"
+  if [ -f "$last_file" ]
+  then
+    cat << FIN >> "$responder"
 # fallback to the last pattern
 extract_response "\$base_dir/$last_file"
 exit 0
