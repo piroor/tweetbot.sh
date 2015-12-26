@@ -45,7 +45,13 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
-  response="$(echo "$body" | "$responder" | tr -d '\n')"
+  response="$(echo "$body" | "$responder")"
+  if [ $? != 0 ]
+  then
+    log " no response"
+    continue
+  fi
+
   log " response: $response"
   if [ "$response" != '' ]
   then

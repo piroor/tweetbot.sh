@@ -47,7 +47,12 @@ do
   if echo "$body" | grep "^@$me" > /dev/null
   then
     log "Seems to be a reply."
-    response="$(echo "$body" | "$responder" | tr -d '\n')"
+    response="$(echo "$body" | "$responder")"
+    if [ $? != 0 ]
+    then
+      log " no response"
+      continue
+    fi
     log " response: $response"
     if [ "$response" != '' ]
     then
