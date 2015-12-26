@@ -25,7 +25,7 @@ do
   # first, convert CR+LF => LF
   nkf -Lu "$path" |
     # ignore comment and blank lines
-    grep -v '^#|^\s*$' |
+    egrep -v '^#|^\s*$' |
     while read -r response
     do
       "$tweet_sh" post "@$me $response"
