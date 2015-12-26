@@ -67,7 +67,7 @@ then
 if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
   extract_response "\$base_dir/$path"
-  exit $?
+  exit \$?
 fi
 
 FIN
