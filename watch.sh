@@ -32,9 +32,11 @@ queries=''
 if [ -f "$queries_file" ]
 then
   echo "Reading search queries from \"$queries_file\"" 1>&2
-  queries="$(grep -v '^\s*#' "$queries_file" | \
-               grep -v '^\s*$' | \
-               paste -s -d ",")"
+  queries="$( \
+    # first, convert CR+LF => LF
+    nkf -Lu "$queries_file" |
+    egrep -v '^\s*#|^\s*$' |
+    paste -s -d ',')"
 fi
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
