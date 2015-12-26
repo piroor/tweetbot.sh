@@ -18,6 +18,9 @@ logs_dir="$TWEET_BASE_DIR/logs"
 mkdir -p "$logs_dir"
 
 
+"$tools_dir/generate_responder.sh"
+
+
 queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
 if [ -f "$queries_file" ]
@@ -27,7 +30,6 @@ then
                grep -v '^\s*$' | \
                paste -s -d ",")"
 fi
-
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$queries" \

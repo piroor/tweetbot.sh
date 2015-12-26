@@ -15,6 +15,10 @@ fi
 
 responder="$TWEET_BASE_DIR/responder.sh"
 
+echo 'Generating responder script...' 1>&2
+echo "  sources: $TWEET_BASE_DIR/responses" 1>&2
+echo "  output : $responder" 1>&2
+
 cat << FIN > "$responder"
 #!/usr/bin/env bash
 #
@@ -52,12 +56,25 @@ do
       # concate them to a list of patterns
       paste -s -d '|')"
   cat << FIN >> "$responder"
-if echo "\$input" | egrep "$matcher" > /dev/null
+if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
   extract_response '$path'
   exit 0
 fi
+
 FIN
 done
+
+last_file="$(ls ./responses/* |
+               sort |
+               tail -n 1)"
+cat << FIN >> "$responder"
+# fallback to the last pattern
+if echo "\$input" | egrep "$matcher" > /dev/null
+then
+  extract_response '$last_file'
+  exit 0
+fi
+FIN
 
 chmod +x "$responder"
