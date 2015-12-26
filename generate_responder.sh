@@ -43,6 +43,8 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
+if [ -d ./responses ]
+then
 ls ./responses/* |
   sort |
   while read path
@@ -76,12 +78,13 @@ then
 # fallback to the last pattern
 extract_response "\$base_dir/$last_file"
 exit 0
-FIN
-else
-  cat << FIN >> "$responder"
-echo ""
-exit 1
+
 FIN
 fi
+
+cat << FIN >> "$responder"
+# finally fallback to an error
+exit 1
+FIN
 
 chmod +x "$responder"
