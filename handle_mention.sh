@@ -15,6 +15,8 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
+responder="$TWEET_BASE_DIR/responder.sh"
+
 while read -r tweet
 do
   screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
@@ -28,4 +30,14 @@ do
 
   log " => favorite $url"
   "$tweet_sh" favorite $url > /dev/null
+
+  body="$(echo "$tweet" | "$tweet_sh" body)"
+  log " body    : $body"
+
+  response="$(echo "$body" | "$responder" | tr -d '\n')"
+  log " response: $response"
+  if [ "$response" != '' ]
+  then
+    "$tweet.sh" reply "$url" "$screen_name $response"
+  fi
 done

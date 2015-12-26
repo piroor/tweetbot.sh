@@ -36,6 +36,12 @@ do
   if echo "$body" | grep "^@$me" > /dev/null
   then
     log "Seems to be a reply."
+    response="$(echo "$body" | "$responder" | tr -d '\n')"
+    log " response: $response"
+    if [ "$response" != '' ]
+    then
+      "$tweet.sh" reply "$url" "$response"
+    fi
   else
     log "Seems to be an RT with quotation."
     log " => retweet $url"
