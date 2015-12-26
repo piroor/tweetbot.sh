@@ -43,7 +43,7 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
-ls ./responses/* |
+ls responses/* |
   sort |
   while read path
 do
