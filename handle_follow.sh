@@ -19,6 +19,7 @@ while read -r event
 do
   screen_name="$(echo "$event" | jq -r .source.screen_name)"
 
+  log '=============================================================='
   log "Followed by $screen_name"
 
   log " => follow back $screen_name"

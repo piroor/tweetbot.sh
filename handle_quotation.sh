@@ -21,6 +21,7 @@ do
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$screen_name/status/$id"
 
+  log '=============================================================='
   log "Quoted by $screen_name at $url"
 
   log " => follow $screen_name"
