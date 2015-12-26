@@ -74,7 +74,7 @@ cat << FIN >> "$responder"
 # fallback to the last pattern
 if echo "\$input" | egrep "$matcher" > /dev/null
 then
-  extract_response '$last_file'
+  extract_response "\$base_dir/$last_file"
   exit 0
 fi
 FIN
