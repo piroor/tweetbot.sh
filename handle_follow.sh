@@ -24,8 +24,10 @@ do
 
   log " => follow back $screen_name"
   result="$("$tweet_sh" follow $screen_name)"
-  if [ $? != 0 ]
+  if [ $? = 0 ]
   then
+    log '  => successfully followed'
+  else
     log "  => failed to follow $screen_name"
     log "     result: $result"
   fi

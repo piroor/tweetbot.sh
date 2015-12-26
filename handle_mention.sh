@@ -28,16 +28,20 @@ do
 
   log " => follow $screen_name"
   result="$("$tweet_sh" follow $screen_name)"
-  if [ $? != 0 ]
+  if [ $? = 0 ]
   then
+    log '  => successfully followed'
+  else
     log "  => failed to follow $screen_name"
     log "     result: $result"
   fi
 
   log " => favorite $url"
   result="$("$tweet_sh" favorite $url)"
-  if [ $? != 0 ]
+  if [ $? = 0 ]
   then
+    log '  => successfully favorited'
+  else
     log '  => failed to favorite'
     log "     result: $result"
   fi
@@ -46,20 +50,19 @@ do
   log " body    : $body"
 
   response="$(echo "$body" | "$responder")"
-  if [ $? != 0 ]
+  if [ $? != 0 -o "$response" = '' ]
   then
     log " no response"
     continue
   fi
 
   log " response: $response"
-  if [ "$response" != '' ]
+  result="$("$tweet_sh" reply "$url" "@$screen_name $response")"
+  if [ $? = 0 ]
   then
-    result="$("$tweet_sh" reply "$url" "@$screen_name $response")"
-    if [ $? != 0 ]
-    then
-      log '  => failed to reply'
-      log "     result: $result"
-    fi
+    log '  => successfully respond'
+  else
+    log '  => failed to reply'
+    log "     result: $result"
   fi
 done
