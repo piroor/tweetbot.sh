@@ -26,10 +26,20 @@ do
   log "Mentioned by $screen_name at $url"
 
   log " => follow $screen_name"
-  "$tweet_sh" follow $screen_name > /dev/null
+  result="$("$tweet_sh" follow $screen_name)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to follow $screen_name'
+    log "     result: $result"
+  fi
 
   log " => favorite $url"
-  "$tweet_sh" favorite $url > /dev/null
+  result="$("$tweet_sh" favorite $url)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to favorite'
+    log "     result: $result"
+  fi
 
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
@@ -38,6 +48,11 @@ do
   log " response: $response"
   if [ "$response" != '' ]
   then
-    "$tweet_sh" reply "$url" "@$screen_name $response" > /dev/null
+    result="$("$tweet_sh" reply "$url" "@$screen_name $response")"
+    if [ $? != 0 ]
+    then
+      log '  => failed to reply'
+      log "     result: $result"
+    fi
   fi
 done

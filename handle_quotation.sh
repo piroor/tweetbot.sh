@@ -24,10 +24,20 @@ do
   log "Quoted by $screen_name at $url"
 
   log " => follow $screen_name"
-  "$tweet_sh" follow $screen_name > /dev/null
+  result="$("$tweet_sh" follow $screen_name)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to follow $screen_name'
+    log "     result: $result"
+  fi
 
   log " => favorite $url"
-  "$tweet_sh" favorite $url > /dev/null
+  result="$("$tweet_sh" favorite $url)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to favorite'
+    log "     result: $result"
+  fi
 
   body="$(echo "$tweet" | "$tweet_sh" body)"
   me="$(echo "$tweet" | jq -r .quoted_status.user.screen_name)"
@@ -40,11 +50,21 @@ do
     log " response: $response"
     if [ "$response" != '' ]
     then
-      "$tweet_sh" reply "$url" "$response" > /dev/null
+      result="$("$tweet_sh" reply "$url" "$response")"
+      if [ $? != 0 ]
+      then
+        log '  => failed to reply'
+        log "     result: $result"
+      fi
     fi
   else
     log "Seems to be an RT with quotation."
     log " => retweet $url"
-    "$tweet_sh" retweet $url > /dev/null
+    result="$("$tweet_sh" retweet $url)"
+    if [ $? != 0 ]
+    then
+      log '  => failed to favorite'
+      log "     result: $result"
+    fi
   fi
 done

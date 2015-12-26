@@ -27,8 +27,18 @@ do
   # "$tweet_sh" follow $screen_name > /dev/null
 
   log " => favorite $url"
-  "$tweet_sh" favorite $url > /dev/null
+  result="$("$tweet_sh" favorite $url)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to favorite'
+    log "     result: $result"
+  fi
 
   log " => retweet $url"
-  "$tweet_sh" retweet $url > /dev/null
+  result="$("$tweet_sh" retweet $url)"
+  if [ $? != 0 ]
+  then
+    log '  => failed to favorite'
+    log "     result: $result"
+  fi
 done
