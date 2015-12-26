@@ -24,6 +24,20 @@ do
   log '=============================================================='
   log "Quoted by $screen_name at $url"
 
+  body="$(echo "$tweet" | "$tweet_sh" body)"
+  me="$(echo "$tweet" | jq -r .quoted_status.user.screen_name)"
+  log " me: $me"
+  log " body: $body"
+
+  response="$(echo "$body" | "$responder")"
+  if [ $? != 0 -o "$response" != '' ]
+  then
+    # Don't follow, favorite, and reply to the tweet
+    # if it is a "don't respond" case.
+    log " no response"
+    continue
+  fi
+
   log " => follow $screen_name"
   result="$("$tweet_sh" follow $screen_name)"
   if [ $? = 0 ]
@@ -44,19 +58,9 @@ do
     log "     result: $result"
   fi
 
-  body="$(echo "$tweet" | "$tweet_sh" body)"
-  me="$(echo "$tweet" | jq -r .quoted_status.user.screen_name)"
-  log " me: $me"
-  log " body: $body"
   if echo "$body" | grep "^@$me" > /dev/null
   then
     log "Seems to be a reply."
-    response="$(echo "$body" | "$responder")"
-    if [ $? != 0 -o "$response" != '' ]
-    then
-      log " no response"
-      continue
-    fi
     log " response: $response"
     result="$("$tweet_sh" reply "$url" "$response")"
     if [ $? = 0 ]

@@ -26,6 +26,19 @@ do
   log '=============================================================='
   log "Mentioned by $screen_name at $url"
 
+  body="$(echo "$tweet" | "$tweet_sh" body)"
+  log " body    : $body"
+
+  response="$(echo "$body" | "$responder")"
+  if [ $? != 0 -o "$response" = '' ]
+  then
+    # Don't follow, favorite, and reply to the tweet
+    # if it is a "don't respond" case.
+    log " no response"
+    continue
+  fi
+  log " response: $response"
+
   log " => follow $screen_name"
   result="$("$tweet_sh" follow $screen_name)"
   if [ $? = 0 ]
@@ -46,17 +59,6 @@ do
     log "     result: $result"
   fi
 
-  body="$(echo "$tweet" | "$tweet_sh" body)"
-  log " body    : $body"
-
-  response="$(echo "$body" | "$responder")"
-  if [ $? != 0 -o "$response" = '' ]
-  then
-    log " no response"
-    continue
-  fi
-
-  log " response: $response"
   result="$("$tweet_sh" reply "$url" "@$screen_name $response")"
   if [ $? = 0 ]
   then
