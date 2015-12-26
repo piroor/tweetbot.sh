@@ -43,7 +43,11 @@ The base directory should have them:
  * `$TWEET_BASE_DIR/tweet.client.key`: the definition of API keys. This is always required.
  * `$TWEET_BASE_DIR/queries.txt` (optional): a list of search keywords to be watched.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
- * `$TWEET_BASE_DIR/logs` (optional): a blank directory to store logs.
+
+After you start the `watch.sh`, following files and directories will be saved under the base directory automatically:
+
+ * `$TWEET_BASE_DIR/responder.sh`: a script to output one of response message by the given input.
+ * `$TWEET_BASE_DIR/logs`: a blank directory to store logs.
 
 ### `tweet.client.key`
 
@@ -76,6 +80,8 @@ This file must be encoded in UTF-8.
 
 ### `responses`
 
+#### Message definition file
+
 The `responses` directory will contain response message definition files.
 Each definition file includes both keywords to be detected and messages to be responded, with the format:
 
@@ -90,6 +96,7 @@ Aloha!
 Ola!
 ~~~
 
+You'll save such a definition file as `greeting.txt` or others.
 Lines beginning with `#` are defines keywords.
 Others defines response messages.
 If one of keyword matches to the body of the mention, one of following messages (chosen at random) will be postead as a reply.
@@ -98,11 +105,37 @@ A definition file including no keyword definition will be simply ignored.
 Keywords are treated as extended regular expressions.
 Meta characters will have to be escaped.
 
+If the file includes only keyword definitions and there is no response messages like:
+
+~~~
+# f(xx|uc)k
+# shit
+# suck
+~~~
+
+then the list will work as an NG list.
+When the given message matches to the keywords, the bot will ignore the tweet - never favorited, never replied, never followed.
+You'll save such a definition file as `forbidden.txt` or others.
+
 This file must be encoded in UTF-8.
 
 
-### `logs`
+#### Detection order of multiple definition files
 
-Logs will be stored into the directory.
-Even if you don't prepare it, it will be created automatically.
+Multiple definition files in the `responses` directory will be used with the order: sorted by their name.
+For example, if there are both `greeting.txt` and `forbidden.txt`, they are sorted alphabetically as "`forbidden.txt`, `greeting.txt`" and used by the order.
+If you hope to change the detection order, add some prefix to control their order like `000_forbidden.txt`, `010_bye.txt`, and others.
 
+
+#### How to update response messages?
+
+If you simply hope to add new response messages to definition files, you can do it freely.
+The bot will use newly added messages automatically.
+
+If you add new definition file, remove existing file, or change matching keywords part of any existing file, then you must run the script `generate_responder.sh` manually.
+Then the `responder.sh` in the base directory will be regenerated and the running bot will use it automatically.
+
+~~~
+$ cd $TWEET_BASE_DIR
+$ /path/to/generate_responder.sh
+~~~
