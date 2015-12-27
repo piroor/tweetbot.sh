@@ -66,7 +66,14 @@ FIN
 
 if [ "$queries" != '' ]
 then
-  lang="$("$tools_dir/tweet.sh/tweet.sh" lang)"
+  me="$("$tools_dir/tweet.sh/tweet.sh" showme)"
+  my_screen_name="$(echo "$me" | jq -r .screen_name | tr -d '\n')"
+  lang="$(echo "$me" | jq -r .lang | tr -d '\n')"
+  if [ "$lang" = 'null' -o "$lang" = '' ]
+  then
+    lang="en"
+  fi
+
   count=100
   last_id=''
 
@@ -75,7 +82,7 @@ then
     while read -r tweet
     do
       last_id="$(echo "$tweet" | jq -r .id_str)"
-      handle_mentions $mentions_handler_options
+      handle_mentions "$my_screen_name" $mentions_handler_options
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$queries" \
                 -l "$lang" \
