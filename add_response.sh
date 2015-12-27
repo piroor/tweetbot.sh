@@ -30,12 +30,12 @@ log 'Adding new keyword definition...'
 
 keyword="$(echo "$input" |
   $esed -e 's/^add\s+//i' \
-        -e 's/(>[^:]+)?(:.*)?$//')"
+        -e 's/\s*(>[^:]+)?(:.*)?$//')"
 alias="$(echo "$input" |
-  $esed -e 's/^add\s+[^>]+>//i' \
-        -e 's/(:.*)?$//')"
+  $esed -e 's/^add\s+[^>]+>\s*//i' \
+        -e 's/\s*(:.*)?$//')"
 response="$(echo "$input" |
-  $esed -e 's/^add\s+[^>]+(>[^:]+)?://i')"
+  $esed -e 's/^add\s+[^>]+(>[^:]+)?:\s*//i')"
 
 log "  keyword : $keyword"
 log "  alias   : $alias"
