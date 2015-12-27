@@ -82,8 +82,8 @@ then
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.statuses[]')
+    sleep 5m
   done
-  sleep 5m
 fi
 
 wait
