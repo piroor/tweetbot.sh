@@ -39,7 +39,7 @@ do
     continue
   fi
 
-  if echo "$body" | egrep -i '^(add|rem(ove)?|del(ete)?)\s' > /dev/null
+  if echo "$body" | egrep -i '^[+-]res(ponse)?\s' > /dev/null
   then
     output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
     result=$?

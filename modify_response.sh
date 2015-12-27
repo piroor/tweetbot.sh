@@ -24,7 +24,8 @@ mkdir -p "$responses_dir"
 
 
 input="$(cat)"
-# add filename-or-keyword(>(alias))?( +(response))?
+# +response filename-or-keyword(>(alias))?( +(response))?
+# -response filename-or-keyword(>(alias))?( +(response))?
 
 log 'Managing keyword definitions...'
 
@@ -34,14 +35,14 @@ non_whitespaces='[^ \f\n\r\t@]'
 operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
   $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \
-        -e "s/[$whitespaces]*((>|\&gt;)${non_whitespaces}+)?([$whitespaces].*)?\$//")"
+        -e "s/[$whitespaces]*((>|\&gt;)${non_whitespaces}+)?([$whitespaces].*)?$//")"
 alias=''
 if echo "$input" |
      egrep "^[^\s]+\s+[^>\&]+(>|\&gt;)\s*[^\s]+" > /dev/null
 then
   alias="$(echo "$input" |
     $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&]+(>|\&gt;)[$whitespaces]*//" \
-          -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?\$/\1/")"
+          -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?$/\1/")"
 fi
 response="$(echo "$input" |
   $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&$whitespaces]+([$whitespaces]*(>|\&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
@@ -204,6 +205,6 @@ remove_definition() {
 
 
 case "$operation" in
-  add ) process_add_command;;
-  del*|rem* ) process_remove_command;;
+  "+*" ) process_add_command;;
+  "-*" ) process_remove_command;;
 esac
