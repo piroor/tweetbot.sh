@@ -50,6 +50,7 @@ if [ -d ./responses ]
 then
   ls ./responses/* |
     sort |
+    grep -v '^default\.txt$' |
     while read path
   do
     matcher="$(\
@@ -73,10 +74,14 @@ fi
 FIN
   done
 
-  last_file="$(ls ./responses/* |
-                 sort |
-                 tail -n 1)"
-  if [ -f "$last_file" ]
+  default_file=./responses/default.txt'
+  if [ ! -f "$default_file" ]
+  then
+    default_file="$(ls ./responses/* |
+                     sort |
+                     tail -n 1)"
+  fi
+  if [ -f "$default_file" ]
   then
     cat << FIN >> "$responder"
 # fallback to the last pattern
