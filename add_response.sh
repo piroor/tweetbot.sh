@@ -32,11 +32,11 @@ keyword="$(echo "$input" |
   $esed -e 's/^add\s+//i' \
         -e 's/\s*(>[^:]+)?(:.*)?$//')"
 alias=''
-if echo "$input" | egrep "s/^add\s+[^>]+>[^:]+" > /dev/null
+if echo "$input" | egrep '^add\s+[^>]+>[^:]+' > /dev/null
 then
   alias="$(echo "$input" |
     $esed -e 's/^add\s+[^>]+>\s*//i' \
-          -e 's/\s*(:.*)?$//')"
+          -e 's/([^:\s]+)\s*(:.*)?$/\1/')"
 fi
 response="$(echo "$input" |
   $esed -e 's/^add\s+[^>]+(>[^:]+)?:\s*//i')"
@@ -56,8 +56,13 @@ add_definition() {
   local path=$1
   local alias=$2
   local response=$3
+  local modified=0
 
   log "Adding new response to $path..."
+
+  # always insert new line, otherwise the added line can be
+  # connected to the last existing line!
+  echo "" >> "$path"
 
   if [ "$alias" != '' ]
   then
@@ -67,6 +72,7 @@ add_definition() {
     else
       log "Adding new alias \"$alias\" for \"$keyword\"..."
       echo "# $alias" >> "$path"
+      modified=1
     fi
   fi
 
@@ -78,13 +84,19 @@ add_definition() {
     else
       log "Adding new response \"$response\"..."
       echo "$response" >> "$path"
+      modified=1
     fi
   fi
 
   if [ $? = 0 ]
   then
-    log 'Successfully added.'
-    "$tools_dir/generate_responder.sh"
+    if [ $modified = 0 ]
+    then
+      log 'Nothing to be added.'
+    else
+      log 'Successfully added.'
+      "$tools_dir/generate_responder.sh"
+    fi
     return 0
   else
     log 'Failed to add.'
@@ -93,18 +105,18 @@ add_definition() {
 }
 
 # if there is any file including the keyword in its name, then reuse it.
-find "$responses_dir" -type f -name "*${keyword}*" | while read path
+while read path
 do
   add_definition "$path" "$alias" "$response"
   exit $?
-done
+done < <(find "$responses_dir" -type f -name "*${keyword}*")
 
 # if there is any file including the keyword in its keyword definitions, then reuse it.
-egrep -r "^#\s*${keyword}\s*$" "$responses_dir" | cut -d ':' -f 1 | while read path
+while read path
 do
   add_definition "$path" "$alias" "$response"
   exit $?
-done
+done < <(egrep -r "^#\s*${keyword}\s*$" "$responses_dir" | cut -d ':' -f 1)
 
 # otherwise, create new definition file.
 path="$responses_dir/autoadd_${keyword}.txt"
