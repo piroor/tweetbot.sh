@@ -34,17 +34,17 @@ non_whitespaces='[^ \f\n\r\t@]'
 operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
   $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \
-        -e "s/[$whitespaces]*(>${non_whitespaces}+)?([$whitespaces].*)?\$//")"
+        -e "s/[$whitespaces]*((>|\&gt;)${non_whitespaces}+)?([$whitespaces].*)?\$//")"
 alias=''
 if echo "$input" |
-     egrep "^[^\s]+\s+[^>]+>\s*[^\s]+" > /dev/null
+     egrep "^[^\s]+\s+[^>\&]+(>|\&gt;)\s*[^\s]+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>]+>[$whitespaces]*//" \
+    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&]+(>|\&gt;)[$whitespaces]*//" \
           -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?\$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>$whitespaces]+([$whitespaces]*>[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
+  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&$whitespaces]+([$whitespaces]*(>|\&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
 
 log "  operation: $operation"
 log "  keyword  : $keyword"
