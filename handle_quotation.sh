@@ -85,6 +85,11 @@ do
     then
       log '  => successfully respond'
       touch "$already_replied_dir/$id"
+      # remove too old files
+      find "$already_replied_dir" -ctime +1 | while read path
+      do
+        rm -rf "$path"
+      done
     else
       log '  => failed to reply'
       log "     result: $result"
