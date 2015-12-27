@@ -38,4 +38,17 @@ do
     log ' => not an administrator, ignore it'
     continue
   fi
+
+  if echo "$body" | egrep -i '^add\s' > /dev/null
+  then
+    output="$(echo "$body" | "$tools_dir/add_response.sh" 2>&1)"
+    result=$?
+    log "$output"
+    if [ $result = 0 ]
+    then
+      "$tweet_sh" dm 'New response pattern is successfully added.'
+    else
+      "$tweet_sh" dm 'Failed to add new response pattern.'
+    fi
+  fi
 done
