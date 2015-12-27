@@ -39,8 +39,8 @@ then
   queries="$( \
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
-    # ignore ASCII quieries - they can be tracked via "keywords".
-    egrep -i -v '^[!-$]+$' |
+    # ignore non-CJK quieries - they can be tracked via "keywords".
+    egrep -i -v '^[!-~]+$' |
     egrep -v '^\s*$' |
     sed 's/$/ OR /' |
     tr -d '\n' |
@@ -48,7 +48,8 @@ then
   keywords="$( \
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
-    egrep -i '^[!-$]+$' |
+    # ignore CJK quieries
+    egrep -i '^[!-~]+$' |
     egrep -v '^\s*$' |
     paste -s -d ',')"
 fi
