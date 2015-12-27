@@ -46,6 +46,10 @@ do
     log "$output"
     if [ $result = 0 ]
     then
+      if [ -f "$TWEET_BASE_DIR/on_add.sh" ]
+      then
+        "$TWEET_BASE_DIR/on_add.sh"
+      fi
       "$tweet_sh" dm 'New response pattern is successfully added.'
     else
       "$tweet_sh" dm 'Failed to add new response pattern.'
