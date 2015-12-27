@@ -50,9 +50,9 @@ do
       then
         "$TWEET_BASE_DIR/on_add.sh"
       fi
-      "$tweet_sh" dm 'New response pattern is successfully added.'
+      "$tweet_sh" dm $sender 'New response pattern is successfully added.'
     else
-      "$tweet_sh" dm 'Failed to add new response pattern.'
+      "$tweet_sh" dm $sender 'Failed to add new response pattern.'
     fi
   fi
 done
