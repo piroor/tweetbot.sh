@@ -76,6 +76,7 @@ add_definition() {
   if [ $? = 0 ]
   then
     log 'Successfully added.'
+    "$tools_dir/generate_responder.sh"
     return 0
   else
     log 'Failed to add.'
