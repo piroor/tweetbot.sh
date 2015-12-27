@@ -29,6 +29,7 @@ mkdir -p "$logs_dir"
 
 queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
+keywords=''
 if [ -f "$queries_file" ]
 then
   echo "Reading search queries from \"$queries_file\"" 1>&2
@@ -36,14 +37,50 @@ then
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
     egrep -v '^\s*$' |
+    sed 's/$/ OR /' |
+    tr -d '\n' |
+    sed 's/ OR $//')"
+  keywords="$( \
+    # first, convert CR+LF => LF
+    nkf -Lu "$queries_file" |
+    egrep -v '^\s*$' |
     paste -s -d ',')"
 fi
 
-"$tools_dir/tweet.sh/tweet.sh" watch-mentions \
-  -k "$queries" \
+mentions_handler_options="$(cat << FIN
+  -k "$keywords" \
   -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
   -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
   -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
   -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
   -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
-  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
+  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh" 
+FIN
+)"
+
+"$tools_dir/tweet.sh/tweet.sh" watch-mentions $mentions_handler_options &
+
+
+if [ "$queries" != '' ]
+then
+  lang="$("$tools_dir/tweet.sh/tweet.sh" lang)"
+  count=100
+  last_id=''
+
+  while true
+  do
+    while read -r tweet
+    do
+      last_id="$(echo "$tweet" | jq -r .id_str)"
+      handle_mentions $mentions_handler_options
+    done < <("$tools_dir/tweet.sh/tweet.sh" search \
+                -q "$queries" \
+                -l "$lang" \
+                -c "$count" \
+                -s "$last_id" |
+                jq -c '.statuses[]')
+  done
+  sleep 5m
+fi
+
+wait
