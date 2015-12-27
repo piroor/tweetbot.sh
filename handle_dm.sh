@@ -25,9 +25,7 @@ fi
 
 while read -r message
 do
-  screen_name="$(echo "$message" | jq -r .user.screen_name)"
-  id="$(echo "$message" | jq -r .id_str)"
-
+  screen_name="$(echo "$message" | "$tweet_sh" owner)"
   log '=============================================================='
   log "DM from $screen_name"
 
