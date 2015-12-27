@@ -52,7 +52,7 @@ do
         handler_result="$("$TWEET_BASE_DIR/on_response_modified.sh" 2>&1)"
         if [ $? = 0 ]
         then
-          log 'Successfully proceeded.
+          log 'Successfully proceeded.'
         else
           log 'Failed to process.'
           log "$handler_result"
