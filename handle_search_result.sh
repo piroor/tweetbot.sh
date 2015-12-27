@@ -27,6 +27,8 @@ do
   # log " => follow $screen_name"
   # "$tweet_sh" follow $screen_name > /dev/null
 
+  if echo "$tweet" | jq -r .favorited | grep "false"
+  then
   log " => favorite $url"
   result="$("$tweet_sh" favorite $url)"
   if [ $? != 0 ]
@@ -34,12 +36,20 @@ do
     log '  => failed to favorite'
     log "     result: $result"
   fi
+  else
+    log " => already favorited"
+  fi
 
+  if echo "$tweet" | jq -r .retweeted | grep "false"
+  then
   log " => retweet $url"
   result="$("$tweet_sh" retweet $url)"
   if [ $? != 0 ]
   then
     log '  => failed to favorite'
     log "     result: $result"
+  fi
+  else
+    log " => already retweeted"
   fi
 done

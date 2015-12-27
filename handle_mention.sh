@@ -39,6 +39,8 @@ do
   fi
   log " response: $response"
 
+  if echo "$tweet" | jq -r .user.following | grep "false"
+  then
   log " => follow $owner"
   result="$("$tweet_sh" follow $owner)"
   if [ $? = 0 ]
@@ -48,7 +50,12 @@ do
     log "  => failed to follow $owner"
     log "     result: $result"
   fi
+  else
+    log " => already followed"
+  fi
 
+  if echo "$tweet" | jq -r .favorited | grep "false"
+  then
   log " => favorite $url"
   result="$("$tweet_sh" favorite $url)"
   if [ $? = 0 ]
@@ -57,6 +64,9 @@ do
   else
     log '  => failed to favorite'
     log "     result: $result"
+  fi
+  else
+    log " => already favorited"
   fi
 
   result="$("$tweet_sh" reply "$url" "@$owner $response")"

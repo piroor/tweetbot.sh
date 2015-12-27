@@ -38,6 +38,8 @@ do
     continue
   fi
 
+  if echo "$tweet" | jq -r .user.following | grep "false"
+  then
   log " => follow $owner"
   result="$("$tweet_sh" follow $owner)"
   if [ $? = 0 ]
@@ -47,7 +49,12 @@ do
     log "  => failed to follow $owner"
     log "     result: $result"
   fi
+  else
+    log " => already followed"
+  fi
 
+  if echo "$tweet" | jq -r .favorited | grep "false"
+  then
   log " => favorite $url"
   result="$("$tweet_sh" favorite $url)"
   if [ $? = 0 ]
@@ -56,6 +63,9 @@ do
   else
     log '  => failed to favorite'
     log "     result: $result"
+  fi
+  else
+    log " => already favorited"
   fi
 
   if echo "$body" | grep "^@$me" > /dev/null
@@ -72,6 +82,8 @@ do
     fi
   else
     log "Seems to be an RT with quotation."
+    if echo "$tweet" | jq -r .retweeted | grep "false"
+    then
     log " => retweet $url"
     result="$("$tweet_sh" retweet $url)"
     if [ $? = 0 ]
@@ -80,6 +92,9 @@ do
     else
       log '  => failed to retweet'
       log "     result: $result"
+    fi
+    else
+      log " => already retweeted"
     fi
   fi
 done
