@@ -5,7 +5,7 @@ tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 
 base_dir="$TWEET_BASE_DIR"
 log_dir="$TWEET_BASE_DIR/logs"
-logfile="$log_dir/handle_mention.log"
+logfile="$log_dir/handle_dm.log"
 
 source "$tweet_sh"
 load_keys
@@ -22,7 +22,6 @@ if [ "$administrators" = '' ]
 then
   exit 1
 fi
-echo "ADMIN $administrators"
 
 while read -r message
 do
