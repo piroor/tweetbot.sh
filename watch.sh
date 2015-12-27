@@ -50,18 +50,15 @@ then
     paste -s -d ',')"
 fi
 
-mentions_handler_options="$(cat << FIN
+"$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
   -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
   -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
   -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
   -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
-  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
-FIN
-)"
-
-"$tools_dir/tweet.sh/tweet.sh" watch-mentions $mentions_handler_options &
+  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh" \
+  &
 
 
 if [ "$queries" != '' ]
@@ -82,7 +79,14 @@ then
     while read -r tweet
     do
       last_id="$(echo "$tweet" | jq -r .id_str)"
-      handle_mentions "$my_screen_name" $mentions_handler_options
+      handle_mentions "$my_screen_name" \
+        -k "$keywords" \
+        -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
+        -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
+        -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
+        -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
+        -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
+        -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$queries" \
                 -l "$lang" \
