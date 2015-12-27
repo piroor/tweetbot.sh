@@ -85,7 +85,7 @@ FIN
   then
     cat << FIN >> "$responder"
 # fallback to the last pattern
-extract_response "\$base_dir/$last_file"
+extract_response "\$base_dir/$default_file"
 exit 0
 
 FIN
