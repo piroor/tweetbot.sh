@@ -71,6 +71,9 @@ then
     lang="en"
   fi
 
+  echo " my screen name: $my_screen_name" 1>&2
+  echo " lang          : $lang" 1>&2
+
   count=100
   last_id=''
 
