@@ -28,23 +28,23 @@ input="$(cat)"
 
 log 'Managing keyword definitions...'
 
-whitespaces='[ \f\n\r\t@]'
+whitespaces=' \f\n\r\t@'
 non_whitespaces='[^ \f\n\r\t@]'
 
-operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)${whitespaces}.+$/\\1/")"
+operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+${whitespaces}+//" \
-        -e "s/${whitespaces}*(>${non_whitespaces}+)?(${whitespaces}.*)?\$//")"
+  $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \
+        -e "s/[$whitespaces]*(>${non_whitespaces}+)?([$whitespaces].*)?\$//")"
 alias=''
 if echo "$input" |
      egrep "^[^\s]+\s+[^>]+>\s*[^\s]+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e "s/^${non_whitespaces}+${whitespaces}+[^>]+>${whitespaces}*//" \
-          -e "s/(${non_whitespaces}+)${whitespaces}*(${whitespaces}.*)?\$/\1/")"
+    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>]+>[$whitespaces]*//" \
+          -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?\$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+${whitespaces}+[^>]+(>${whitespaces}*${non_whitespaces}+)?${whitespaces}*//")"
+  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>$whitespaces]+([$whitespaces]*>[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
 
 log "  operation: $operation"
 log "  keyword  : $keyword"
@@ -164,7 +164,7 @@ remove_definition() {
     if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
     then
       log "Removing alias \"$alias\" for \"$keyword\"..."
-      $esed -e "/^#${whitespaces}*${alias}${whitespaces}*$/d" -i "$path"
+      $esed -e "/^#[$whitespaces]*${alias}[$whitespaces]*$/d" -i "$path"
       modified=1
     fi
   fi
@@ -174,7 +174,7 @@ remove_definition() {
     if egrep "^\s*${response}\s*$" "$path" > /dev/null
     then
       log "Removing response \"$response\"..."
-      $esed -e "/^${whitespaces}*${response}${whitespaces}*$/d" -i "$path"
+      $esed -e "/^[$whitespaces]*${response}[$whitespaces]*$/d" -i "$path"
       modified=1
     fi
   fi
