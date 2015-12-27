@@ -27,6 +27,15 @@ do
   log '=============================================================='
   log "Mentioned by $owner at $url"
 
+  created_at="$(echo "$tweet" | jq -r .created_at)"
+  created_at=$(date -d "$created_at" +%s)
+  now=$(date +%s)
+  if [ $((now - created_at)) -gt $((30 * 60)) ]
+  then
+    log " => ignored, because this is tweeted 30 minutes or more ago"
+    continue
+  fi
+
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
