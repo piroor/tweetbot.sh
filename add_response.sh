@@ -31,9 +31,13 @@ log 'Adding new keyword definition...'
 keyword="$(echo "$input" |
   $esed -e 's/^add\s+//i' \
         -e 's/\s*(>[^:]+)?(:.*)?$//')"
-alias="$(echo "$input" |
-  $esed -e 's/^add\s+[^>]+>\s*//i' \
-        -e 's/\s*(:.*)?$//')"
+alias=''
+if echo "$input" | egrep "s/^add\s+[^>]+>[^:]+" > /dev/null
+then
+  alias="$(echo "$input" |
+    $esed -e 's/^add\s+[^>]+>\s*//i' \
+          -e 's/\s*(:.*)?$//')"
+fi
 response="$(echo "$input" |
   $esed -e 's/^add\s+[^>]+(>[^:]+)?:\s*//i')"
 
@@ -53,12 +57,15 @@ add_definition() {
   local alias=$2
   local response=$3
 
+  log "Adding new response to $path..."
+
   if [ "$alias" != '' ]
   then
-    if egrep "^#" "^#\s*${alias}\s*$" "$path" > /dev/null
+    if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
     then
       : # found
     else
+      log "Adding new alias \"$alias\" for \"$keyword\"..."
       echo "# $alias" >> "$path"
     fi
   fi
@@ -69,6 +76,7 @@ add_definition() {
     then
       : # found
     else
+      log "Adding new response \"$response\"..."
       echo "$response" >> "$path"
     fi
   fi
@@ -100,6 +108,6 @@ done
 
 # otherwise, create new definition file.
 path="$responses_dir/autoadd_${keyword}.txt"
-echo "# $($keyword)" > "$path"
+echo "# $keyword" > "$path"
 add_definition "$path" "$alias" "$response"
 exit $?
