@@ -50,9 +50,9 @@ do
       then
         "$TWEET_BASE_DIR/on_response_modified.sh"
       fi
-      "$tweet_sh" dm $sender 'Response patterns are successfully modified.'
+      "$tweet_sh" dm $sender "Response patterns are successfully modified for \"$body\""
     else
-      "$tweet_sh" dm $sender 'Failed to modify response patterns.'
+      "$tweet_sh" dm $sender "Failed to modify response patterns for \"$body\""
     fi
   fi
 done
