@@ -41,6 +41,7 @@ This script detects data files and directories from the base directory (the curr
 The base directory should have them:
 
  * `$TWEET_BASE_DIR/tweet.client.key`: the definition of API keys. This is always required.
+ * `$TWEET_BASE_DIR/administrators.txt` (optional): a list of administrator accounts.
  * `$TWEET_BASE_DIR/queries.txt` (optional): a list of search keywords to be watched.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
 
@@ -59,6 +60,11 @@ CONSUMER_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ACCESS_TOKEN_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ~~~
+
+
+### `administrators.txt`
+
+TBD.
 
 
 ### `queries.txt`

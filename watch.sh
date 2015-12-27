@@ -45,4 +45,5 @@ fi
 #  -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
   -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
   -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
+  -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
   -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
