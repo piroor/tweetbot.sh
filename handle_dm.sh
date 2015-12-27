@@ -46,10 +46,10 @@ do
     log "$output"
     if [ $result = 0 ]
     then
-      if [ -f "$TWEET_BASE_DIR/on_response_modified.sh" ]
-      then
-        log 'Processing "on_response_modified" handler...'
-        handler_result="$("$TWEET_BASE_DIR/on_response_modified.sh" 2>&1)"
+      find "$TWEET_BASE_DIR" -type f -name 'on_response_modified*' | while read path
+      do
+        log "Processing \"$path\"..."
+        handler_result="$("$path" 2>&1)"
         if [ $? = 0 ]
         then
           log 'Successfully proceeded.'
@@ -57,7 +57,7 @@ do
           log 'Failed to process.'
           log "$handler_result"
         fi
-      fi
+      done
       "$tweet_sh" dm $sender "Response patterns are successfully modified for \"$body\"" > /dev/null
     else
       "$tweet_sh" dm $sender "Failed to modify response patterns for \"$body\"" > /dev/null
