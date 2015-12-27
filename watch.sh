@@ -35,7 +35,7 @@ then
   queries="$( \
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
-    egrep -v '^\s*#|^\s*$' |
+    egrep -v '^\s*$' |
     paste -s -d ',')"
 fi
 
