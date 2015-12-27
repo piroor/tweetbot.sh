@@ -26,24 +26,27 @@ mkdir -p "$responses_dir"
 input="$(cat)"
 # add filename-or-keyword(>(alias))?(:(response))?
 
-log 'Adding new keyword definition...'
+log 'Managing keyword definitions...'
 
+operation="$(echo "$input" |
+  $esed 's/^([^\s]+).+$//i')"
 keyword="$(echo "$input" |
-  $esed -e 's/^add\s+//i' \
+  $esed -e 's/^[^\s]+\s+//i' \
         -e 's/\s*(>[^:]+)?(:.*)?$//')"
 alias=''
 if echo "$input" | egrep '^add\s+[^>]+>[^:]+' > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e 's/^add\s+[^>]+>\s*//i' \
+    $esed -e 's/^[^\s]+\s+[^>]+>\s*//i' \
           -e 's/([^:\s]+)\s*(:.*)?$/\1/')"
 fi
 response="$(echo "$input" |
-  $esed -e 's/^add\s+[^>]+(>[^:]+)?:\s*//i')"
+  $esed -e 's/^[^\s]+\s+[^>]+(>[^:]+)?:\s*//i')"
 
-log "  keyword : $keyword"
-log "  alias   : $alias"
-log "  response: $response"
+log "  operation: $operation"
+log "  keyword  : $keyword"
+log "  alias    : $alias"
+log "  response : $response"
 
 if [ "$keyword" = '' ]
 then

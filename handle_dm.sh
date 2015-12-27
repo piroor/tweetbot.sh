@@ -39,9 +39,9 @@ do
     continue
   fi
 
-  if echo "$body" | egrep -i '^add\s' > /dev/null
+  if echo "$body" | egrep -i '^(add|rem(ove)?|del(ete)?)\s' > /dev/null
   then
-    output="$(echo "$body" | "$tools_dir/add_response.sh" 2>&1)"
+    output="$(echo "$body" | "$tools_dir/manage_response.sh" 2>&1)"
     result=$?
     log "$output"
     if [ $result = 0 ]
