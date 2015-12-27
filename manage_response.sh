@@ -24,24 +24,27 @@ mkdir -p "$responses_dir"
 
 
 input="$(cat)"
-# add filename-or-keyword(>(alias))?(:(response))?
+# add filename-or-keyword(>(alias))?( +(response))?
 
 log 'Managing keyword definitions...'
 
-operation="$(echo "$input" |
-  $esed 's/^([^\s]+).+$//i')"
+whitespaces='[ \f\n\r\t@]'
+non_whitespaces='[^ \f\n\r\t@]'
+
+operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)${whitespaces}.+$/\\1/")"
 keyword="$(echo "$input" |
-  $esed -e 's/^[^\s]+\s+//i' \
-        -e 's/\s*(>[^:]+)?(:.*)?$//')"
+  $esed -e "s/^${non_whitespaces}+${whitespaces}+//" \
+        -e "s/${whitespaces}*(>${non_whitespaces}+)?(${whitespaces}.*)?\$//")"
 alias=''
-if echo "$input" | egrep '^add\s+[^>]+>[^:]+' > /dev/null
+if echo "$input" |
+     egrep "^[^\s]+\s+[^>]+>\s*[^\s]+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e 's/^[^\s]+\s+[^>]+>\s*//i' \
-          -e 's/([^:\s]+)\s*(:.*)?$/\1/')"
+    $esed -e "s/^${non_whitespaces}+${whitespaces}+[^>]+>${whitespaces}*//" \
+          -e "s/(${non_whitespaces}+)${whitespaces}*(${whitespaces}.*)?\$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e 's/^[^\s]+\s+[^>]+(>[^:]+)?:\s*//i')"
+  $esed -e "s/^${non_whitespaces}+${whitespaces}+[^>]+(>${whitespaces}*${non_whitespaces}+)?${whitespaces}*//")"
 
 log "  operation: $operation"
 log "  keyword  : $keyword"
