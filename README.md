@@ -21,6 +21,8 @@ This bot watches events around the related your Twitter account, and will react 
 You need to prepare API keys at first.
 Go to [the front page](https://apps.twitter.com/), create a new app, and generate a new access token.
 
+If you hope to use DMs to control the running bot, you have to permit the app to access direct messages.
+
 ## Usage
 
 ~~~
