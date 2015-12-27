@@ -17,18 +17,18 @@ log() {
 
 while read -r event
 do
-  screen_name="$(echo "$event" | jq -r .source.screen_name)"
+  follower="$(echo "$event" | jq -r .source.screen_name)"
 
   log '=============================================================='
-  log "Followed by $screen_name"
+  log "Followed by $follower"
 
-  log " => follow back $screen_name"
-  result="$("$tweet_sh" follow $screen_name)"
+  log " => follow back $follower"
+  result="$("$tweet_sh" follow $follower)"
   if [ $? = 0 ]
   then
     log '  => successfully followed'
   else
-    log "  => failed to follow $screen_name"
+    log "  => failed to follow $follower"
     log "     result: $result"
   fi
 done

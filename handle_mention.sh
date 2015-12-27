@@ -19,12 +19,12 @@ responder="$TWEET_BASE_DIR/responder.sh"
 
 while read -r tweet
 do
-  screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
+  owner="$(echo "$tweet" | jq -r .user.screen_name)"
   id="$(echo "$tweet" | jq -r .id_str)"
-  url="https://twitter.com/$screen_name/status/$id"
+  url="https://twitter.com/$owner/status/$id"
 
   log '=============================================================='
-  log "Mentioned by $screen_name at $url"
+  log "Mentioned by $owner at $url"
 
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
@@ -39,13 +39,13 @@ do
   fi
   log " response: $response"
 
-  log " => follow $screen_name"
-  result="$("$tweet_sh" follow $screen_name)"
+  log " => follow $owner"
+  result="$("$tweet_sh" follow $owner)"
   if [ $? = 0 ]
   then
     log '  => successfully followed'
   else
-    log "  => failed to follow $screen_name"
+    log "  => failed to follow $owner"
     log "     result: $result"
   fi
 
@@ -59,7 +59,7 @@ do
     log "     result: $result"
   fi
 
-  result="$("$tweet_sh" reply "$url" "@$screen_name $response")"
+  result="$("$tweet_sh" reply "$url" "@$owner $response")"
   if [ $? = 0 ]
   then
     log '  => successfully respond'

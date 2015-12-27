@@ -25,15 +25,15 @@ fi
 
 while read -r message
 do
-  screen_name="$(echo "$message" | "$tweet_sh" owner)"
+  sender="$(echo "$message" | "$tweet_sh" owner)"
 
   log '=============================================================='
-  log "DM from $screen_name"
+  log "DM from $sender"
 
   body="$(echo "$message" | "$tweet_sh" body)"
   log " body    : $body"
 
-  if echo "$screen_name" | egrep -v "$administrators" > /dev/null
+  if echo "$sender" | egrep -v "$administrators" > /dev/null
   then
     log ' => not an administrator, ignore it'
     continue
