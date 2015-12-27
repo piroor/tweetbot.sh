@@ -39,6 +39,8 @@ then
   queries="$( \
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
+    # ignore ASCII quieries - they can be tracked via "keywords".
+    egrep -i -v '^[!-$]+$' |
     egrep -v '^\s*$' |
     sed 's/$/ OR /' |
     tr -d '\n' |
@@ -46,6 +48,7 @@ then
   keywords="$( \
     # first, convert CR+LF => LF
     nkf -Lu "$queries_file" |
+    egrep -i '^[!-$]+$' |
     egrep -v '^\s*$' |
     paste -s -d ',')"
 fi
@@ -71,6 +74,7 @@ then
     lang="en"
   fi
 
+  echo " queries       : $queries" 1>&2
   echo " my screen name: $my_screen_name" 1>&2
   echo " lang          : $lang" 1>&2
 
