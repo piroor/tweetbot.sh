@@ -41,18 +41,18 @@ do
 
   if echo "$body" | egrep -i '^(add|rem(ove)?|del(ete)?)\s' > /dev/null
   then
-    output="$(echo "$body" | "$tools_dir/manage_response.sh" 2>&1)"
+    output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
     result=$?
     log "$output"
     if [ $result = 0 ]
     then
-      if [ -f "$TWEET_BASE_DIR/on_add.sh" ]
+      if [ -f "$TWEET_BASE_DIR/on_response_modified.sh" ]
       then
-        "$TWEET_BASE_DIR/on_add.sh"
+        "$TWEET_BASE_DIR/on_response_modified.sh"
       fi
-      "$tweet_sh" dm $sender 'New response pattern is successfully added.'
+      "$tweet_sh" dm $sender 'Response patterns are successfully modified.'
     else
-      "$tweet_sh" dm $sender 'Failed to add new response pattern.'
+      "$tweet_sh" dm $sender 'Failed to modify response patterns.'
     fi
   fi
 done
