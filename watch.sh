@@ -23,6 +23,9 @@ load_keys
 logs_dir="$TWEET_BASE_DIR/logs"
 mkdir -p "$logs_dir"
 
+already_replied_dir="$TWEET_BASE_DIR/already_replied"
+mkdir -p "$already_replied_dir"
+
 
 "$tools_dir/generate_responder.sh"
 

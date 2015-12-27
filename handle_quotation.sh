@@ -15,6 +15,9 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
+responder="$TWEET_BASE_DIR/responder.sh"
+already_replied_dir="$TWEET_BASE_DIR/already_replied"
+
 while read -r tweet
 do
   owner="$(echo "$tweet" | jq -r .user.screen_name)"
@@ -72,10 +75,16 @@ do
   then
     log "Seems to be a reply."
     log " response: $response"
+    if [ -f "$already_replied_dir/$id" ]
+    then
+      log '  => already responded'
+      continue
+    fi
     result="$("$tweet_sh" reply "$url" "$response")"
     if [ $? = 0 ]
     then
       log '  => successfully respond'
+      touch "$already_replied_dir/$id"
     else
       log '  => failed to reply'
       log "     result: $result"

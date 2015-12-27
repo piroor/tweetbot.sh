@@ -16,6 +16,7 @@ log() {
 }
 
 responder="$TWEET_BASE_DIR/responder.sh"
+already_replied_dir="$TWEET_BASE_DIR/already_replied"
 
 while read -r tweet
 do
@@ -69,10 +70,17 @@ do
     log " => already favorited"
   fi
 
+  if [ -f "$already_replied_dir/$id" ]
+  then
+    log '  => already replied'
+    continue
+  fi
+
   result="$("$tweet_sh" reply "$url" "@$owner $response")"
   if [ $? = 0 ]
   then
-    log '  => successfully respond'
+    log '  => successfully responded'
+    touch "$already_replied_dir/$id"
   else
     log '  => failed to reply'
     log "     result: $result"
