@@ -159,6 +159,13 @@ remove_definition() {
 
   log "Removing a response from $path..."
 
+  if egrep "^#\s*${keyword}\s*$" "$path" > /dev/null
+  then
+    log "Removing keyword \"$keyword\"..."
+    $esed -e "/^#[$whitespaces]*${keyword}[$whitespaces]*$/d" -i "$path"
+    modified=1
+  fi
+
   if [ "$alias" != '' ]
   then
     if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
