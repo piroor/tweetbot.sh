@@ -22,10 +22,12 @@ if [ "$administrators" = '' ]
 then
   exit 1
 fi
+echo "ADMIN $administrators"
 
 while read -r message
 do
   screen_name="$(echo "$message" | "$tweet_sh" owner)"
+
   log '=============================================================='
   log "DM from $screen_name"
 
@@ -34,7 +36,7 @@ do
 
   if echo "$screen_name" | egrep -v "$administrators" > /dev/null
   then
-    log ' => not an administrator, ignore it"
+    log ' => not an administrator, ignore it'
     continue
   fi
 done
