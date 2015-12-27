@@ -74,7 +74,7 @@ fi
 FIN
   done
 
-  default_file=./responses/default.txt'
+  default_file='./responses/default.txt'
   if [ ! -f "$default_file" ]
   then
     default_file="$(ls ./responses/* |
