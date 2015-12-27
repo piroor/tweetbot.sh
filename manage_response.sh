@@ -110,6 +110,8 @@ add_definition() {
   fi
 }
 
+case "$operation" in
+  add )
 # if there is any file including the keyword in its name, then reuse it.
 while read path
 do
@@ -129,3 +131,5 @@ path="$responses_dir/autoadd_${keyword}.txt"
 echo "# $keyword" > "$path"
 add_definition "$path" "$alias" "$response"
 exit $?
+;;
+esac
