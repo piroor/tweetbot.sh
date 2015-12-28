@@ -35,17 +35,17 @@ non_whitespaces='[^ \f\n\r\t@]'
 operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
   $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \
-        -e "s/[$whitespaces]*((>|\&gt;)${non_whitespaces}+)?([$whitespaces].*)?$//")"
+        -e "s/[$whitespaces]*((>|&gt;)${non_whitespaces}+)?([$whitespaces].*)?$//")"
 alias=''
 if echo "$input" |
-     egrep "^[^\s]+\s+[^>\&]+(>|\&gt;)\s*[^\s]+" > /dev/null
+     egrep "^${non_whitespaces}+[$whitespaces]+[^>&]+(>|&gt;)[$whitespaces]*${non_whitespaces}+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&]+(>|\&gt;)[$whitespaces]*//" \
+    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&]+(>|&gt;)[$whitespaces]*//" \
           -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>\&$whitespaces]+([$whitespaces]*(>|\&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
+  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&$whitespaces]+([$whitespaces]*(>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")"
 
 log "  operation: $operation"
 log "  keyword  : $keyword"
@@ -72,7 +72,7 @@ process_add_command() {
   do
     add_definition "$path" "$alias" "$response"
     exit $?
-  done < <(egrep -r "^#\s*${keyword}\s*$" "$responses_dir" | cut -d ':' -f 1)
+  done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   # otherwise, create new definition file.
   path="$responses_dir/autoadd_${keyword}.txt"
@@ -95,7 +95,7 @@ add_definition() {
 
   if [ "$alias" != '' ]
   then
-    if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
+    if egrep "^#[$whitespaces]*${alias}[$whitespaces]*$" "$path" > /dev/null
     then
       : # found
     else
@@ -107,7 +107,7 @@ add_definition() {
 
   if [ "$response" != '' ]
   then
-    if egrep "^\s*${response}\s*$" "$path" > /dev/null
+    if egrep "^[$whitespaces]*${response}[$whitespaces]*$" "$path" > /dev/null
     then
       : # found
     else
@@ -147,7 +147,7 @@ process_remove_command() {
   do
     remove_definition "$path" "$alias" "$response"
     exit $?
-  done < <(egrep -r "^#\s*${keyword}\s*$" "$responses_dir" | cut -d ':' -f 1)
+  done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   exit 1
 }
