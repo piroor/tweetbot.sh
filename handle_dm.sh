@@ -54,6 +54,21 @@ do
     continue
   fi
 
+  if echo "$body" | egrep -i "^test " > /dev/null
+  then
+    log 'Testing to reply...'
+    tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
+    result="$("$tweet_sh" dm $sender "$tweet_body" > /dev/null)"
+    if [ $? = 0 ]
+    then
+      log "Successfully responded: \"$tweet_body\""
+    else
+      log "$result"
+      log "Failed to respond \"$tweet_body\""
+    fi
+    continue
+  fi
+
   if echo "$body" | egrep -i '^[+-]res(ponse)?\s' > /dev/null
   then
     output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
