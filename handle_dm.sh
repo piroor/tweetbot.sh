@@ -69,8 +69,10 @@ do
   then
     log 'Posting new tweet...'
     tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
-    "$tweet_sh" post "$tweet_body" > /dev/null
-    if [ $? = 0 ]
+    output="$("$tweet_sh" post "$tweet_body" 2>&1)"
+    result=$?
+    log "$output"
+    if [ $result = 0 ]
     then
       log "Successfully posted: \"$tweet_body\""
       "$tweet_sh" dm $sender "Successfully posted: \"$tweet_body\"" > /dev/null
@@ -87,8 +89,10 @@ do
     reply_params="$(echo "$body" | $esed 's/^reply +//i')"
     reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
     reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
-    "$tweet_sh" reply "$reply_target" "$reply_body" > /dev/null
-    if [ $? = 0 ]
+    output="$("$tweet_sh" reply "$reply_target" "$reply_body" 2>&1)"
+    result=$?
+    log "$output"
+    if [ $result = 0 ]
     then
       log "Successfully replied to \"$reply_target\": \"$reply_body\""
       "$tweet_sh" dm $sender "Successfully replied: \"$reply_body\" to \"$reply_target\"" > /dev/null
