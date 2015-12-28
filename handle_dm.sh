@@ -102,4 +102,22 @@ do
     fi
     continue
   fi
+
+  if echo "$body" | egrep -i "^(del(ete)?|rem(ove)?) " > /dev/null
+  then
+    log 'Replying...'
+    delete_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+    output="$("$tweet_sh" delete "$delete_target" 2>&1)"
+    result=$?
+    log "$output"
+    if [ $result = 0 ]
+    then
+      log "Successfully deleted: \"$delete_target\""
+      "$tweet_sh" dm $sender "Successfully deleted: \"$delete_target\"" > /dev/null
+    else
+      log "Failed to delete \"$delete_target\""
+      "$tweet_sh" dm $sender "Failed to delete \"$delete_target\"" > /dev/null
+    fi
+    continue
+  fi
 done
