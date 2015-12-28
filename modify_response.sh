@@ -205,6 +205,6 @@ remove_definition() {
 
 
 case "$operation" in
-  "+*" ) process_add_command;;
-  "-*" ) process_remove_command;;
+  +* ) process_add_command;;
+  -* ) process_remove_command;;
 esac
