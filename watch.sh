@@ -55,7 +55,8 @@ then
 fi
 
 
-trap 'kill_descendants $$; exit 0' HUP INT QUIT KILL TERM
+self_pid=$$
+trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
