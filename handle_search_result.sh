@@ -37,6 +37,15 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
+  if [ "$TWEET_SCREEN_NAME" != '' ]
+  then
+    if echo "$body" | egrep "^@$TWEET_SCREEN_NAME" > /dev/null
+    then
+      log " => ignored, because this is a retweet"
+      continue
+    fi
+  fi
+
   if echo "$body" | egrep "^RT @[^:]+:" > /dev/null
   then
     log " => ignored, because this is a retweet"

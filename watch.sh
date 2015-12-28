@@ -30,6 +30,20 @@ mkdir -p "$already_replied_dir"
 "$tools_dir/generate_responder.sh"
 
 
+me="$("$tools_dir/tweet.sh/tweet.sh" showme)"
+my_screen_name="$(echo "$me" | jq -r .screen_name | tr -d '\n')"
+lang="$(echo "$me" | jq -r .lang | tr -d '\n')"
+if [ "$lang" = 'null' -o "$lang" = '' ]
+then
+  lang="en"
+fi
+
+echo " my screen name: $my_screen_name" 1>&2
+echo " lang          : $lang" 1>&2
+
+export TWEET_SCREEN_NAME="$my_screen_name"
+COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\""
+
 queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
 keywords=''
@@ -60,28 +74,18 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
-  -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
-  -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
-  -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
-  -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
-  -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
-  -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh" \
+  -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
+  -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
+  -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
+  -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
+  -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
+  -s "$COMMON_ENV $tools_dir/handle_search_result.sh" \
   &
 
 
 if [ "$queries" != '' ]
 then
-  me="$("$tools_dir/tweet.sh/tweet.sh" showme)"
-  my_screen_name="$(echo "$me" | jq -r .screen_name | tr -d '\n')"
-  lang="$(echo "$me" | jq -r .lang | tr -d '\n')"
-  if [ "$lang" = 'null' -o "$lang" = '' ]
-  then
-    lang="en"
-  fi
-
-  echo " queries       : $queries" 1>&2
-  echo " my screen name: $my_screen_name" 1>&2
-  echo " lang          : $lang" 1>&2
+  echo " queries: $queries" 1>&2
 
   count=100
   last_id=''
@@ -94,12 +98,12 @@ then
       last_id="$(echo "$tweet" | jq -r .id_str)"
       handle_mentions "$my_screen_name" \
         -k "$keywords_for_search_results" \
-        -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
-        -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
-        -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
-        -f "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_follow.sh" \
-        -d "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_dm.sh" \
-        -s "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_search_result.sh"
+        -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
+        -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
+        -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
+        -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
+        -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
+        -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$queries" \
                 -l "$lang" \
