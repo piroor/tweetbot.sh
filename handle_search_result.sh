@@ -24,6 +24,15 @@ do
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
 
+  created_at="$(echo "$tweet" | jq -r .created_at)"
+  created_at=$(date -d "$created_at" +%s)
+  now=$(date +%s)
+  if [ $((now - created_at)) -gt $((24 * 60 * 60)) ]
+  then
+    log " => ignored, because this is tweeted one day or more ago"
+    continue
+  fi
+
   # log " => follow $screen_name"
   # "$tweet_sh" follow $screen_name > /dev/null
 
