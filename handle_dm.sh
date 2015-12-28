@@ -120,4 +120,22 @@ do
     fi
     continue
   fi
+
+  if echo "$body" | egrep -i "^(rt|retweet) " > /dev/null
+  then
+    log 'Retweeting...'
+    retweet_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+    output="$("$tweet_sh" retweet "$retweet_target" 2>&1)"
+    result=$?
+    if [ $result = 0 ]
+    then
+      log "Successfully retweeted: \"$retweet_target\""
+      "$tweet_sh" dm $sender "Successfully retweeted: \"$retweet_target\"" > /dev/null
+    else
+      log "$output"
+      log "Failed to retweet \"$retweet_target\""
+      "$tweet_sh" dm $sender "Failed to retweet \"$retweet_target\"" > /dev/null
+    fi
+    continue
+  fi
 done
