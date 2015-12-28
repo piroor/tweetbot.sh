@@ -41,7 +41,7 @@ do
   then
     if echo "$body" | egrep "^@$TWEET_SCREEN_NAME" > /dev/null
     then
-      log " => ignored, because this is a retweet"
+      log " => ignored, because this is my tweet"
       continue
     fi
   fi
