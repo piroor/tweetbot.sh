@@ -23,7 +23,9 @@ responses_dir="$TWEET_BASE_DIR/responses"
 mkdir -p "$responses_dir"
 
 
-input="$(cat)"
+input="$(cat |
+           # normalize waves
+           sed 's/〜/～/g')"
 # +response filename-or-keyword(>(alias))?( +(response))?
 # -response filename-or-keyword(>(alias))?( +(response))?
 
