@@ -71,12 +71,12 @@ do
     tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
     output="$("$tweet_sh" post "$tweet_body" 2>&1)"
     result=$?
-    log "$output"
     if [ $result = 0 ]
     then
       log "Successfully posted: \"$tweet_body\""
       "$tweet_sh" dm $sender "Successfully posted: \"$tweet_body\"" > /dev/null
     else
+      log "$output"
       log "Failed to post \"$tweet_body\""
       "$tweet_sh" dm $sender "Failed to post \"$tweet_body\"" > /dev/null
     fi
@@ -91,12 +91,12 @@ do
     reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
     output="$("$tweet_sh" reply "$reply_target" "$reply_body" 2>&1)"
     result=$?
-    log "$output"
     if [ $result = 0 ]
     then
       log "Successfully replied to \"$reply_target\": \"$reply_body\""
       "$tweet_sh" dm $sender "Successfully replied: \"$reply_body\" to \"$reply_target\"" > /dev/null
     else
+      log "$output"
       log "Failed to reply to \"$reply_target\": \"$reply_body\""
       "$tweet_sh" dm $sender "Failed to reply \"$reply_body\" to \"$reply_target\"" > /dev/null
     fi
@@ -105,16 +105,16 @@ do
 
   if echo "$body" | egrep -i "^(del(ete)?|rem(ove)?) " > /dev/null
   then
-    log 'Replying...'
+    log 'Deleting...'
     delete_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
     output="$("$tweet_sh" delete "$delete_target" 2>&1)"
     result=$?
-    log "$output"
     if [ $result = 0 ]
     then
       log "Successfully deleted: \"$delete_target\""
       "$tweet_sh" dm $sender "Successfully deleted: \"$delete_target\"" > /dev/null
     else
+      log "$output"
       log "Failed to delete \"$delete_target\""
       "$tweet_sh" dm $sender "Failed to delete \"$delete_target\"" > /dev/null
     fi
