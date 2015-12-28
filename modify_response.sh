@@ -27,7 +27,7 @@ input="$(cat)"
 # +response filename-or-keyword(>(alias))?( +(response))?
 # -response filename-or-keyword(>(alias))?( +(response))?
 
-log 'Managing keyword definitions...'
+log 'Modifying keyword definitions...'
 
 whitespaces=' \f\n\r\tÅ@'
 non_whitespaces='[^ \f\n\r\tÅ@]'
@@ -205,6 +205,6 @@ remove_definition() {
 
 
 case "$operation" in
-  "+*" ) process_add_command;;
-  "-*" ) process_remove_command;;
+  +* ) process_add_command;;
+  -* ) process_remove_command;;
 esac
