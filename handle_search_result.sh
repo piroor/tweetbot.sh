@@ -36,12 +36,18 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
+  if echo "$body" | grep "^RT @[^:]+:" > /dev/null
+  then
+    log " => ignored, because this is a retweet"
+    continue
+  fi
+
   response="$(echo "$body" | "$responder")"
   if [ $? != 0 -o "$response" = '' ]
   then
     # Don't favorite and reply to the tweet
     # if it is a "don't respond" case.
-    log " don't response case"
+    log " => don't response case"
     continue
   fi
 
