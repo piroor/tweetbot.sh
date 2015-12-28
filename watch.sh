@@ -54,6 +54,9 @@ then
     paste -s -d ',')"
 fi
 
+
+trap 'jobs="$(jobs -p)"; [ "$jobs" = "" ] || kill $jobs' QUIT KILL TERM
+
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
