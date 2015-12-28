@@ -37,7 +37,7 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
-  if echo "$body" | grep "^RT @[^:]+:" > /dev/null
+  if echo "$body" | egrep "^RT @[^:]+:" > /dev/null
   then
     log " => ignored, because this is a retweet"
     continue
