@@ -96,7 +96,7 @@ then
     while read -r tweet
     do
       id="$(echo "$tweet" | jq -r .id_str)"
-      if [ "$last_id" != '' ]
+      if [ "$last_id" = '' ]
       then
         last_id="$id"
       fi
