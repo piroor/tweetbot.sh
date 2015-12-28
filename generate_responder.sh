@@ -34,7 +34,7 @@ input="\$(cat |
             sed 's/〜/～/g')"
 
 choose_random_one() {
-  local input="$(cat)"
+  local input="\$(cat)"
   local n_lines="\$(echo "\$input" | wc -l)"
   local index=\$(((\$RANDOM % \$n_lines) + 1))
   echo "\$input" | sed -n "\${index}p"
