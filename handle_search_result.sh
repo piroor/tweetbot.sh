@@ -33,6 +33,18 @@ do
     continue
   fi
 
+  body="$(echo "$tweet" | "$tweet_sh" body)"
+  log " body    : $body"
+
+  response="$(echo "$body" | "$responder")"
+  if [ $? != 0 -o "$response" = '' ]
+  then
+    # Don't favorite and reply to the tweet
+    # if it is a "don't respond" case.
+    log " don't response case"
+    continue
+  fi
+
   # log " => follow $screen_name"
   # "$tweet_sh" follow $screen_name > /dev/null
 
