@@ -29,8 +29,8 @@ input="$(cat)"
 
 log 'Modifying keyword definitions...'
 
-whitespaces=' \f\n\r\t�@'
-non_whitespaces='[^ \f\n\r\t�@]'
+whitespaces=' \f\n\r\t　'
+non_whitespaces='[^ \f\n\r\t　]'
 
 operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
@@ -124,6 +124,7 @@ add_definition() {
       log 'Nothing to be added.'
     else
       log 'Successfully added.'
+      normalize_contents "$path"
       "$tools_dir/generate_responder.sh"
     fi
     return 0
@@ -194,6 +195,7 @@ remove_definition() {
       log 'Nothing to be removed.'
     else
       log 'Successfully removed.'
+      normalize_contents "$path"
       "$tools_dir/generate_responder.sh"
     fi
     return 0
@@ -203,6 +205,26 @@ remove_definition() {
   fi
 }
 
+
+normalize_contents() {
+  local path="$1"
+
+  # first, put keyword patterns.
+  grep '^#' "$path" |
+    sort > "${path}_sorted"
+
+  # separator line between keywords and responses
+  echo '' >> "${path}_sorted"
+
+  # output response patterns
+  grep -v '^#' "$path" |
+    grep -v '^ *$' |
+    # normalize wave
+    sed 's/〜/～/g' |
+    sort >> "${path}_sorted"
+
+  mv "${path}_sorted" "$path"
+}
 
 case "$operation" in
   +* ) process_add_command;;
