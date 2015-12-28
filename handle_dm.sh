@@ -62,5 +62,34 @@ do
     else
       "$tweet_sh" dm $sender "Failed to modify response patterns for \"$body\"" > /dev/null
     fi
+    continue
+  fi
+
+  if echo "$body" | egrep -i "^(tweet|post) " > /dev/null
+  then
+    tweet_body="$(echo "$body" | sed 's/^(tweet|post) +//i')"
+    "$tweet_sh" post "$tweet_body" > /dev/null
+    if [ $? = 0 ]
+    then
+      "$tweet_sh" dm $sender "Successfully posted: \"$tweet_body\"" > /dev/null
+    else
+      "$tweet_sh" dm $sender "Failed to post \"$tweet_body\"" > /dev/null
+    fi
+    continue
+  fi
+
+  if echo "$body" | egrep -i "^reply " > /dev/null
+  then
+    reply_params="$(echo "$body" | sed 's/^reply +//i')"
+    reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
+    reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
+    "$tweet_sh" reply "$reply_target" "$reply_body" > /dev/null
+    if [ $? = 0 ]
+    then
+      "$tweet_sh" dm $sender "Successfully replied: \"$reply_body\" to \"$reply_target\"" > /dev/null
+    else
+      "$tweet_sh" dm $sender "Failed to reply \"$reply_body\" to \"$reply_target\"" > /dev/null
+    fi
+    continue
   fi
 done
