@@ -55,7 +55,7 @@ then
 fi
 
 
-trap 'jobs="$(jobs -p)"; [ "$jobs" = "" ] || kill $jobs; exit 0' 1 2 3 15
+trap 'kill_descendants $$' HUP INT QUIT KILL TERM
 
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
