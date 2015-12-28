@@ -95,7 +95,11 @@ then
   do
     while read -r tweet
     do
-      last_id="$(echo "$tweet" | jq -r .id_str)"
+      id="$(echo "$tweet" | jq -r .id_str)"
+      if [ "$last_id" = '' -o "$id" -gt "$last_id" ]
+      then
+        last_id="$id"
+      fi
       handle_mentions "$my_screen_name" \
         -k "$keywords_for_search_results" \
         -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
