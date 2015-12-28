@@ -33,6 +33,13 @@ input="\$(cat |
             # normalize waves
             sed 's/〜/～/g')"
 
+choose_random_one() {
+  local input="$(cat)"
+  local n_lines="\$(echo "\$input" | wc -l)"
+  local index=\$(((\$RANDOM % \$n_lines) + 1))
+  echo "\$input" | sed -n "\${index}p"
+}
+
 extract_response() {
   local source="\$1"
   local responses="\$(cat "\$source" |
@@ -41,9 +48,7 @@ extract_response() {
 
   [ "\$responses" = '' ] && return 1
 
-  local n_responses="\$(echo "\$responses" | wc -l)"
-  local index=\$(((\$RANDOM % \$n_responses) + 1))
-  echo "\$responses" | sed -n "\${index}p"
+  echo "\$responses" | choose_random_one
 }
 
 FIN
