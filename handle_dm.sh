@@ -67,12 +67,15 @@ do
 
   if echo "$body" | egrep -i "^(tweet|post) " > /dev/null
   then
+    log 'Posting new tweet...'
     tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
     "$tweet_sh" post "$tweet_body" > /dev/null
     if [ $? = 0 ]
     then
+      log "Successfully posted: \"$tweet_body\""
       "$tweet_sh" dm $sender "Successfully posted: \"$tweet_body\"" > /dev/null
     else
+      log "Failed to post \"$tweet_body\""
       "$tweet_sh" dm $sender "Failed to post \"$tweet_body\"" > /dev/null
     fi
     continue
@@ -80,14 +83,17 @@ do
 
   if echo "$body" | egrep -i "^reply " > /dev/null
   then
+    log 'Replying...'
     reply_params="$(echo "$body" | $esed 's/^reply +//i')"
     reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
     reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
     "$tweet_sh" reply "$reply_target" "$reply_body" > /dev/null
     if [ $? = 0 ]
     then
+      log "Successfully replied to \"$reply_target\": \"$reply_body\""
       "$tweet_sh" dm $sender "Successfully replied: \"$reply_body\" to \"$reply_target\"" > /dev/null
     else
+      log "Failed to reply to \"$reply_target\": \"$reply_body\""
       "$tweet_sh" dm $sender "Failed to reply \"$reply_body\" to \"$reply_target\"" > /dev/null
     fi
     continue
