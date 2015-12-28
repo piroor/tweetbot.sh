@@ -29,7 +29,7 @@ base_dir="\$(cd "\$(dirname "\$0")" && pwd)"
 
 input="\$(cat |
             # remove all whitespaces
-            sed 's/[ \f\n\r\t　]//g'
+            sed 's/[ \f\n\r\t　]+/ /g'
             # normalize waves
             sed 's/〜/～/g')"
 
