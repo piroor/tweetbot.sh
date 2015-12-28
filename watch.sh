@@ -85,6 +85,7 @@ then
 
   count=100
   last_id=''
+  keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
 
   while true
   do
@@ -92,7 +93,7 @@ then
     do
       last_id="$(echo "$tweet" | jq -r .id_str)"
       handle_mentions "$my_screen_name" \
-        -k "$keywords" \
+        -k "$keywords_for_search_results" \
         -m "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_mention.sh" \
         -r "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_retweet.sh" \
         -q "env TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" $tools_dir/handle_quotation.sh" \
