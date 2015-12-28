@@ -62,12 +62,18 @@ fi
 
 
 process_add_command() {
+  local safe_keyword=$(echo "$keyword" |
+                         # remove dangerous characters
+                         sed "s/[!\[\]<>{}/:?*'\"]+/_/g")"
+
   # if there is any file including the keyword in its name, then reuse it.
   while read path
   do
     add_definition "$path" "$alias" "$response"
     exit $?
-  done < <(find "$responses_dir" -type f -name "*${keyword}*")
+  done < <(find "$responses_dir" -type f \
+                                 -name "*${keyword}*" \
+                                 -or -name "*${safe_keyword}*")
 
   # if there is any file including the keyword in its keyword definitions, then reuse it.
   while read path
@@ -77,7 +83,7 @@ process_add_command() {
   done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   # otherwise, create new definition file.
-  path="$responses_dir/autoadd_${keyword}.txt"
+  local path="$responses_dir/autoadd_${safe_basename}.txt"
   echo "# $keyword" > "$path"
   add_definition "$path" "$alias" "$response"
   exit $?
