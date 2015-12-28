@@ -14,6 +14,7 @@ log() {
   echo "$*" 1>&2
   echo "[$(date)] $*" >> "$logfile"
 }
+responder="$TWEET_BASE_DIR/responder.sh"
 
 while read -r tweet
 do
