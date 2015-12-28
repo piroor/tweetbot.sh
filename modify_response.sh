@@ -27,7 +27,7 @@ input="$(cat)"
 # +response filename-or-keyword(>(alias))?( +(response))?
 # -response filename-or-keyword(>(alias))?( +(response))?
 
-log 'Managing keyword definitions...'
+log 'Modifying keyword definitions...'
 
 whitespaces=' \f\n\r\t@'
 non_whitespaces='[^ \f\n\r\t@]'
