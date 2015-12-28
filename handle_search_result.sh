@@ -55,7 +55,7 @@ do
     result="$("$tweet_sh" retweet $url)"
     if [ $? != 0 ]
     then
-      log '  => failed to favorite'
+      log '  => failed to retweet'
       log "     result: $result"
     fi
   else
