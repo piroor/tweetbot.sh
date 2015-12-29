@@ -133,7 +133,7 @@ else
   if [ "\$IS_REPLY" = '1' ]
   then
     # If it is a reply of continuous context, you can two choices:
-    if [ "\$(echo 1 | probable $FREQUENCY_OF_CAPRICES)" = '' ]
+    if [ "\$(echo 1 | probable $FREQUENCY_OF_CAPRICES)" != '' ]
     then
       # 1) Change the topic.
       #    Then we should reply twite: a "pong" and "question about next topic".
