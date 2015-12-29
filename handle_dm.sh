@@ -37,9 +37,9 @@ run_command() {
     local handler_result="$("$path" "$sender" "$command" 2>&1)"
     if [ $? = 0 ]
     then
-      log "$result"
+      log "$handler_result"
       log "Successfully processed."
-      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"\n$handler_result" > /dev/null
+      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"" > /dev/null
     else
       log 'Failed to process.'
       log "$handler_result"
