@@ -193,7 +193,8 @@ do
     continue
   fi
 
-  command_name="$(echo "$body" | $esed "s/^([ ]+).*$/\1/")"
+  command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
+  log "command name = $command_name"
   case "$command_name" in
     run )
       run_command "$sender" "$body"
