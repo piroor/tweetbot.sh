@@ -51,18 +51,16 @@ if [ -f "$queries_file" ]
 then
   echo "Reading search queries from \"$queries_file\"" 1>&2
   queries="$( \
-    # first, convert CR+LF => LF
+    # First, convert CR+LF => LF for safety.
     nkf -Lu "$queries_file" |
-    # ignore non-CJK quieries - they can be tracked via "keywords".
-    egrep -i -v '^[!-~]+$' |
     egrep -v '^\s*$' |
     sed 's/$/ OR /' |
     tr -d '\n' |
     sed 's/ OR $//')"
   keywords="$( \
-    # first, convert CR+LF => LF
+    # First, convert CR+LF => LF for safety.
     nkf -Lu "$queries_file" |
-    # ignore CJK quieries
+    # Ignore CJK quieries, because then never appear in the stream.
     egrep -i '^[!-~]+$' |
     egrep -v '^\s*$' |
     paste -s -d ',')"
@@ -86,7 +84,11 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
   &
 
 
-# Sub process 2: watching search results with polling of the REST search API
+# Sub process 2: polling for the REST search API
+#   This is required, because not-mention CJK tweets with keywords
+#   won't appear in the stream tracked by "watch-mentions" command.
+#   For more details of this limitation, see also:
+#   https://dev.twitter.com/streaming/overview/request-parameters#track
 
 periodical_search() {
   echo " queries: $queries" 1>&2
