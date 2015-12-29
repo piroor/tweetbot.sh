@@ -119,7 +119,7 @@ FIN
 # fallback to the last pattern
 
 if [ -f "\$base_dir/$default_file" \
-     -a "\$IS_REPLY" != '1'
+     -a "\$IS_REPLY" != '1' \
      -a "\$(echo 1 | probable 6)" = '' ]
 then
   extract_response "\$base_dir/$default_file"
