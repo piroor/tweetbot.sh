@@ -83,7 +83,7 @@ process_add_command() {
   done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   # otherwise, create new definition file.
-  local path="$responses_dir/autoadd_${safe_basename}.txt"
+  local path="$responses_dir/autoadd_${safe_keyword}.txt"
   echo "# $keyword" > "$path"
   add_definition "$path" "$alias" "$response"
   exit $?
