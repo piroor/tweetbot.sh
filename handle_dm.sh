@@ -1,21 +1,9 @@
 #!/usr/bin/env bash
 
+work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
-tweet_sh="$tools_dir/tweet.sh/tweet.sh"
-
-base_dir="$TWEET_BASE_DIR"
-log_dir="$TWEET_BASE_DIR/logs"
+source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
-
-source "$tweet_sh"
-load_keys
-
-log() {
-  echo "$*" 1>&2
-  echo "[$(date)] $*" >> "$logfile"
-}
-
-responder="$TWEET_BASE_DIR/responder.sh"
 
 administrators="$(cat "$TWEET_BASE_DIR/administrators.txt" |
                     sed 's/^\s+|\s+$//' |
@@ -24,6 +12,12 @@ if [ "$administrators" = '' ]
 then
   exit 1
 fi
+
+respond() {
+  local sender="$1"
+  shift
+  "$tweet_sh" dm "$sender" "$*" > /dev/null
+}
 
 run_command() {
   local sender="$1"
@@ -39,11 +33,11 @@ run_command() {
     then
       log "$handler_result"
       log "Successfully processed."
-      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"" > /dev/null
+      respond "$sender" "Successfully processed: \"$command\" by \"$(basename "$path")\""
     else
       log 'Failed to process.'
       log "$handler_result"
-      "$tweet_sh" dm $sender "Failed to run \"$command\" by \"$(basename "$path")\"" > /dev/null
+      respond "$sender" "Failed to run \"$command\" by \"$(basename "$path")\""
     fi
   done
 }
@@ -53,7 +47,7 @@ do_echo() {
   local body="$2"
   log 'Responding an echo...'
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
-  local result="$("$tweet_sh" dm $sender "$tweet_body" > /dev/null)"
+  local result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
   then
     log "Successfully responded: \"$tweet_body\""
@@ -69,7 +63,7 @@ test_response() {
   log 'Testing to reply...'
   cd $TWEET_BASE_DIR
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
-  local result="$("$tweet_sh" dm $sender "$tweet_body" > /dev/null)"
+  local result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
   then
     log "Successfully responded: \"$tweet_body\""
@@ -100,9 +94,9 @@ modify_response() {
         log "$handler_result"
       fi
     done
-    "$tweet_sh" dm $sender "Response patterns are successfully modified for \"$body\"" > /dev/null
+    respond "$sender" "Response patterns are successfully modified for \"$body\""
   else
-    "$tweet_sh" dm $sender "Failed to modify response patterns for \"$body\"" > /dev/null
+    respond "$sender" "Failed to modify response patterns for \"$body\""
   fi
 }
 
@@ -115,11 +109,11 @@ post() {
   if [ $? = 0 ]
   then
     log "Successfully posted: \"$tweet_body\""
-    "$tweet_sh" dm $sender "Successfully posted: \"$tweet_body\"" > /dev/null
+    respond "$sender" "Successfully posted: \"$tweet_body\""
   else
     log "$output"
     log "Failed to post \"$tweet_body\""
-    "$tweet_sh" dm $sender "Failed to post \"$tweet_body\"" > /dev/null
+    respond "$sender" "Failed to post \"$tweet_body\""
   fi
 }
 
@@ -134,11 +128,11 @@ reply() {
   if [ $? = 0 ]
   then
     log "Successfully replied to \"$reply_target\": \"$reply_body\""
-    "$tweet_sh" dm $sender "Successfully replied: \"$reply_body\" to \"$reply_target\"" > /dev/null
+    respond "$sender" "Successfully replied: \"$reply_body\" to \"$reply_target\""
   else
     log "$output"
     log "Failed to reply to \"$reply_target\": \"$reply_body\""
-    "$tweet_sh" dm $sender "Failed to reply \"$reply_body\" to \"$reply_target\"" > /dev/null
+    respond "$sender" "Failed to reply \"$reply_body\" to \"$reply_target\""
   fi
 }
 
@@ -151,11 +145,11 @@ delete() {
   if [ $? = 0 ]
   then
     log "Successfully deleted: \"$delete_target\""
-    "$tweet_sh" dm $sender "Successfully deleted: \"$delete_target\"" > /dev/null
+    respond "$sender" "Successfully deleted: \"$delete_target\""
   else
     log "$output"
     log "Failed to delete \"$delete_target\""
-    "$tweet_sh" dm $sender "Failed to delete \"$delete_target\"" > /dev/null
+    respond "$sender" "Failed to delete \"$delete_target\""
   fi
 }
 
@@ -169,11 +163,11 @@ retweet() {
   if [ $result = 0 ]
   then
     log "Successfully retweeted: \"$retweet_target\""
-    "$tweet_sh" dm $sender "Successfully retweeted: \"$retweet_target\"" > /dev/null
+    respond "$sender" "Successfully retweeted: \"$retweet_target\""
   else
     log "$output"
     log "Failed to retweet \"$retweet_target\""
-    "$tweet_sh" dm $sender "Failed to retweet \"$retweet_target\"" > /dev/null
+    respond "$sender" "Failed to retweet \"$retweet_target\""
   fi
 }
 
