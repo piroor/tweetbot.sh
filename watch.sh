@@ -113,10 +113,10 @@ periodical_search() {
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.[]')
-    sleep 5m
     # increment "since id" to bypass cached search results
     last_id="$(($last_id + 1))"
     echo "$last_id" > "$last_id_file"
+    sleep 5m
   done
 }
 [ "$queries" != '' ] && periodical_search &
@@ -147,8 +147,8 @@ periodical_fetch_direct_messages() {
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.[]')
-    sleep 3m
     echo "$last_id" > "$last_id_file"
+    sleep 3m
   done
 }
 periodical_fetch_direct_messages &
