@@ -40,8 +40,27 @@ choose_random_one() {
   echo "\$input" | sed -n "\${index}p"
 }
 
+# do nothing with the probability 1/N
+probable() {
+  local probability=\$1
+  [ "\$probability" = '' ] && probability=2
+
+  if [ \$((\$RANDOM % \$probability)) -eq 0 ]
+  then
+    return 0
+  fi
+
+  cat
+}
+
 extract_response() {
   local source="\$1"
+  if [ ! -f "\$source" ]
+  then
+    echo ""
+    return 0
+  fi
+
   local responses="\$(cat "\$source" |
                         grep -v '^#' |
                         grep -v '^\s*\$')"
@@ -59,7 +78,7 @@ if [ -d ./responses ]
 then
   ls ./responses/* |
     sort |
-    grep -v '^default\.txt$' |
+    grep -v '^(pong|questions|connectors)\.txt$' |
     while read path
   do
     matcher="$(\
@@ -83,27 +102,36 @@ fi
 FIN
   done
 
+  pong_file='./responses/pong.txt'
+  connectors_file='./responses/connectors.txt'
+  questions_file='./responses/questions.txt'
+
   default_file='./responses/default.txt'
   if [ ! -f "$default_file" ]
   then
     default_file="$(ls ./responses/* |
                      sort |
+                     grep -v '^(pong|questions|connectors)\.txt$' |
                      tail -n 1)"
   fi
-  if [ -f "$default_file" ]
-  then
-    cat << FIN >> "$responder"
+  cat << FIN >> "$responder"
 # fallback to the last pattern
-extract_response "\$base_dir/$default_file"
+
+if [ -f "\$base_dir/$default_file" \
+     -a "\$(echo 1 | probable 6)" = '' ]
+then
+  extract_response "\$base_dir/$default_file"
+else
+  pong="\$(extract_response "\$base_dir/$pong_file" | probable 5)"
+  connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 5)"
+  question="\$(extract_response "\$base_dir/$questions_file" | 3)"
+
+  echo "\$pong\$connctor\$question"
+fi
+
 exit 0
 
 FIN
-  fi
 fi
-
-cat << FIN >> "$responder"
-# finally fallback to an error
-exit 1
-FIN
 
 chmod +x "$responder"
