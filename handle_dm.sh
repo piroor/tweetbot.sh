@@ -32,7 +32,7 @@ run_command() {
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
     log "Processing \"$path\"..."
-    local handler_result="$(echo "$command" | "$path" 2>&1)"
+    local handler_result="$("$path" "$command" 2>&1)"
     if [ $? = 0 ]
     then
       log "$result"
