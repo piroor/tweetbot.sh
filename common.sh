@@ -14,7 +14,7 @@ fi
 base_dir="$TWEET_BASE_DIR"
 
 log_dir="$TWEET_BASE_DIR/logs"
-mkdir -p "$logs_dir"
+mkdir -p "$log_dir"
 
 logfile="$log_dir/general.log"
 
