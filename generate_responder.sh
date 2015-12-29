@@ -14,10 +14,10 @@ FREQUENCY_OF_CAPRICES=6
 ENDLESSNESS=3
 CONVERSATION_SPAN=3
 
-responder_personality_file="$TWEET_BASE_DIR/responder_personality.txt"
-if [ -f "$responder_personality_file" ]
+personality_file="$TWEET_BASE_DIR/personality.txt"
+if [ -f "$personality_file" ]
 then
-  source "$responder_personality_file"
+  source "$personality_file"
 fi
 
 cat << FIN > "$responder"
