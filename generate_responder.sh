@@ -78,7 +78,7 @@ if [ -d ./responses ]
 then
   ls ./responses/* |
     sort |
-    grep -v '^(pong|questions|connectors)\.txt$' |
+    grep -v '^(pong|questions|connectors|default)\.txt$' |
     while read path
   do
     matcher="$(\
@@ -112,7 +112,7 @@ FIN
   then
     default_file="$(ls ./responses/* |
                      sort |
-                     grep -v '^(pong|questions|connectors)\.txt$' |
+                     grep -v '^(pong|questions|connectors|default)\.txt$' |
                      tail -n 1)"
   fi
   cat << FIN >> "$responder"
