@@ -95,6 +95,7 @@ periodical_search() {
 
   while true
   do
+    log "Processing results of REST search API..."
     while read -r tweet
     do
       [ "$tweet" = '' ] && continue
@@ -152,6 +153,7 @@ periodical_fetch_direct_messages() {
 
   while true
   do
+    log "Processing results of REST direct messages API..."
     while read -r message
     do
       [ "$message" = '' ] && continue
