@@ -98,6 +98,7 @@ periodical_search() {
     do
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
+      [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       [ $id -gt $last_id ] && last_id="$id"
       handle_mentions "$my_screen_name" \
@@ -112,10 +113,13 @@ periodical_search() {
                 -l "$lang" \
                 -c "$count" \
                 -s "$last_id" |
-                jq -c '.[]')
-    # increment "since id" to bypass cached search results
-    last_id="$(($last_id + 1))"
-    echo "$last_id" > "$last_id_file"
+                jq -c '.statuses[]')
+    if [ "$last_id" != '' ]
+    then
+      # increment "since id" to bypass cached search results
+      last_id="$(($last_id + 1))"
+      echo "$last_id" > "$last_id_file"
+    fi
     sleep 5m
   done
 }
@@ -131,6 +135,7 @@ periodical_fetch_direct_messages() {
   local last_id_file="$status_dir/last_fetched_dm"
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
+  local id
 
   while true
   do
@@ -138,6 +143,7 @@ periodical_fetch_direct_messages() {
     do
       [ "$message" = '' ] && continue
       id="$(echo "$message" | jq -r .id_str)"
+      [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       [ $id -gt $last_id ] && last_id="$id"
       handle_mentions "$my_screen_name" \
@@ -147,7 +153,7 @@ periodical_fetch_direct_messages() {
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.[]')
-    echo "$last_id" > "$last_id_file"
+    [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
     sleep 3m
   done
 }
