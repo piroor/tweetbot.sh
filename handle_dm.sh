@@ -25,6 +25,27 @@ then
   exit 1
 fi
 
+run_command() {
+  local body="$1"
+  log 'Running given command...'
+  local command="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
+  do
+    log "Processing \"$path\"..."
+    local handler_result="$(echo "$command" | "$path" 2>&1)"
+    if [ $? = 0 ]
+    then
+      log "$result"
+      log "Successfully processed."
+      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"" > /dev/null
+    else
+      log 'Failed to process.'
+      log "$handler_result"
+      "$tweet_sh" dm $sender "Failed to run \"$command\" by \"$(basename "$path")\"" > /dev/null
+    fi
+  done
+}
+
 do_echo() {
   local body="$1"
   log 'Responding an echo...'
@@ -162,6 +183,9 @@ do
 
   command_name="$(echo "$body" | $esed "s/^([ ]+).*$/\1/")"
   case "$command_name" in
+    run )
+      run_command "$body"
+      ;;
     echo )
       do_echo "$body"
       ;;
