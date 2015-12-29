@@ -2,14 +2,7 @@
 
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
-tweet_sh="$tools_dir/tweet.sh/tweet.sh"
-
-if [ "$TWEET_BASE_DIR" != '' ]
-then
-  TWEET_BASE_DIR="$(cd "$TWEET_BASE_DIR" && pwd)"
-else
-  TWEET_BASE_DIR="$work_dir"
-fi
+source "$tools_dir/common.sh"
 
 if [ ! -f "$TWEET_BASE_DIR/tweet.client.key" ]
 then
@@ -17,18 +10,10 @@ then
   exit 1
 fi
 
-source "$tweet_sh"
-load_keys
-
-logs_dir="$TWEET_BASE_DIR/logs"
-mkdir -p "$logs_dir"
-
-already_replied_dir="$TWEET_BASE_DIR/already_replied"
-mkdir -p "$already_replied_dir"
-
-
 "$tools_dir/generate_responder.sh"
 
+
+# Initialize required informations to call APIs
 
 me="$("$tools_dir/tweet.sh/tweet.sh" showme)"
 my_screen_name="$(echo "$me" | jq -r .screen_name | tr -d '\n')"
@@ -43,6 +28,9 @@ echo " lang          : $lang" 1>&2
 
 export TWEET_SCREEN_NAME="$my_screen_name"
 COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\""
+
+
+# Initialize list of search queries
 
 queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
@@ -66,6 +54,10 @@ then
     paste -s -d ',')"
 fi
 
+
+# Kill all forked children always!
+# Ctrl-C sometimes fails to kill descendant processes,
+# so we have to use custom "kill_descendants" function...
 
 self_pid=$$
 trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
@@ -93,9 +85,11 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 periodical_search() {
   echo " queries: $queries" 1>&2
 
-  count=100
-  last_id=''
-  keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
+  local count=100
+  local last_id_file="$TWEET_BASE_DIR/.last_search_result"
+  local last_id="$(cat "$last_id_file")"
+  local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
+  local id
 
   while true
   do
@@ -128,6 +122,7 @@ periodical_search() {
     sleep 5m
     # increment "since id" to bypass cached search results
     last_id="$(($last_id + 1))"
+    echo "$last_id" > "$last_id_file"
   done
 }
 [ "$queries" != '' ] && periodical_search &
