@@ -169,13 +169,6 @@ remove_definition() {
 
   log "Removing a response from $path..."
 
-  if egrep "^#\s*${keyword}\s*$" "$path" > /dev/null
-  then
-    log "Removing keyword \"$keyword\"..."
-    $esed -e "/^#[$whitespaces]*${keyword}[$whitespaces]*$/d" -i "$path"
-    modified=1
-  fi
-
   if [ "$alias" != '' ]
   then
     if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
@@ -205,6 +198,11 @@ remove_definition() {
       log 'Successfully removed.'
       normalize_contents "$path"
       "$tools_dir/generate_responder.sh"
+      if egrep -v "^#|^[$whitespaces]*$" "$path" > /dev/null
+      then
+        log 'There is no more response message.'
+        loc 'Note: this keyword works as a filter to ignore mentions.'
+      fi
     fi
     return 0
   else
