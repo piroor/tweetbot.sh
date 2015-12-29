@@ -123,12 +123,16 @@ then
   extract_response "\$base_dir/$default_file"
 else
   pong="\$(extract_response "\$base_dir/$pong_file")"
+
   question="\$(extract_response "\$base_dir/$questions_file" | probable 5)"
   if [ "\$question" != '' ]
   then
-    connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 5)"
+    connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
+    [ "\$connector" != '' ] && connctor="\$connctor "
+
     question="\$connctor\$question"
     pong="\$(echo "\$pong" | probable 8)"
+    [ "\$pong" != '' ] && pong="\$pong "
   fi
 
   echo "\$pong\$question"
