@@ -21,6 +21,12 @@ do
     continue
   fi
 
+  if is_already_replied "$id"
+  then
+    log '  => already responded'
+    continue
+  fi
+
   body="$(echo "$tweet" | "$tweet_sh" body)"
   me="$(echo "$tweet" | jq -r .quoted_status.user.screen_name)"
   log " me: $me"
@@ -50,15 +56,10 @@ do
   then
     log "Seems to be a reply."
     log " response: $response"
-    if is_already_replied "$id"
-    then
-      log '  => already responded'
-      continue
-    fi
-      is_true "$RESPOND_TO_QUOTATIONS" && (
-        echo "$responses" |
-          post_replies "$owner" "$id"
-      )
+    is_true "$RESPOND_TO_QUOTATIONS" && (
+      echo "$responses" |
+        post_replies "$owner" "$id"
+    )
   else
     log "Seems to be an RT with quotation."
     echo "$tweet" | retweet

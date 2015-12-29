@@ -21,6 +21,12 @@ do
     continue
   fi
 
+  if is_already_replied "$id"
+  then
+    log '  => already replied'
+    continue
+  fi
+
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
@@ -47,12 +53,6 @@ do
   is_true "$FOLLOW_ON_MENTIONED" && (echo "$tweet" | follow_owner)
   is_true "$FAVORITE_MENTIONS" && (echo "$tweet" | favorite)
   is_true "$RETWEET_MENTIONS" && (echo "$tweet" | retweet)
-
-  if is_already_replied "$id"
-  then
-    log '  => already replied'
-    continue
-  fi
 
   is_true "$RESPOND_TO_MENTIONS" && (
     echo "$responses" |
