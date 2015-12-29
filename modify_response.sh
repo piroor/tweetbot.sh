@@ -64,7 +64,7 @@ fi
 process_add_command() {
   local safe_keyword="$(echo "$keyword" |
                          # remove dangerous characters
-                         sed "s/[!\[\]<>{}\/\\:;?*'\"|]+/_/g")"
+                         $esed "s/[!\[\]<>{}\/\\:;?*'\"|]+/_/g")"
 
   # if there is any file including the keyword in its name, then reuse it.
   while read path
