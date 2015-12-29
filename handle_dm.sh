@@ -173,7 +173,7 @@ retweet() {
 
 while read -r message
 do
-  sender="$(echo "$message" | "$tweet_sh" owner)"
+  sender="$(echo "$message" | jq -r .sender_screen_name)"
   id="$(echo "$message" | jq -r .id_str)"
 
   log '=============================================================='
