@@ -14,7 +14,7 @@ do
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
 
-  if echo "$tweet" | is_older_than_N_seconds_before $((24 * 60 * 60))
+  if echo "$tweet" | expired_by_seconds $((24 * 60 * 60))
   then
     log " => ignored, because this is tweeted one day or more ago"
     continue

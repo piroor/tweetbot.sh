@@ -55,7 +55,7 @@ is_true() {
   egrep -i "^(1|true|yes)$"
 }
 
-is_older_than_N_seconds_before() {
+expired_by_seconds() {
   local expire_seconds=$1
   local tweet="$(cat)"
   local created_at="$(echo "$tweet" | jq -r .created_at)"

@@ -15,7 +15,7 @@ do
   log '=============================================================='
   log "Quoted by $owner at $url"
 
-  if echo "$tweet" | is_older_than_N_seconds_before $((30 * 60))
+  if echo "$tweet" | expired_by_seconds $((30 * 60))
   then
     log " => ignored, because this is tweeted 30 minutes or more ago"
     continue
