@@ -7,6 +7,7 @@ This bot watches events around the related your Twitter account, and will react 
  * If someone follows you, this will follows him/her.
  * If someone mentioned to you, this will...
    * favorite it.
+   * retweet it. (disabled by default)
    * respond to it, if you supplied response messages.
  * If someone retweeted your tweet with comments, this will...
    * favorite it.
@@ -43,14 +44,23 @@ This script detects data files and directories from the base directory (the curr
 The base directory should have them:
 
  * `$TWEET_BASE_DIR/tweet.client.key`: the definition of API keys. This is always required.
- * `$TWEET_BASE_DIR/administrators.txt` (optional): a list of administrator accounts.
+ * `$TWEET_BASE_DIR/personality.txt` (optional): configures the strategy of the bot.
  * `$TWEET_BASE_DIR/queries.txt` (optional): a list of search keywords to be watched.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
 
-After you start the `watch.sh`, following files and directories will be saved under the base directory automatically:
+If you permit accessing to direct messages for the app, you'll prepare following files also:
+
+ * `$TWEET_BASE_DIR/administrators.txt` (optional): a list of administrator accounts.
+ * `$TWEET_BASE_DIR/on_response_modified.*` (optional): a callback script to be executed when response messages are changed dynamically.
+ * `$TWEET_BASE_DIR/on_command.*` (optional): a callback script providing user-defined commands via DMs.
+
+And, after you start the `watch.sh`, following files and directories will be saved under the base directory automatically:
 
  * `$TWEET_BASE_DIR/responder.sh`: a script to output one of response message by the given input.
  * `$TWEET_BASE_DIR/logs`: a blank directory to store logs.
+
+
+## Configurations
 
 ### `tweet.client.key`
 
@@ -64,9 +74,9 @@ ACCESS_TOKEN_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ~~~
 
 
-### `administrators.txt`
+### `personality.txt`
 
-TBD.
+TBD
 
 
 ### `queries.txt`
@@ -135,7 +145,7 @@ For example, if there are both `greeting.txt` and `forbidden.txt`, they are sort
 If you hope to change the detection order, add some prefix to control their order like `000_forbidden.txt`, `010_bye.txt`, and others.
 
 
-#### How to update response messages?
+#### How to update response messages manually?
 
 If you simply hope to add new response messages to definition files, you can do it freely.
 The bot will use newly added messages automatically.
@@ -147,3 +157,9 @@ Then the `responder.sh` in the base directory will be regenerated and the runnin
 $ cd $TWEET_BASE_DIR
 $ /path/to/generate_responder.sh
 ~~~
+
+
+
+### `administrators.txt`
+
+TBD.
