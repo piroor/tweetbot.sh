@@ -62,7 +62,7 @@ fi
 
 
 process_add_command() {
-  local safe_keyword=$(echo "$keyword" |
+  local safe_keyword="$(echo "$keyword" |
                          # remove dangerous characters
                          sed "s/[!\[\]<>{}/:?*'\"]+/_/g")"
 
