@@ -107,7 +107,8 @@ FIN
   questions_file='./responses/questions.txt'
 
   default_file='./responses/default.txt'
-  if [ ! -f "$default_file" ]
+  if [ ! -f "$default_file"
+       -a -f "$pong_file" ]
   then
     default_file="$(ls ./responses/* |
                      sort |
