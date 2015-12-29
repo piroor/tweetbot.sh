@@ -56,17 +56,12 @@ is_true() {
 }
 
 is_older_than_N_seconds_before() {
+  local expire_seconds=$1
   local tweet="$(cat)"
   local created_at="$(echo "$tweet" | jq -r .created_at)"
   local created_at=$(date -d "$created_at" +%s)
   local now=$(date +%s)
-  if [ $((now - created_at)) -gt $((30 * 60)) ]
-  then
-    log " => ignored, because this is tweeted 30 minutes or more ago"
-    exit 0
-  fi
-
-  exit 1
+  [ $((now - created_at)) -gt $expire_seconds ]
 }
 
 is_reply() {
