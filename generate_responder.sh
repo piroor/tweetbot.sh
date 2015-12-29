@@ -63,11 +63,13 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
+special_pattern_files='^(pong|questions|following_questions|connectors|default)\.txt$'
+
 if [ -d ./responses ]
 then
   ls ./responses/* |
     sort |
-    grep -v '^(pong|questions|connectors|default)\.txt$' |
+    grep -v "$special_pattern_files" |
     while read path
   do
     matcher="$(\
@@ -94,6 +96,7 @@ FIN
   pong_file='./responses/pong.txt'
   connectors_file='./responses/connectors.txt'
   questions_file='./responses/questions.txt'
+  following_questions_file='./responses/following-questions.txt'
 
   default_file='./responses/default.txt'
   if [ ! -f "$default_file" \
@@ -101,12 +104,14 @@ FIN
   then
     default_file="$(ls ./responses/* |
                      sort |
-                     grep -v '^(pong|questions|connectors|default)\.txt$' |
+                     grep -v "$special_pattern_files" |
                      tail -n 1)"
   fi
   cat << FIN >> "$responder"
-# fallback to the last pattern
+# fallback to generated-patterns
 
+# Use "default" responses only if it is the first mention
+# (not a reply of existing context)
 if [ -f "\$base_dir/$default_file" \
      -a "\$IS_REPLY" != '1' \
      -a "\$(echo 1 | probable 6)" = '' ]
@@ -115,23 +120,31 @@ then
 else
   if [ "\$IS_REPLY" = '1' ]
   then
-    pong="\$(extract_response "\$base_dir/$pong_file")"
-    question="\$(extract_response "\$base_dir/$questions_file" | probable 5)"
+    # If it is a reply of continuous context, you can two choices:
+    if [ "\$(echo 1 | probable 3)" = '' ]
+    then
+      # 1) Change the topic.
+      #    Then we should reply twite: a "pong" and "question about next topic".
+      pong="\$(extract_response "\$base_dir/$pong_file")"
+      pong="\$(echo "\$pong" | probable 8)"
+      [ "\$pong" != '' ] && pong="\$pong "
+
+      question="\$(extract_response "\$base_dir/$questions_file" | probable 3)"
+      connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
+      [ "\$connector" != '' ] && connctor="\$connctor "
+      question="\$connctor\$question"
+    else
+      # 2) Continue to talk about the current topic.
+      #    The continueous question should be a part of "pong".
+      pong="\$(extract_response "\$base_dir/$pong_file" | probable 10)"
+      pong="\$pong \$(extract_response "\$base_dir/$following_questions_file" | probable 3)"
+    fi
   else
+    # If it is not a reply, we always start new conversation without "pong".
     question="\$(extract_response "\$base_dir/$questions_file")"
   fi
 
-  if [ "\$question" != '' ]
-  then
-    connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
-    [ "\$connector" != '' ] && connctor="\$connctor "
-
-    question="\$connctor\$question"
-
-    pong="\$(echo "\$pong" | probable 8)"
-    [ "\$pong" != '' ] && pong="\$pong "
-  fi
-
+  # Then output each responses.
   [ "\$pong" != '' ] && echo "\$pong"
   [ "\$question" != '' ] && echo "\$question"
 fi
