@@ -109,8 +109,6 @@ periodical_search() {
         -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
         -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
         -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
-        -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
-        -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
         -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
