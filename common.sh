@@ -12,7 +12,10 @@ else
 fi
 
 base_dir="$TWEET_BASE_DIR"
+
 log_dir="$TWEET_BASE_DIR/logs"
+mkdir -p "$logs_dir"
+
 logfile="$log_dir/general.log"
 
 source "$tweet_sh"
@@ -24,7 +27,9 @@ log() {
 }
 
 responder="$TWEET_BASE_DIR/responder.sh"
-already_replied_dir="$TWEET_BASE_DIR/already_replied"
+
+already_replied_dir="$TWEET_BASE_DIR/.already_replied"
+mkdir -p "$already_replied_dir"
 
 
 # default personality
