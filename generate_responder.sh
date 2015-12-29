@@ -130,9 +130,12 @@ else
       [ "\$pong" != '' ] && pong="\$pong "
 
       question="\$(extract_response "\$base_dir/$questions_file" | probable 3)"
-      connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
-      [ "\$connector" != '' ] && connctor="\$connctor "
-      question="\$connctor\$question"
+      if [ "\$question" != '' ]
+      then
+        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
+        [ "\$connector" != '' ] && connctor="\$connctor "
+        question="\$connctor\$question"
+      fi
     else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
