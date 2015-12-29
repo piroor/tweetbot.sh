@@ -50,6 +50,6 @@ do
   # log " => follow $screen_name"
   # "$tweet_sh" follow $screen_name > /dev/null
 
-  echo "$tweet" | favorite
-  echo "$tweet" | retweet
+  is_true "$FAVORITE_SEARCH_RESULTS" && (echo "$tweet" | favorite)
+  is_true "$RETWEET_SEARCH_RESULTS" && (echo "$tweet" | retweet)
 done

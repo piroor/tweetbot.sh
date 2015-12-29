@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# default personailty of the responder
+OBSESSION_TO_SELF_TOPICS=4
+FREQUENCY_OF_CAPRICES=6
+ENDLESSNESS=3
+CONVERSATION_SPAN=3
+
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
@@ -7,18 +13,6 @@ source "$tools_dir/common.sh"
 echo 'Generating responder script...' 1>&2
 echo "  sources: $TWEET_BASE_DIR/responses" 1>&2
 echo "  output : $responder" 1>&2
-
-# personailty of this responder
-OBSESSION_TO_SELF_TOPICS=4
-FREQUENCY_OF_CAPRICES=6
-ENDLESSNESS=3
-CONVERSATION_SPAN=3
-
-personality_file="$TWEET_BASE_DIR/personality.txt"
-if [ -f "$personality_file" ]
-then
-  source "$personality_file"
-fi
 
 cat << FIN > "$responder"
 #!/usr/bin/env bash

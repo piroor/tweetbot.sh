@@ -41,8 +41,8 @@ do
     continue
   fi
 
-  echo "$tweet" | follow_owner
-  echo "$tweet" | favorite
+  is_true "$FOLLOW_ON_QUOTED" && (echo "$tweet" | follow_owner)
+  is_true "$FAVORITE_QUOTATIONS" && (echo "$tweet" | favorite)
 
   if echo "$body" | grep "^@$me" > /dev/null
   then
@@ -53,10 +53,13 @@ do
       log '  => already responded'
       continue
     fi
-    echo "$responses" |
-      post_replies "$owner" "$id"
+      is_true "$RESPOND_TO_QUOTATIONS" && (
+        echo "$responses" |
+          post_replies "$owner" "$id"
+      )
   else
     log "Seems to be an RT with quotation."
     echo "$tweet" | retweet
+    is_true "$RETWEET_QUOTATIONS" && (echo "$tweet" | retweet)
   fi
 done

@@ -26,6 +26,35 @@ log() {
 responder="$TWEET_BASE_DIR/responder.sh"
 already_replied_dir="$TWEET_BASE_DIR/already_replied"
 
+
+# default personality
+
+FOLLOW_ON_FOLLOWED=true
+FOLLOW_ON_MENTIONED=true
+FOLLOW_ON_QUOTED=true
+FOLLOW_ON_RETWEETED=true
+
+FAVORITE_MENTIONS=true
+FAVORITE_QUOTATIONS=true
+FAVORITE_SEARCH_RESULTS=true
+
+RETWEET_MENTIONS=false
+RETWEET_QUOTATIONS=true
+RETWEET_SEARCH_RESULTS=true
+
+RESPOND_TO_MENTIONS=true
+RESPOND_TO_QUOTATIONS=true
+
+personality_file="$TWEET_BASE_DIR/personality.txt"
+if [ -f "$personality_file" ]
+then
+  source "$personality_file"
+fi
+
+is_true() {
+  egrep -i "^(1|true|yes)$"
+}
+
 is_older_than_N_seconds_before() {
   local tweet="$(cat)"
   local created_at="$(echo "$tweet" | jq -r .created_at)"
