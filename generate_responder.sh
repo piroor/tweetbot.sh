@@ -8,6 +8,18 @@ echo 'Generating responder script...' 1>&2
 echo "  sources: $TWEET_BASE_DIR/responses" 1>&2
 echo "  output : $responder" 1>&2
 
+# personailty of this responder
+OBSESSION_TO_SELF_TOPICS=4
+FREQUENCY_OF_CAPRICES=4
+ENDLESSNESS=6
+CONVERSATION_SPAN=4
+
+responder_personality_file="$TWEET_BASE_DIR/responder_personality.txt"
+if [ -f "$responder_personality_file" ]
+then
+  source "$responder_personality_file"
+fi
+
 cat << FIN > "$responder"
 #!/usr/bin/env bash
 #
@@ -114,24 +126,26 @@ FIN
 # (not a reply of existing context)
 if [ -f "\$base_dir/$default_file" \
      -a "\$IS_REPLY" != '1' \
-     -a "\$(echo 1 | probable 6)" = '' ]
+     -a "\$(echo 1 | probable $OBSESSION_TO_SELF_TOPICS)" = '' ]
 then
   extract_response "\$base_dir/$default_file"
 else
   if [ "\$IS_REPLY" = '1' ]
   then
     # If it is a reply of continuous context, you can two choices:
-    if [ "\$(echo 1 | probable 3)" = '' ]
+    if [ "\$(echo 1 | probable $FREQUENCY_OF_CAPRICES)" = '' ]
     then
       # 1) Change the topic.
       #    Then we should reply twite: a "pong" and "question about next topic".
       pong="\$(extract_response "\$base_dir/$pong_file")"
-      pong="\$(echo "\$pong" | probable 8)"
-      [ "\$pong" != '' ] && pong="\$pong "
 
-      question="\$(extract_response "\$base_dir/$questions_file" | probable 3)"
+      question="\$(extract_response "\$base_dir/$questions_file" | probable $ENDLESSNESS)"
       if [ "\$question" != '' ]
       then
+        # "pong" can be omitted if there is question
+        pong="\$(echo "\$pong" | probable 9)"
+        [ "\$pong" != '' ] && pong="\$pong "
+
         connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
         [ "\$connector" != '' ] && connctor="\$connctor "
         question="\$connctor\$question"
@@ -140,7 +154,7 @@ else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file" | probable 10)"
-      pong="\$pong \$(extract_response "\$base_dir/$following_questions_file" | probable 3)"
+      pong="\$pong \$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
     fi
   else
     # If it is not a reply, we always start new conversation without "pong".
