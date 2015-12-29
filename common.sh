@@ -28,8 +28,14 @@ log() {
 
 responder="$TWEET_BASE_DIR/responder.sh"
 
-already_replied_dir="$TWEET_BASE_DIR/.already_replied"
+status_dir="$TWEET_BASE_DIR/.status"
+mkdir -p "$status_dir"
+
+already_replied_dir="$status_dir/already_replied"
 mkdir -p "$already_replied_dir"
+
+already_processed_dir="$status_dir/already_processed"
+mkdir -p "$already_processed_dir"
 
 
 # default personality

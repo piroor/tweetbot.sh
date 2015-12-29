@@ -86,7 +86,7 @@ periodical_search() {
   echo " queries: $queries" 1>&2
 
   local count=100
-  local last_id_file="$TWEET_BASE_DIR/.last_search_result"
+  local last_id_file="$status_dir/last_search_result"
   local last_id="$(cat "$last_id_file")"
   local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
   local id
@@ -95,15 +95,10 @@ periodical_search() {
   do
     while read -r tweet
     do
+      [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
-      if [ "$last_id" = '' ]
-      then
-        last_id="$id"
-      fi
-      if [ $id -gt $last_id ]
-      then
-        last_id="$id"
-      fi
+      [ "$last_id" = '' ] && last_id="$id"
+      [ $id -gt $last_id ] && last_id="$id"
       handle_mentions "$my_screen_name" \
         -k "$keywords_for_search_results" \
         -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
@@ -116,7 +111,7 @@ periodical_search() {
                 -l "$lang" \
                 -c "$count" \
                 -s "$last_id" |
-                jq -c '.statuses[]')
+                jq -c '.[]')
     sleep 5m
     # increment "since id" to bypass cached search results
     last_id="$(($last_id + 1))"
@@ -124,6 +119,37 @@ periodical_search() {
   done
 }
 [ "$queries" != '' ] && periodical_search &
+
+
+# Sub process 3: polling for the REST direct messages API
+#   This is required, because some direct messages can be dropped
+#   in the stream.
+
+periodical_fetch_direct_messages() {
+  local count=100
+  local last_id_file="$status_dir/last_fetched_dm"
+  local last_id="$(cat "$last_id_file")"
+
+  while true
+  do
+    while read -r message
+    do
+      [ "$message" = '' ] && continue
+      id="$(echo "$message" | jq -r .id_str)"
+      [ "$last_id" = '' ] && last_id="$id"
+      [ $id -gt $last_id ] && last_id="$id"
+      handle_mentions "$my_screen_name" \
+        -d "$COMMON_ENV $tools_dir/handle_dm.sh"
+      sleep 3s
+    done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
+                -c "$count" \
+                -s "$last_id" |
+                jq -c '.[]')
+    sleep 3m
+    echo "$last_id" > "$last_id_file"
+  done
+}
+periodical_fetch_direct_messages &
 
 
 wait

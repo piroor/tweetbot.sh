@@ -174,18 +174,25 @@ retweet() {
 while read -r message
 do
   sender="$(echo "$message" | "$tweet_sh" owner)"
+  id="$(echo "$message" | jq -r .id_str)"
 
   log '=============================================================='
-  log "DM from $sender"
-
-  body="$(echo "$message" | "$tweet_sh" body)"
-  log " body    : $body"
+  log "DM $id from $sender"
 
   if echo "$sender" | egrep -v "$administrators" > /dev/null
   then
     log ' => not an administrator, ignore it'
     continue
   fi
+
+  if [ -f "$already_processed_dir/$id" ]
+  then
+    log ' => already processed, ignore it'
+    continue
+  fi
+
+  body="$(echo "$message" | "$tweet_sh" body)"
+  log " body    : $body"
 
   command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
   log "command name = $command_name"
@@ -215,4 +222,11 @@ do
       retweet "$sender" "$body"
       ;;
   esac
+
+  touch "$already_processed_dir/$id"
+  # remove too old files - store only for recent N messages
+  ls "$already_processed_dir/*" | sort | head -n -200 | while read path
+  do
+    rm -rf "$path"
+  done
 done
