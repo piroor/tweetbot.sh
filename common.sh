@@ -13,6 +13,7 @@ then
 else
   TWEET_BASE_DIR="$work_dir"
 fi
+export TWEET_BASE_DIR
 
 base_dir="$TWEET_BASE_DIR"
 

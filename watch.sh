@@ -27,7 +27,6 @@ echo " my screen name: $my_screen_name" 1>&2
 echo " lang          : $lang" 1>&2
 
 export TWEET_SCREEN_NAME="$my_screen_name"
-COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\""
 
 
 # Initialize list of search queries
@@ -65,6 +64,7 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
 # Sub process 1: watching mentions with the streaming API
 
+COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\""
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
@@ -91,6 +91,7 @@ periodical_search() {
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
   local id
+  local type
 
   while true
   do
@@ -101,12 +102,24 @@ periodical_search() {
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       [ $id -gt $last_id ] && last_id="$id"
-      handle_mentions "$my_screen_name" \
-        -k "$keywords_for_search_results" \
-        -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
-        -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
-        -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
-        -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
+      type="$(echo "$tweet" |
+                "$tools_dir/tweet.sh/tweet.sh" type \
+                  -s "$my_screen_name" \
+                  -k "$keywords_for_search_results")"
+      case "$type" in
+        mention )
+          echo "$tweet" | "$tools_dir/handle_mention.sh"
+          ;;
+        retweet )
+          echo "$tweet" | "$tools_dir/handle_retweet.sh"
+          ;;
+        quotation )
+          echo "$tweet" | "$tools_dir/handle_quotation.sh"
+          ;;
+        search-result )
+          echo "$tweet" | "$tools_dir/handle_search_result.sh"
+          ;;
+      esac
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$queries" \
@@ -146,8 +159,7 @@ periodical_fetch_direct_messages() {
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       [ $id -gt $last_id ] && last_id="$id"
-      handle_mentions "$my_screen_name" \
-        -d "$COMMON_ENV $tools_dir/handle_dm.sh"
+      echo "$message" | "$tools_dir/handle_dm.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
