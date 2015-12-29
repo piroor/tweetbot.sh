@@ -88,7 +88,7 @@ periodical_search() {
   local count=100
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
-  [ -f "$last_id_file" ] && "$(cat "$last_id_file")"
+  [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
   local id
 
@@ -130,7 +130,7 @@ periodical_fetch_direct_messages() {
   local count=100
   local last_id_file="$status_dir/last_fetched_dm"
   local last_id=''
-  [ -f "$last_id_file" ] && "$(cat "$last_id_file")"
+  [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
 
   while true
   do
