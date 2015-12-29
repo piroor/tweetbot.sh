@@ -32,6 +32,7 @@ run_command() {
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
     log "Processing \"$path\"..."
+    cd $TWEET_BASE_DIR
     local handler_result="$("$path" "$command" 2>&1)"
     if [ $? = 0 ]
     then
@@ -63,6 +64,7 @@ do_echo() {
 test_response() {
   local body="$1"
   log 'Testing to reply...'
+  cd $TWEET_BASE_DIR
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
   local result="$("$tweet_sh" dm $sender "$tweet_body" > /dev/null)"
   if [ $? = 0 ]
@@ -84,6 +86,7 @@ modify_response() {
     find "$TWEET_BASE_DIR" -type f -name 'on_response_modified*' | while read path
     do
       log "Processing \"$path\"..."
+      cd $TWEET_BASE_DIR
       local handler_result="$("$path" 2>&1)"
       if [ $? = 0 ]
       then
