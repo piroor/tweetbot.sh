@@ -39,7 +39,19 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   me="$(echo "$tweet" | jq -r .quoted_status.user.screen_name)"
   log " me: $me"
-  log " body: $body"
+  log " body    : $body"
+
+  replied_id="$(echo "$tweet" | jq -r .in_reply_to_status_id_str)"
+  if [ "$replied_id" != 'null' -a "$replied_id" != '' ]
+  then
+    is_reply=1
+  else
+    is_reply=0
+  fi
+  log " is_reply: $is_reply"
+
+  export SCREEN_NAME="$owner"
+  export IS_REPLY=$is_reply
 
   response="$(echo "$body" | "$responder")"
   if [ $? != 0 -o "$response" != '' ]

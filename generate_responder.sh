@@ -119,19 +119,26 @@ FIN
 # fallback to the last pattern
 
 if [ -f "\$base_dir/$default_file" \
+     -a "\$IS_REPLY" != '1'
      -a "\$(echo 1 | probable 6)" = '' ]
 then
   extract_response "\$base_dir/$default_file"
 else
-  pong="\$(extract_response "\$base_dir/$pong_file")"
+  if [ "\$IS_REPLY" = '1' ]
+  then
+    pong="\$(extract_response "\$base_dir/$pong_file")"
+    question="\$(extract_response "\$base_dir/$questions_file" | probable 5)"
+  else
+    question="\$(extract_response "\$base_dir/$questions_file")"
+  fi
 
-  question="\$(extract_response "\$base_dir/$questions_file" | probable 5)"
   if [ "\$question" != '' ]
   then
     connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
     [ "\$connector" != '' ] && connctor="\$connctor "
 
     question="\$connctor\$question"
+
     pong="\$(echo "\$pong" | probable 8)"
     [ "\$pong" != '' ] && pong="\$pong "
   fi
