@@ -10,9 +10,9 @@ echo "  output : $responder" 1>&2
 
 # personailty of this responder
 OBSESSION_TO_SELF_TOPICS=4
-FREQUENCY_OF_CAPRICES=4
-ENDLESSNESS=6
-CONVERSATION_SPAN=4
+FREQUENCY_OF_CAPRICES=6
+ENDLESSNESS=3
+CONVERSATION_SPAN=3
 
 responder_personality_file="$TWEET_BASE_DIR/responder_personality.txt"
 if [ -f "$responder_personality_file" ]
