@@ -132,7 +132,8 @@ else
     [ "\$pong" != '' ] && pong="\$pong "
   fi
 
-  echo "\$pong\$question"
+  [ "\$pong" != '' ] && echo "\$pong"
+  [ "\$question" != '' ] && echo "\$question"
 fi
 
 exit 0
