@@ -179,6 +179,12 @@ do
   log '=============================================================='
   log "DM $id from $sender"
 
+  if echo "$message" | expired_by_seconds $((30 * 60))
+  then
+    log " => ignored, because this is sent 30 minutes or more ago"
+    continue
+  fi
+
   if echo "$sender" | egrep -v "$administrators" > /dev/null
   then
     log ' => not an administrator, ignore it'
