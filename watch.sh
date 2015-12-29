@@ -72,6 +72,9 @@ fi
 self_pid=$$
 trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
+
+# Sub process 1: watching mentions with the streaming API
+
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
@@ -83,8 +86,9 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
   &
 
 
-if [ "$queries" != '' ]
-then
+# Sub process 2: watching search results with polling of the REST search API
+
+periodical_search() {
   echo " queries: $queries" 1>&2
 
   count=100
@@ -112,6 +116,7 @@ then
         -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
         -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
         -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
+      sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$queries" \
                 -l "$lang" \
@@ -119,7 +124,11 @@ then
                 -s "$last_id" |
                 jq -c '.statuses[]')
     sleep 5m
+    # increment "since id" to bypass cached search results
+    last_id="$(($last_id + 1))"
   done
-fi
+}
+[ "$queries" != '' ] && periodical_search &
+
 
 wait
