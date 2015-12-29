@@ -231,7 +231,7 @@ do
 
   touch "$already_processed_dir/$id"
   # remove too old files - store only for recent N messages
-  ls "$already_processed_dir/*" | sort | head -n -200 | while read path
+  ls "$already_processed_dir/" | sort | head -n -200 | while read path
   do
     rm -rf "$path"
   done
