@@ -4,6 +4,9 @@ work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 
+source "$tweet_sh"
+load_keys
+
 if [ "$TWEET_BASE_DIR" != '' ]
 then
   TWEET_BASE_DIR="$(cd "$TWEET_BASE_DIR" && pwd)"
@@ -17,9 +20,6 @@ log_dir="$TWEET_BASE_DIR/logs"
 mkdir -p "$log_dir"
 
 logfile="$log_dir/general.log"
-
-source "$tweet_sh"
-load_keys
 
 log() {
   echo "$*" 1>&2
