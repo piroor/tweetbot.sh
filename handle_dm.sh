@@ -26,14 +26,15 @@ then
 fi
 
 run_command() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Running given command...'
   local command="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
     log "Processing \"$path\"..."
     cd $TWEET_BASE_DIR
-    local handler_result="$("$path" "$command" 2>&1)"
+    local handler_result="$("$path" "$sender" "$command" 2>&1)"
     if [ $? = 0 ]
     then
       log "$result"
@@ -48,7 +49,8 @@ run_command() {
 }
 
 do_echo() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Responding an echo...'
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local result="$("$tweet_sh" dm $sender "$tweet_body" > /dev/null)"
@@ -62,7 +64,8 @@ do_echo() {
 }
 
 test_response() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Testing to reply...'
   cd $TWEET_BASE_DIR
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
@@ -77,7 +80,8 @@ test_response() {
 }
 
 modify_response() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   local output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
   local result=$?
   log "$output"
@@ -103,7 +107,8 @@ modify_response() {
 }
 
 post() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Posting new tweet...'
   local tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
   local output="$("$tweet_sh" post "$tweet_body" 2>&1)"
@@ -119,7 +124,8 @@ post() {
 }
 
 reply() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Replying...'
   local reply_params="$(echo "$body" | $esed 's/^reply +//i')"
   local reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
@@ -137,7 +143,8 @@ reply() {
 }
 
 delete() {
-  local body="$1"
+  local sender="$1"
+  local body="$2"
   log 'Deleting...'
   local delete_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local output="$("$tweet_sh" delete "$delete_target" 2>&1)"
@@ -153,6 +160,8 @@ delete() {
 }
 
 retweet() {
+  local sender="$1"
+  local body="$2"
   log 'Retweeting...'
   local retweet_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local output="$("$tweet_sh" retweet "$retweet_target" 2>&1)"
@@ -187,28 +196,28 @@ do
   command_name="$(echo "$body" | $esed "s/^([ ]+).*$/\1/")"
   case "$command_name" in
     run )
-      run_command "$body"
+      run_command "$sender" "$body"
       ;;
     echo )
-      do_echo "$body"
+      do_echo "$sender" "$body"
       ;;
     test )
-      test_response "$body"
+      test_response "$sender" "$body"
       ;;
     +res*|-res* )
-      modify_response "$body"
+      modify_response "$sender" "$body"
       ;;
     tweet|post )
-      post "$body"
+      post "$sender" "$body"
       ;;
     reply )
-      reply "$body"
+      reply "$sender" "$body"
       ;;
     del*|rem* )
-      delete "$body"
+      delete "$sender" "$body"
       ;;
     rt|retweet )
-      retweet "$body"
+      retweet "$sender" "$body"
       ;;
   esac
 done
