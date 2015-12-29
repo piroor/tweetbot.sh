@@ -52,7 +52,7 @@ then
 fi
 
 is_true() {
-  echo "$1" | egrep -i "^(1|true|yes)$"
+  echo "$1" | egrep -i "^(1|true|yes)$" > /dev/null
 }
 
 expired_by_seconds() {
