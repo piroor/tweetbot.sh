@@ -39,7 +39,7 @@ run_command() {
     then
       log "$result"
       log "Successfully processed."
-      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"" > /dev/null
+      "$tweet_sh" dm $sender "Successfully processed: \"$command\" by \"$(basename "$path")\"\n$handler_result" > /dev/null
     else
       log 'Failed to process.'
       log "$handler_result"
