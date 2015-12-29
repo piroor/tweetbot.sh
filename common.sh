@@ -38,6 +38,9 @@ mkdir -p "$already_replied_dir"
 already_processed_dir="$status_dir/already_processed"
 mkdir -p "$already_processed_dir"
 
+body_cache_dir="$status_dir/body_cache"
+mkdir -p "$body_cache_dir"
+
 
 # default personality
 
@@ -56,6 +59,8 @@ RETWEET_SEARCH_RESULTS=true
 
 RESPOND_TO_MENTIONS=true
 RESPOND_TO_QUOTATIONS=true
+
+MAX_BODY_CACHE=1000
 
 personality_file="$TWEET_BASE_DIR/personality.txt"
 if [ -f "$personality_file" ]
@@ -174,9 +179,22 @@ post_replies() {
       done
       # send following resposnes as a sequential tweets
       id="$(echo "$result" | jq -r .id_str)"
+      echo "$body" | cache_body "$id"
     else
       log '  => failed to reply'
       log "     result: $result"
     fi
   done
 }
+
+cache_body() {
+  local id="$1"
+  cat > "$body_cache_dir/$id"
+
+  # remove too old caches - store only for recent N bodies
+  ls "$body_cache_dir/" | sort | head -n -$MAX_BODY_CACHE | while read path
+  do
+    rm -rf "$path"
+  done
+}
+

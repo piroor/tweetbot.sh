@@ -41,6 +41,8 @@ do
     continue
   fi
 
+  echo "$body" | cache_body "$id"
+
   is_true "$FOLLOW_ON_QUOTED" && (echo "$tweet" | follow_owner)
   is_true "$FAVORITE_QUOTATIONS" && (echo "$tweet" | favorite)
 

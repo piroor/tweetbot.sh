@@ -39,6 +39,8 @@ do
     continue
   fi
 
+  echo "$body" | cache_body "$id"
+
   log ' responses:'
   log "$responses"
 
