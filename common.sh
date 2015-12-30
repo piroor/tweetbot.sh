@@ -27,6 +27,12 @@ log() {
   echo "[$(date)] $*" >> "$logfile"
 }
 
+debug() {
+  [ "$DEBUG" = '' ] && return 0
+  echo "$*" 1>&2
+  echo "[$(date)] debug: $*" >> "$logfile"
+}
+
 responder="$TWEET_BASE_DIR/responder.sh"
 
 status_dir="$TWEET_BASE_DIR/.status"

@@ -95,9 +95,10 @@ periodical_search() {
 
   while true
   do
-    log "Processing results of REST search API..."
+    debug "Processing results of REST search API..."
     while read -r tweet
     do
+      debug "=> $tweet"
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
       [ "$id" = '' -o "$id" = 'null' ] && continue
@@ -107,6 +108,7 @@ periodical_search() {
                 "$tools_dir/tweet.sh/tweet.sh" type \
                   -s "$my_screen_name" \
                   -k "$keywords_for_search_results")"
+      debug "   type: $type"
       case "$type" in
         mention )
           # When the REST search founds the tweet, it also appears
@@ -159,9 +161,10 @@ periodical_fetch_direct_messages() {
 
   while true
   do
-    log "Processing results of REST direct messages API..."
+    debug "Processing results of REST direct messages API..."
     while read -r message
     do
+      debug "=> $message"
       [ "$message" = '' ] && continue
       id="$(echo "$message" | jq -r .id_str)"
       [ "$id" = '' -o "$id" = 'null' ] && continue
