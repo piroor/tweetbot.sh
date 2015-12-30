@@ -9,7 +9,8 @@ logfile="$log_dir/handle_retweet.log"
 while read -r tweet
 do
   owner="$(echo "$tweet" | jq -r .user.screen_name)"
+  id="$(echo "$tweet" | jq -r .id_str)"
+  url="https://twitter.com/$owner/status/$id"
   log '=============================================================='
-  log "Retweeted by $owner"
-  log "$tweet"
+  log "Retweeted by $owner at $url"
 done
