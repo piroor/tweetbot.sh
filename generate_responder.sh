@@ -105,11 +105,8 @@ FIN
   default_file='./responses/_default.txt'
   cat << FIN >> "$responder"
 # fallback to generated-patterns
-if [ "\$NO_QUESTION" != '' ]
-then
-  [ "\$DEBUG" != '' ] && echo "Not matched to any case" 1>&2
-  exit 1
-fi
+[ "\$DEBUG" != '' ] && echo "Not matched to any case" 1>&2
+[ "\$NO_QUESTION" != '' ] && exit 1
 
 # Use "default" responses only if it is the first mention
 # (not a reply of existing context)
