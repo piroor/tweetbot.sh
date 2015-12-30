@@ -42,7 +42,7 @@ then
   keywords="$(echo ",$WATCH_KEYWORDS," |
     # Ignore CJK quieries, because then never appear in the stream.
     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e 's/,[^!-~]+,//g' \
+          -e 's/,[^,!-~]+,//g' \
           -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
           -e 's/^,|,$//g')"
 fi
