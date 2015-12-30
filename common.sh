@@ -51,6 +51,10 @@ responses_dir="$TWEET_BASE_DIR/responses"
 mkdir -p "$responses_dir"
 
 
+whitespaces=' \f\n\r\tÅ@'
+non_whitespaces='[^ \f\n\r\tÅ@]'
+
+
 # default personality
 
 FOLLOW_ON_FOLLOWED=true
@@ -71,6 +75,8 @@ RESPOND_TO_QUOTATIONS=true
 RESPOND_TO_SEARCH_RESULTS=true
 
 MAX_BODY_CACHE=1000
+ADMINISTRATORS=''
+WATCH_KEYWORDS=''
 
 personality_file="$TWEET_BASE_DIR/personality.txt"
 if [ -f "$personality_file" ]

@@ -12,9 +12,6 @@ input="$(cat |
 
 log 'Modifying keyword definitions...'
 
-whitespaces=' \f\n\r\t　'
-non_whitespaces='[^ \f\n\r\t　]'
-
 operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
   $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \

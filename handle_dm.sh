@@ -5,9 +5,9 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
 
-administrators="$(cat "$TWEET_BASE_DIR/administrators.txt" |
-                    sed 's/^\s+|\s+$//' |
-                    paste -s -d '|')"
+administrators="$(echo "$ADMINISTRATORS" |
+                    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+                          -e "s/[$whitespaces]*,[$whitespaces]*/|/g")"
 if [ "$administrators" = '' ]
 then
   exit 1

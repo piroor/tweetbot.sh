@@ -31,26 +31,23 @@ export TWEET_SCREEN_NAME="$my_screen_name"
 
 # Initialize list of search queries
 
-queries_file="$TWEET_BASE_DIR/queries.txt"
 queries=''
 keywords=''
-if [ -f "$queries_file" ]
+if [ -f "$WATCH_KEYWORDS" ]
 then
-  echo "Reading search queries from \"$queries_file\"" 1>&2
+  echo "Building search queries from \"$WATCH_KEYWORDS\"" 1>&2
   queries="$( \
     # First, convert CR+LF => LF for safety.
-    nkf -Lu "$queries_file" |
-    egrep -v '^\s*$' |
-    sed 's/$/ OR /' |
-    tr -d '\n' |
-    sed 's/ OR $//')"
+    echo "$WATCH_KEYWORDS" |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+          -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g")"
   keywords="$( \
-    # First, convert CR+LF => LF for safety.
-    nkf -Lu "$queries_file" |
+    echo ",$WATCH_KEYWORDS," |
     # Ignore CJK quieries, because then never appear in the stream.
-    egrep -i '^[!-~]+$' |
-    egrep -v '^\s*$' |
-    paste -s -d ',')"
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+          -e 's/,[^!-~]+,//g' \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g")" \
+          -e 's/^,|,$//g')"
 fi
 
 

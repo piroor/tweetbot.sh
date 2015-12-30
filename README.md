@@ -45,12 +45,10 @@ The base directory should have them:
 
  * `$TWEET_BASE_DIR/tweet.client.key`: the definition of API keys. This is always required.
  * `$TWEET_BASE_DIR/personality.txt` (optional): configures the strategy of the bot.
- * `$TWEET_BASE_DIR/queries.txt` (optional): a list of search keywords to be watched.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
 
 If you permit accessing to direct messages for the app, you'll prepare following files also:
 
- * `$TWEET_BASE_DIR/administrators.txt` (optional): a list of administrator accounts.
  * `$TWEET_BASE_DIR/on_response_modified.*` (optional): a callback script to be executed when response messages are changed dynamically.
  * `$TWEET_BASE_DIR/on_command.*` (optional): a callback script providing user-defined commands via DMs.
 
@@ -76,21 +74,15 @@ ACCESS_TOKEN_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### `personality.txt`
 
-TBD
 
-
-### `queries.txt`
-
-Put keywords to be watched, with the format:
+Put keywords to be watched to the file with the format:
 
 ~~~
-Bash
-Shell Script
-Twitter
+KEYWORDS="Bash, Shell Script, Twitter"
 ~~~
 
-You should put one phrase per one line.
-They are treated like conditions with the `OR` logical operator.
+It is a comma-separated list.
+Kwyeords are treated like conditions with the `OR` logical operator.
 Any tweet matched to one of given terms will be favorited and retweeted.
 
 This file must be encoded in UTF-8.
@@ -157,9 +149,3 @@ Then the `responder.sh` in the base directory will be regenerated and the runnin
 $ cd $TWEET_BASE_DIR
 $ /path/to/generate_responder.sh
 ~~~
-
-
-
-### `administrators.txt`
-
-TBD.
