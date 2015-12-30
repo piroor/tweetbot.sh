@@ -20,12 +20,6 @@ do
     continue
   fi
 
-  if is_already_replied "$id"
-  then
-    log '  => already replied'
-    continue
-  fi
-
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
@@ -50,16 +44,23 @@ do
 
   is_true "$FAVORITE_SEARCH_RESULTS" && (echo "$tweet" | favorite)
   is_true "$RETWEET_SEARCH_RESULTS" && (echo "$tweet" | retweet)
-  if is_true "$RESPOND_TO_SEARCH_RESULTS"
+
+  # If we include the screen name into the keywords, simple mentions
+  # can be detected as a search result. Even if it has been processed
+  # as a mention, we should retweet it.
+  if echo "$body" | sed "s/^@$me//" | egrep -i "$keywords_matcher" > /dev/null
   then
-    # Don't post default questions as quotation!
-    responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
-    if [ $? != 0 -o "$responses" = '' ]
+    if is_true "$RESPOND_TO_SEARCH_RESULTS"
     then
-      log " => don't quote case"
-      continue
+      # Don't post default questions as quotation!
+      responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
+      if [ $? != 0 -o "$responses" = '' ]
+      then
+        log " => don't quote case"
+        continue
+      fi
+      echo "$responses" |
+        post_quotation "$screen_name" "$id"
     fi
-    echo "$responses" |
-      post_quotation "$screen_name" "$id"
   fi
 done

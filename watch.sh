@@ -28,23 +28,13 @@ log " lang          : $lang"
 
 export TWEET_SCREEN_NAME="$my_screen_name"
 
-
-# Initialize list of search queries
-
-query=''
-keywords=''
 if [ "$WATCH_KEYWORDS" != '' ]
 then
-  log "Building search query from \"$WATCH_KEYWORDS\""
-  query="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g")"
-  keywords="$(echo ",$WATCH_KEYWORDS," |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
-          -e 's/^,|,$//g')"
+  log "Search queries from \"$WATCH_KEYWORDS\":"
+  log "  query for REST searc : $query"
+  log "  keywords for tracking: $keywords"
+  log "  search result matcher: $keywords_matcher"
 fi
-
 
 # Kill all forked children always!
 # Ctrl-C sometimes fails to kill descendant processes,

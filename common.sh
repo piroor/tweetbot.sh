@@ -89,6 +89,30 @@ then
   source "$personality_file"
 fi
 
+
+# Initialize list of search queries
+query=''
+keywords=''
+keywords_matcher=''
+if [ "$WATCH_KEYWORDS" != '' ]
+then
+  query="$(echo "$WATCH_KEYWORDS" |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
+          -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g")"
+  keywords="$(echo ",$WATCH_KEYWORDS," |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
+          -e 's/^,|,$//g')"
+  keywords_matcher="$(echo "$WATCH_KEYWORDS" |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
+          -e 's/^\||\|$//g')"
+fi
+
+
+# Utility functions
+
 is_true() {
   echo "$1" | egrep -i "^(1|true|yes)$" > /dev/null
 }
