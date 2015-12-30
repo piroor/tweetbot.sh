@@ -107,7 +107,11 @@ periodical_search() {
       id="$(echo "$tweet" | jq -r .id_str)"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
-      [ $id -gt $last_id ] && last_id="$id"
+      if [ $id -gt $last_id ]
+      then
+        last_id="$id"
+        echo "$last_id" > "$last_id_file"
+      fi
       type="$(echo "$tweet" |
                 "$tools_dir/tweet.sh/tweet.sh" type \
                   -s "$my_screen_name" \
@@ -177,7 +181,11 @@ periodical_fetch_direct_messages() {
       id="$(echo "$message" | jq -r .id_str)"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
-      [ $id -gt $last_id ] && last_id="$id"
+      if [ $id -gt $last_id ]
+      then
+        last_id="$id"
+        echo "$last_id" > "$last_id_file"
+      fi
       echo "$message" | "$tools_dir/handle_dm.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
