@@ -108,13 +108,16 @@ if [ -f "\$base_dir/$default_file" \
      -a "\$IS_REPLY" != '1' \
      -a "\$(echo 1 | probable $OBSESSION_TO_SELF_TOPICS)" = '' ]
 then
+  [ "\$DEBUG" != '' ] && echo "Default response" 1>&2
   extract_response "\$base_dir/$default_file"
 else
+  [ "\$DEBUG" != '' ] && echo "Generated response" 1>&2
   if [ "\$IS_REPLY" = '1' ]
   then
     # If it is a reply of continuous context, you can two choices:
     if [ "\$(echo 1 | probable $FREQUENCY_OF_CAPRICES)" != '' ]
     then
+      [ "\$DEBUG" != '' ] && echo "Try to change the topic" 1>&2
       # 1) Change the topic.
       #    Then we should reply twite: a "pong" and "question about next topic".
       pong="\$(extract_response "\$base_dir/$pong_file")"
@@ -122,6 +125,7 @@ else
       question="\$(extract_response "\$base_dir/$questions_file" | probable $ENDLESSNESS)"
       if [ "\$question" != '' ]
       then
+        [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
         # "pong" can be omitted if there is question
         pong="\$(echo "\$pong" | probable 9)"
         [ "\$pong" != '' ] && pong="\$pong "
@@ -131,6 +135,7 @@ else
         question="\$connctor\$question"
       fi
     else
+      [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file" | probable 10)"
