@@ -136,9 +136,12 @@ else
       [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
-      pong="\$(echo "\$pong" | probable 10)"
       following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
-      [ "\$following" != '' ] && pong="\$pong \$following"
+      if [ "\$following" != '' ]
+      then
+        pong="\$(echo "\$pong" | probable 10)"
+        pong="\$pong \$following"
+      fi
     fi
   else
     # If it is not a reply, we always start new conversation without "pong".
