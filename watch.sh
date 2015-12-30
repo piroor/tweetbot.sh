@@ -108,9 +108,6 @@ periodical_search() {
                   -s "$my_screen_name" \
                   -k "$keywords_for_search_results")"
       case "$type" in
-        mention )
-          echo "$tweet" | "$tools_dir/handle_mention.sh"
-          ;;
         retweet )
           echo "$tweet" | "$tools_dir/handle_retweet.sh"
           ;;
