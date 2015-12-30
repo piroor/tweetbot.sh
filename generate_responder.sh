@@ -115,6 +115,7 @@ FIN
   fi
   cat << FIN >> "$responder"
 # fallback to generated-patterns
+[ "\$NO_QUESTION" = '' ] && exit 1
 
 # Use "default" responses only if it is the first mention
 # (not a reply of existing context)

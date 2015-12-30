@@ -38,8 +38,9 @@ do
     continue
   fi
 
-  response="$(echo "$body" | "$responder")"
-  if [ $? != 0 -o "$response" = '' ]
+  export SCREEN_NAME="$owner"
+  responses="$(echo "$body" | "$responder")"
+  if [ $? != 0 -o "$responses" = '' ]
   then
     # Don't favorite and reply to the tweet
     # if it is a "don't respond" case.
@@ -52,4 +53,16 @@ do
 
   is_true "$FAVORITE_SEARCH_RESULTS" && (echo "$tweet" | favorite)
   is_true "$RETWEET_SEARCH_RESULTS" && (echo "$tweet" | retweet)
+
+  # Don't post default questions as quotation!
+  responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
+  if [ $? != 0 -o "$responses" = '' ]
+  then
+    log " => don't quote case"
+    continue
+  fi
+  is_true "$RESPOND_TO_SEARCH_RESULTS" && (
+    echo "$responses" |
+      post_quotation "$screen_name" "$id"
+  )
 done

@@ -68,6 +68,7 @@ RETWEET_SEARCH_RESULTS=true
 
 RESPOND_TO_MENTIONS=true
 RESPOND_TO_QUOTATIONS=true
+RESPOND_TO_SEARCH_RESULTS=true
 
 MAX_BODY_CACHE=1000
 
@@ -191,6 +192,34 @@ post_replies() {
       echo "$body" | cache_body "$id"
     else
       log '  => failed to reply'
+      log "     result: $result"
+    fi
+  done
+}
+
+post_quotation() {
+  local owner=$1
+  local id=$2
+  local url="https://twitter.com/$owner/status/$id"
+
+  log "Quoting the tweet $id by $owner..."
+  while read -r body
+  do
+    local result="$("$tweet_sh" reply "$id" "$body $url")"
+    if [ $? = 0 ]
+    then
+      log '  => successfully quoted'
+      touch "$already_replied_dir/$id"
+      # remove too old files
+      find "$already_replied_dir" -ctime +1 | while read path
+      do
+        rm -rf "$path"
+      done
+      # send following resposnes as a sequential tweets
+      id="$(echo "$result" | jq -r .id_str)"
+      echo "$body $url" | cache_body "$id"
+    else
+      log '  => failed to quote'
       log "     result: $result"
     fi
   done
