@@ -29,17 +29,15 @@ choose_random_one() {
   echo "\$input" | sed -n "\${index}p"
 }
 
-# do nothing with the probability 1/N
+# do nothing with the probability N% (0-100)
 probable() {
   local probability=\$1
-  [ "\$probability" = '' ] && probability=2
+  [ "\$probability" = '' ] && probability=50
 
-  if [ \$((\$RANDOM % \$probability)) -eq 0 ]
+  if [ \$((\$RANDOM % 100)) -lt \$probability ]
   then
-    return 0
+    cat
   fi
-
-  cat
 }
 
 extract_response() {
