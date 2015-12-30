@@ -101,16 +101,7 @@ FIN
   connectors_file='./responses/_connectors.txt'
   questions_file='./responses/_questions.txt'
   following_questions_file='./responses/_following-questions.txt'
-
   default_file='./responses/_default.txt'
-  if [ ! -f "$default_file" \
-       -a -f "$pong_file" ]
-  then
-    default_file="$(ls ./responses/* |
-                     sort |
-                     egrep -v '/_|^_' |
-                     tail -n 1)"
-  fi
   cat << FIN >> "$responder"
 # fallback to generated-patterns
 [ "\$NO_QUESTION" = '' ] && exit 1
