@@ -108,6 +108,13 @@ periodical_search() {
                   -s "$my_screen_name" \
                   -k "$keywords_for_search_results")"
       case "$type" in
+        mention )
+          # When the REST search founds the tweet, it also appears
+          # into the streaming API. To prevent duplicated responses,
+          # I handle it with delay for now...
+          sleep 30s
+          echo "$tweet" | "$tools_dir/handle_mention.sh"
+          ;;
         retweet )
           echo "$tweet" | "$tools_dir/handle_retweet.sh"
           ;;
