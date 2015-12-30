@@ -90,6 +90,7 @@ then
     cat << FIN >> "$responder"
 if echo "\$input" | egrep -i "$matcher" > /dev/null
 then
+  [ "\$DEBUG" != '' ] && echo "Matched to \"$matcher\", from \"\$base_dir/$path\"" 1>&2
   extract_response "\$base_dir/$path"
   exit \$?
 fi
