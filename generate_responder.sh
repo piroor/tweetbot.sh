@@ -128,7 +128,7 @@ else
         pong="\$(echo "\$pong" | probable 90)"
         [ "\$pong" != '' ] && pong="\$pong "
 
-        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 90)"
+        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 95)"
         [ "\$connector" != '' ] && connctor="\$connctor "
         question="\$connctor\$question"
       fi
@@ -140,7 +140,7 @@ else
       following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
       if [ "\$following" != '' ]
       then
-        pong="\$(echo "\$pong" | probable 10)"
+        pong="\$(echo "\$pong" | probable 50)"
         pong="\$pong \$following"
       fi
     fi
