@@ -6,7 +6,7 @@ source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
 
 administrators="$(echo "$ADMINISTRATORS" |
-                    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+                    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
                           -e "s/[$whitespaces]*,[$whitespaces]*/|/g")"
 if [ "$administrators" = '' ]
 then
