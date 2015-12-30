@@ -52,28 +52,33 @@ do
   is_true "$FAVORITE_QUOTATIONS" && (echo "$tweet" | favorite)
   is_true "$RETWEET_QUOTATIONS" && (echo "$tweet" | retweet)
 
-  if echo "$body" | grep "^@$me" > /dev/null
+  if is_true "$RESPOND_TO_QUOTATIONS"
   then
-    log "Seems to be a reply."
-    # regenerate responses with is_reply parameter
-    responses="$(echo "$body" | env IS_REPLY=$is_reply "$responder")"
-    log " response: $response"
-    is_true "$RESPOND_TO_QUOTATIONS" && (
+    if echo "$body" | grep "^@$me" > /dev/null
+    then
+      log "Seems to be a reply."
+      # regenerate responses with is_reply parameter
+      responses="$(echo "$body" | env IS_REPLY=$is_reply "$responder")"
+      log " response: $response"
       echo "$responses" |
         post_replies "$id"
-    )
-  else
-    log "Seems to be an RT with quotation."
-    # Don't post default questions as quotation!
-    responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
-    if [ $? != 0 -o "$responses" = '' ]
+    elif echo "$body" | egrep "^[\._,:;]?@$me" > /dev/null
     then
-      log " => don't quote case"
-      continue
-    fi
-    is_true "$RESPOND_TO_QUOTATIONS" && (
+      log "Seems to be a mention but for public."
+      log " response: $response"
+      echo "$responses" |
+        post_replies "$id"
+    else
+      log "Seems to be an RT with quotation."
+      # Don't post default questions as quotation!
+      responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
+      if [ $? != 0 -o "$responses" = '' ]
+      then
+        log " => don't quote case"
+        continue
+      fi
       echo "$responses" |
         post_quotation "$owner" "$id"
-    )
+    fi
   fi
 done

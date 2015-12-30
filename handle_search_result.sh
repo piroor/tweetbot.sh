@@ -53,16 +53,16 @@ do
 
   is_true "$FAVORITE_SEARCH_RESULTS" && (echo "$tweet" | favorite)
   is_true "$RETWEET_SEARCH_RESULTS" && (echo "$tweet" | retweet)
-
-  # Don't post default questions as quotation!
-  responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
-  if [ $? != 0 -o "$responses" = '' ]
+  if is_true "$RESPOND_TO_SEARCH_RESULTS"
   then
-    log " => don't quote case"
-    continue
-  fi
-  is_true "$RESPOND_TO_SEARCH_RESULTS" && (
+    # Don't post default questions as quotation!
+    responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
+    if [ $? != 0 -o "$responses" = '' ]
+    then
+      log " => don't quote case"
+      continue
+    fi
     echo "$responses" |
       post_quotation "$screen_name" "$id"
-  )
+  fi
 done
