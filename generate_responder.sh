@@ -125,10 +125,10 @@ else
       then
         [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
         # "pong" can be omitted if there is question
-        pong="\$(echo "\$pong" | probable 9)"
+        pong="\$(echo "\$pong" | probable 90)"
         [ "\$pong" != '' ] && pong="\$pong "
 
-        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 9)"
+        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 90)"
         [ "\$connector" != '' ] && connctor="\$connctor "
         question="\$connctor\$question"
       fi
@@ -136,7 +136,7 @@ else
       [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
-      pong="\$(extract_response "\$base_dir/$pong_file" | probable 10)"
+      pong="\$(echo "\$pong" | probable 10)"
       following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
       [ "\$following" != '' ] && pong="\$pong \$following"
     fi
