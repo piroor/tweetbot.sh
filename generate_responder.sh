@@ -30,14 +30,11 @@ choose_random_one() {
 }
 
 # do nothing with the probability N% (0-100)
-probable() {
+probability() {
   local probability=\$1
   [ "\$probability" = '' ] && probability=50
 
-  if [ \$((\$RANDOM % 100)) -lt \$probability ]
-  then
-    cat
-  fi
+  [ \$((\$RANDOM % 100)) -lt \$probability ] && cat
 }
 
 extract_response() {
@@ -104,7 +101,7 @@ FIN
 # (not a reply of existing context)
 if [ -f "\$base_dir/$default_file" \
      -a "\$IS_REPLY" != '1' \
-     -a "\$(echo 1 | probable $OBSESSION_TO_SELF_TOPICS)" = '' ]
+     -a "\$(echo 1 | probability $OBSESSION_TO_SELF_TOPICS)" = '' ]
 then
   [ "\$DEBUG" != '' ] && echo "Default response" 1>&2
   extract_response "\$base_dir/$default_file"
@@ -113,22 +110,22 @@ else
   if [ "\$IS_REPLY" = '1' ]
   then
     # If it is a reply of continuous context, you can two choices:
-    if [ "\$(echo 1 | probable $FREQUENCY_OF_CAPRICES)" != '' ]
+    if [ "\$(echo 1 | probability $FREQUENCY_OF_CAPRICES)" != '' ]
     then
       [ "\$DEBUG" != '' ] && echo "Try to change the topic" 1>&2
       # 1) Change the topic.
       #    Then we should reply twite: a "pong" and "question about next topic".
       pong="\$(extract_response "\$base_dir/$pong_file")"
 
-      question="\$(extract_response "\$base_dir/$questions_file" | probable $ENDLESSNESS)"
+      question="\$(extract_response "\$base_dir/$questions_file" | probability $ENDLESSNESS)"
       if [ "\$question" != '' ]
       then
         [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
         # "pong" can be omitted if there is question
-        pong="\$(echo "\$pong" | probable 90)"
+        pong="\$(echo "\$pong" | probability 90)"
         [ "\$pong" != '' ] && pong="\$pong "
 
-        connctor="\$(extract_response "\$base_dir/$connectors_file" | probable 95)"
+        connctor="\$(extract_response "\$base_dir/$connectors_file" | probability 95)"
         [ "\$connector" != '' ] && connctor="\$connctor "
         question="\$connctor\$question"
       fi
@@ -137,10 +134,10 @@ else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file")"
-      following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
+      following="\$(extract_response "\$base_dir/$following_questions_file" | probability $CONVERSATION_SPAN)"
       if [ "\$following" != '' ]
       then
-        pong="\$(echo "\$pong" | probable 50)"
+        pong="\$(echo "\$pong" | probability 50)"
         pong="\$pong \$following"
       fi
     fi
