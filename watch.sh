@@ -37,13 +37,13 @@ if [ -f "$WATCH_KEYWORDS" ]
 then
   echo "Building search queries from \"$WATCH_KEYWORDS\"" 1>&2
   queries="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g")"
   keywords="$(echo ",$WATCH_KEYWORDS," |
     # Ignore CJK quieries, because then never appear in the stream.
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g' \
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e 's/,[^!-~]+,//g' \
-          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g")" \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
           -e 's/^,|,$//g')"
 fi
 
