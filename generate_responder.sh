@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# default personailty of the responder
-OBSESSION_TO_SELF_TOPICS=4
-FREQUENCY_OF_CAPRICES=6
-ENDLESSNESS=3
-CONVERSATION_SPAN=3
-
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
@@ -140,7 +134,8 @@ else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file" | probable 10)"
-      pong="\$pong \$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
+      following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
+      [ "\$following" != '' ] && pong="\$pong \$following"
     fi
   else
     # If it is not a reply, we always start new conversation without "pong".
