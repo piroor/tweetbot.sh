@@ -171,6 +171,16 @@ is_already_replied() {
   [ -f "$already_replied_dir/$id" ]
 }
 
+on_replied() {
+  local id="$1"
+  touch "$already_replied_dir/$id"
+  # remove too old files
+  find "$already_replied_dir" -ctime +1 | while read path
+  do
+    rm -rf "$path"
+  done
+}
+
 post_replies() {
   local id=$1
 
@@ -181,12 +191,7 @@ post_replies() {
     if [ $? = 0 ]
     then
       log '  => successfully responded'
-      touch "$already_replied_dir/$id"
-      # remove too old files
-      find "$already_replied_dir" -ctime +1 | while read path
-      do
-        rm -rf "$path"
-      done
+      on_replied "$id"
       # send following resposnes as a sequential tweets
       id="$(echo "$result" | jq -r .id_str)"
       echo "$body" | cache_body "$id"
@@ -209,12 +214,7 @@ post_quotation() {
     if [ $? = 0 ]
     then
       log '  => successfully quoted'
-      touch "$already_replied_dir/$id"
-      # remove too old files
-      find "$already_replied_dir" -ctime +1 | while read path
-      do
-        rm -rf "$path"
-      done
+      on_replied "$id"
       # send following resposnes as a sequential tweets
       id="$(echo "$result" | jq -r .id_str)"
       echo "$body $url" | cache_body "$id"

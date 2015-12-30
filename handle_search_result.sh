@@ -20,17 +20,14 @@ do
     continue
   fi
 
+  if is_already_replied "$id"
+  then
+    log '  => already replied'
+    continue
+  fi
+
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
-
-  if [ "$TWEET_SCREEN_NAME" != '' ]
-  then
-    if echo "$body" | egrep "^@$TWEET_SCREEN_NAME" > /dev/null
-    then
-      log " => ignored, because this is a mention for me"
-      continue
-    fi
-  fi
 
   if echo "$body" | egrep "^RT @[^:]+:" > /dev/null
   then
