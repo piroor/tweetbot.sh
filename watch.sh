@@ -31,9 +31,9 @@ export TWEET_SCREEN_NAME="$my_screen_name"
 
 # Initialize list of search queries
 
-queries=''
+query=''
 keywords=''
-if [ -f "$WATCH_KEYWORDS" ]
+if [ "$WATCH_KEYWORDS" != '' ]
 then
   log "Building search query from \"$WATCH_KEYWORDS\""
   query="$(echo "$WATCH_KEYWORDS" |
