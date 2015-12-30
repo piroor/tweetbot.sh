@@ -146,7 +146,7 @@ periodical_search() {
       last_id="$(($last_id + 1))"
       echo "$last_id" > "$last_id_file"
     fi
-    sleep 5m
+    sleep 2m
   done
 }
 [ "$queries" != '' ] && periodical_search &
