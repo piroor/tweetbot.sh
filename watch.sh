@@ -119,6 +119,8 @@ periodical_search() {
           echo "$tweet" | "$tools_dir/handle_retweet.sh"
           ;;
         quotation )
+          # Same to mentions.
+          sleep 30s
           echo "$tweet" | "$tools_dir/handle_quotation.sh"
           ;;
         search-result )
