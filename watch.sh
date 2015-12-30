@@ -6,7 +6,7 @@ source "$tools_dir/common.sh"
 
 if [ ! -f "$TWEET_BASE_DIR/tweet.client.key" ]
 then
-  echo "FATAL ERROR: Missing key file at $TWEET_BASE_DIR/tweet.client.key" 1>&2
+  log "FATAL ERROR: Missing key file at $TWEET_BASE_DIR/tweet.client.key"
   exit 1
 fi
 
@@ -23,8 +23,8 @@ then
   lang="en"
 fi
 
-echo " my screen name: $my_screen_name" 1>&2
-echo " lang          : $lang" 1>&2
+log " my screen name: $my_screen_name"
+log " lang          : $lang"
 
 export TWEET_SCREEN_NAME="$my_screen_name"
 
@@ -35,8 +35,8 @@ queries=''
 keywords=''
 if [ -f "$WATCH_KEYWORDS" ]
 then
-  echo "Building search queries from \"$WATCH_KEYWORDS\"" 1>&2
-  queries="$(echo "$WATCH_KEYWORDS" |
+  log "Building search query from \"$WATCH_KEYWORDS\""
+  query="$(echo "$WATCH_KEYWORDS" |
     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g")"
   keywords="$(echo ",$WATCH_KEYWORDS," |
@@ -77,13 +77,11 @@ COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET
 #   https://dev.twitter.com/streaming/overview/request-parameters#track
 
 periodical_search() {
-  echo " queries: $queries" 1>&2
-
   local count=100
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-  local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
+  local keywords_for_search_results="$(echo "$query" | sed 's/ OR /,/g')"
   local id
   local type
   if [ "$last_id" != '' ]
@@ -133,7 +131,7 @@ periodical_search() {
       esac
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$queries" \
+                -q "$query" \
                 -l "$lang" \
                 -c "$count" \
                 -s "$last_id" |
@@ -147,8 +145,13 @@ periodical_search() {
     sleep 2m
   done
 }
-[ "$queries" != '' ] && periodical_search &
-
+if [ "$query" != '' ]
+then
+  log "Tracking search results with the query \"$query\"..."
+  periodical_search &
+else
+  log "No search queriy."
+fi
 
 # Sub process 3: polling for the REST direct messages API
 #   This is required, because some direct messages can be dropped
