@@ -136,6 +136,7 @@ else
       [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
+      pong="\$(extract_response "\$base_dir/$pong_file")"
       following="\$(extract_response "\$base_dir/$following_questions_file" | probable $CONVERSATION_SPAN)"
       if [ "\$following" != '' ]
       then
