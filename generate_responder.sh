@@ -69,13 +69,11 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
-special_pattern_files='^_'
-
 if [ -d ./responses ]
 then
   ls ./responses/* |
     sort |
-    grep -v "$special_pattern_files" |
+    egrep -v '/_|^_' |
     while read path
   do
     matcher="$(\
@@ -110,7 +108,7 @@ FIN
   then
     default_file="$(ls ./responses/* |
                      sort |
-                     grep -v "$special_pattern_files" |
+                     egrep -v '/_|^_' |
                      tail -n 1)"
   fi
   cat << FIN >> "$responder"
