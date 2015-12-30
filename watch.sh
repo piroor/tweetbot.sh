@@ -92,6 +92,10 @@ periodical_search() {
   local keywords_for_search_results="$(echo "$queries" | sed 's/ OR /,/g')"
   local id
   local type
+  if [ "$last_id" != '' ]
+  then
+    log "Doing search for newer than $last_id"
+  fi
 
   while true
   do
@@ -158,6 +162,10 @@ periodical_fetch_direct_messages() {
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local id
+  if [ "$last_id" != '' ]
+  then
+    log "Fetching for newer than $last_id"
+  fi
 
   while true
   do
