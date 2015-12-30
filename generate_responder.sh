@@ -69,7 +69,7 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
-special_pattern_files='^(pong|questions|following_questions|connectors|default)\.txt$'
+special_pattern_files='^_'
 
 if [ -d ./responses ]
 then
@@ -99,12 +99,12 @@ fi
 FIN
   done
 
-  pong_file='./responses/pong.txt'
-  connectors_file='./responses/connectors.txt'
-  questions_file='./responses/questions.txt'
-  following_questions_file='./responses/following-questions.txt'
+  pong_file='./responses/_pong.txt'
+  connectors_file='./responses/_connectors.txt'
+  questions_file='./responses/_questions.txt'
+  following_questions_file='./responses/_following-questions.txt'
 
-  default_file='./responses/default.txt'
+  default_file='./responses/_default.txt'
   if [ ! -f "$default_file" \
        -a -f "$pong_file" ]
   then
