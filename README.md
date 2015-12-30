@@ -78,7 +78,7 @@ ACCESS_TOKEN_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Put keywords to be watched to the file with the format:
 
 ~~~
-KEYWORDS="Bash, Shell Script, Twitter"
+WATCH_KEYWORDS="Bash, Shell Script, Twitter"
 ~~~
 
 It is a comma-separated list.
