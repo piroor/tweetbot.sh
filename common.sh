@@ -47,6 +47,9 @@ mkdir -p "$already_processed_dir"
 body_cache_dir="$status_dir/body_cache"
 mkdir -p "$body_cache_dir"
 
+responses_dir="$TWEET_BASE_DIR/responses"
+mkdir -p "$responses_dir"
+
 
 # default personality
 

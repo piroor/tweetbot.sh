@@ -2,30 +2,11 @@
 
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
-tweet_sh="$tools_dir/tweet.sh/tweet.sh"
-
-source "$tweet_sh"
-load_keys
-
-log() {
-  echo "$*" 1>&2
-}
-
-if [ "$TWEET_BASE_DIR" != '' ]
-then
-  TWEET_BASE_DIR="$(cd "$TWEET_BASE_DIR" && pwd)"
-else
-  TWEET_BASE_DIR="$work_dir"
-fi
-
-responses_dir="$TWEET_BASE_DIR/responses"
-
-mkdir -p "$responses_dir"
-
+source "$tools_dir/common.sh"
 
 input="$(cat |
            # normalize waves
-           sed 's/〜/～/g')"
+           $esed 's/〜/～/g')"
 # +response filename-or-keyword(>(alias))?( +(response))?
 # -response filename-or-keyword(>(alias))?( +(response))?
 
