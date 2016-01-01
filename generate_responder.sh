@@ -45,7 +45,8 @@ extract_response() {
     return 0
   fi
 
-  local responses="\$(cat "\$source" |
+  # convert CR+LF => LF for safety at first.
+  local responses="\$( nkf -Lu "\$source" |
                         grep -v '^#' |
                         grep -v '^\s*\$')"
 

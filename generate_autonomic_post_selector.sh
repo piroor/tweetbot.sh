@@ -47,16 +47,18 @@ cd "$TWEET_BASE_DIR"
 if [ -d ./scheduled ]
 then
   messages_allday="$status_dir/scheduled_allday.txt"
-  rm -rf "$messages_allday"
-  touch "$messages_allday"
+  echo '' > "${messages_allday}.tmp"
 
   ls ./scheduled/all* |
     sort |
     while read path
   do
-    cat "$path" |
-      egrep -v '^#|^\s*$' >> "$messages_allday"
+    # convert CR+LF => LF for safety.
+    nkf -Lu "$path" >> "${messages_allday}.tmp"
+    echo '' >> "$messages_allday"
   done
+  egrep -v '^#|^\s*$' "${messages_allday}.tmp" > "$messages_allday"
+  rm -rf "${messages_allday}.tmp"
 
   cat << FIN >> "$autonomic_post_selector"
 [ "\$DEBUG" != '' ] && echo "Choosing message from \"$messages_allday\"" 1>&2
