@@ -44,7 +44,7 @@ process_add_command() {
 
   local exact_path="$scheduled_messages_dir/$target.txt"
   if [ -f "$exact_path" ]
-  do
+  then
     add_definition "$exact_path" "$alias" "$body"
     exit $?
   fi
@@ -120,6 +120,7 @@ add_definition() {
 process_remove_command() {
   local exact_path="$scheduled_messages_dir/$target.txt"
   if [ -f "$exact_path" ]
+  then
     remove_definition "$path" "$alias" "$body"
     exit $?
   fi
