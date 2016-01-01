@@ -224,7 +224,7 @@ calculate_autonomic_post_probability() {
   then
     echo 0
   else
-    $probability
+    echo $probability
   fi
 }
 
