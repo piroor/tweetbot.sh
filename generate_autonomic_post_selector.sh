@@ -55,7 +55,7 @@ then
     while read path
   do
     cat "$path" |
-      egrep -v '^#|^\s+$' >> "$messages_allday"
+      egrep -v '^#|^\s*$' >> "$messages_allday"
   done
 
   cat << FIN >> "$autonomic_post_selector"
