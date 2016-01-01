@@ -48,7 +48,7 @@ extract_response() {
   # convert CR+LF => LF for safety at first.
   local responses="\$( nkf -Lu "\$source" |
                         grep -v '^#' |
-                        grep -v '^\s*\$')"
+                        grep -v '^[$whitespaces]*\$')"
 
   [ "\$responses" = '' ] && return 1
 
@@ -72,8 +72,8 @@ then
         # extract comment lines as definitions of matching patterns
         grep '^#' |
         # remove comment marks
-        sed -e 's/^#\s*//' \
-            -e '/^\s*$/d' |
+        $esed -e "s/^#[$whitespaces]*//" \
+              -e "/^[$whitespaces]$/d" |
         # concate them to a list of patterns
         paste -s -d '|')"
     [ "$matcher" = '' ] && continue

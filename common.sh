@@ -51,6 +51,9 @@ mkdir -p "$body_cache_dir"
 responses_dir="$TWEET_BASE_DIR/responses"
 mkdir -p "$responses_dir"
 
+scheduled_messages_dir="$TWEET_BASE_DIR/scheduled"
+mkdir -p "$scheduled_messages_dir"
+
 
 whitespaces=' \f\n\r\tÅ@'
 non_whitespaces='[^ \f\n\r\tÅ@]'

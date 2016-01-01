@@ -100,6 +100,33 @@ modify_response() {
   fi
 }
 
+modify_scheduled_message() {
+  local sender="$1"
+  local body="$2"
+  local output="$(echo "$body" | "$tools_dir/modify_scheduled_message.sh" 2>&1)"
+  local result=$?
+  log "$output"
+  if [ $result = 0 ]
+  then
+    find "$TWEET_BASE_DIR" -type f -name 'on_scheduled_message_modified*' | while read path
+    do
+      log "Processing \"$path\"..."
+      cd $TWEET_BASE_DIR
+      local handler_result="$("$path" 2>&1)"
+      if [ $? = 0 ]
+      then
+        log 'Successfully proceeded.'
+      else
+        log 'Failed to process.'
+        log "$handler_result"
+      fi
+    done
+    respond "$sender" "Scheduled message patterns are successfully modified for \"$body\""
+  else
+    respond "$sender" "Failed to modify scheduled message patterns for \"$body\""
+  fi
+}
+
 post() {
   local sender="$1"
   local body="$2"
@@ -214,6 +241,9 @@ do
       ;;
     +res*|-res* )
       modify_response "$sender" "$body"
+      ;;
+    +*|-* )
+      modify_scheduled_message "$sender" "$body"
       ;;
     tweet|post )
       post "$sender" "$body"

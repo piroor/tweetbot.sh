@@ -202,7 +202,7 @@ normalize_contents() {
 
   # output response patterns
   grep -v '^#' "$path" |
-    grep -v '^ *$' |
+    grep -v "^[$whitespaces]*$" |
     # normalize wave
     sed 's/〜/～/g' |
     sort >> "${path}_sorted"

@@ -31,9 +31,7 @@ extract_response() {
     return 0
   fi
 
-  local responses="\$(cat "\$source" |
-                        grep -v '^#' |
-                        grep -v '^\s*\$')"
+  local responses="\$(cat "\$source")"
 
   [ "\$responses" = '' ] && return 1
 
@@ -57,7 +55,7 @@ then
     nkf -Lu "$path" >> "${messages_allday}.tmp"
     echo '' >> "$messages_allday"
   done
-  egrep -v '^#|^\s*$' "${messages_allday}.tmp" > "$messages_allday"
+  egrep -v "^#|^[$whitespaces]*$" "${messages_allday}.tmp" > "$messages_allday"
   rm -rf "${messages_allday}.tmp"
 
   cat << FIN >> "$autonomic_post_selector"
