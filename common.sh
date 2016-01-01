@@ -82,6 +82,7 @@ CONVERSATION_SPAN=40
 MAX_BODY_CACHE=1000
 ADMINISTRATORS=''
 WATCH_KEYWORDS=''
+INTERVAL_MINUTES=30
 
 personality_file="$TWEET_BASE_DIR/personality.txt"
 if [ -f "$personality_file" ]
@@ -271,3 +272,22 @@ cache_body() {
   done
 }
 
+
+# Randomization
+
+# echo only one line of all given lines
+choose_random_one() {
+  local input="$(cat)"
+  local n_lines=$(echo "$input" | wc -l)
+  local index=$(((\$RANDOM % $n_lines) + 1))
+  echo "$input" | sed -n "${index}p"
+}
+
+# return 0 with the probability N% (0-100)
+run_with_probability() {
+  [ $(($RANDOM % 100)) -lt $1 ]
+}
+
+echo_with_probability() {
+  run_with_probability $1 && cat
+}

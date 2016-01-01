@@ -79,7 +79,7 @@ periodical_search() {
 
   while true
   do
-    debug "Processing results of REST search API..."
+    debug 'Processing results of REST search API...'
     while read -r tweet
     do
       debug "=> $tweet"
@@ -141,6 +141,7 @@ else
   log "No search queriy."
 fi
 
+
 # Sub process 3: polling for the REST direct messages API
 #   This is required, because some direct messages can be dropped
 #   in the stream.
@@ -158,7 +159,7 @@ periodical_fetch_direct_messages() {
 
   while true
   do
-    debug "Processing results of REST direct messages API..."
+    debug 'Processing results of REST direct messages API...'
     while read -r message
     do
       debug "=> $message"
@@ -182,6 +183,90 @@ periodical_fetch_direct_messages() {
   done
 }
 periodical_fetch_direct_messages &
+
+
+# Sub process 4: posting autonomic tweets
+# ・計算の始点は00:00
+# ・指定間隔の1/3か10分の短い方を、「投稿時間の振れ幅」とする。
+#   30分間隔なら、振れ幅は10分。00:25から00:35の間のどこかで投稿する。
+# ・指定間隔ちょうどを90％、振れ幅最大の時を10％として、その確率で投稿する。
+# ・その振れ幅の中のどこかで投稿済みであれば、その振れ幅の中では多重投稿はしない。
+# ・ただし、振れ幅の最後のタイミングでまだ投稿されていなければ、必ず投稿する。
+
+# minimum interval = 10minutes
+[ $INTERVAL_MINUTES -le 10 ] && INTERVAL_MINUTES=10
+
+max_lag=$(( $INTERVAL_MINUTES / 3 ))
+[ $max_lag -gt 10 ] && max_lag=10
+half_max_lag=$(( $max_lag / 2 ))
+
+calculate_autonomic_post_probability() {
+  local target_minutes=$1
+
+  # 目標時刻から何分ずれているかを求める
+  local lag=$(($target_minutes % $INTERVAL_MINUTES))
+  # 目標時刻からのずれがhalf_max_lagを超えている場合、目標時刻より手前である
+  if [ $lag -gt $half_max_lag ]
+  then
+    lag=$(echo "sqrt(($lag - $INTERVAL_MINUTES) ^ 2)" | bc)
+  fi
+
+  echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
+         bc |
+         $esed 's/\..+$//'
+}
+
+periodical_autonomic_post() {
+  local last_post_file="$status_dir/last_autonomic_post"
+  local last_post=0
+  [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
+
+  local hours
+  local minutes
+  local total_minutes
+  local lag
+  local probability
+  local should_post
+
+  while true
+  do
+    debug 'Processing autonomic post...'
+
+    # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
+    if [ $(calculate_autonomic_post_probability $last_post) -gt 0 ]
+    then
+      debug 'Already posted in this period.'
+      continue
+    fi
+
+    hours=$(date +%H)
+    minutes=$(date +%M)
+    total_minutes=$(( $hours * 60 + $minutes ))
+    should_post=0
+
+    # 振れ幅の最後のタイミングかどうかを判定
+    lag=$(($total_minutes % $INTERVAL_MINUTES))
+    if [ $lag -eq $half_max_lag ]
+    then
+      debug "Nothing was posted in this period."
+      should_post=1
+    else
+      probability=$(calculate_autonomic_post_probability $total_minutes)
+      debug "Posting probability: $probability %"
+      run_with_probability $probability && should_post=1
+    fi
+
+    if [ $shoud_post -eq 1 ]
+    then
+      debug "Let's post!"
+      "$tools_dir/autonomic_post.sh"
+      echo $total_minutes > "$last_post_file"
+    fi
+
+    sleep 1m
+  done
+}
+periodical_autonomic_post &
 
 
 wait

@@ -29,7 +29,7 @@ choose_random_one() {
   echo "\$input" | sed -n "\${index}p"
 }
 
-# do nothing with the probability N% (0-100)
+# echo the input with the probability N% (0-100)
 probability() {
   local probability=\$1
   [ "\$probability" = '' ] && probability=50
