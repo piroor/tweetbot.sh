@@ -203,6 +203,11 @@ half_max_lag=$(( $max_lag / 2 ))
 
 calculate_autonomic_post_probability() {
   local target_minutes=$1
+  if [ "$target_minutes" = '' ]
+  then
+    echo 0
+    return 1
+  fi
 
   # 目標時刻から何分ずれているかを求める
   local lag=$(($target_minutes % $INTERVAL_MINUTES))
@@ -212,29 +217,39 @@ calculate_autonomic_post_probability() {
     lag=$(echo "sqrt(($lag - $INTERVAL_MINUTES) ^ 2)" | bc)
   fi
 
-  echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
-         bc |
-         $esed 's/\..+$//'
+  local probability=$(echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
+                        bc |
+                        $esed 's/\..+$//')
+  if [ $probability -lt 0 ]
+  then
+    echo 0
+  else
+    $probability
+  fi
 }
 
 periodical_autonomic_post() {
   local last_post_file="$status_dir/last_autonomic_post"
-  local last_post=0
+  local last_post=''
   [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
+
+  local process_interval=1m
 
   while true
   do
     debug 'Processing autonomic post...'
 
     # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
-    if [ $(calculate_autonomic_post_probability $last_post) -gt 0 ]
+    if [ "$last_post" != '' -a \
+         $(calculate_autonomic_post_probability $last_post) -gt 0 ]
     then
       debug 'Already posted in this period.'
+      sleep $process_interval
       continue
     fi
 
-    local hours=$(date +%H)
-    local minutes=$(date +%M)
+    local hours=$(date +%H | $esed 's/^0(.+)$/\1/')
+    local minutes=$(date +%M | $esed 's/^0(.+)$/\1/')
     local total_minutes=$(( $hours * 60 + $minutes ))
     local should_post=0
 
@@ -250,7 +265,7 @@ periodical_autonomic_post() {
       run_with_probability $probability && should_post=1
     fi
 
-    if [ $shoud_post -eq 1 ]
+    if [ $should_post -eq 1 ]
     then
       debug "Let's post!"
       local body="$("$autonomic_post_selector")"
@@ -268,7 +283,7 @@ periodical_autonomic_post() {
       echo $total_minutes > "$last_post_file"
     fi
 
-    sleep 1m
+    sleep $process_interval
   done
 }
 periodical_autonomic_post &
