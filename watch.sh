@@ -239,18 +239,22 @@ periodical_autonomic_post() {
   do
     debug 'Processing autonomic post...'
 
-    # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
-    if [ "$last_post" != '' -a \
-         $(calculate_autonomic_post_probability $last_post) -gt 0 ]
-    then
-      debug 'Already posted in this period.'
-      sleep $process_interval
-      continue
-    fi
-
     local hours=$(date +%H | $esed 's/^0(.+)$/\1/')
     local minutes=$(date +%M | $esed 's/^0(.+)$/\1/')
     local total_minutes=$(( $hours * 60 + $minutes ))
+    debug "  $total_minutes minutes past from 00:00"
+
+    # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
+    if [ "$last_post" != '' ]
+    then
+      if [ $(($total_minutes - $last_post)) -lt $max_lag ]
+      then
+        debug 'Already posted in this period.'
+        sleep $process_interval
+        continue
+      fi
+    fi
+
     local should_post=0
 
     # 振れ幅の最後のタイミングかどうかを判定
@@ -270,16 +274,16 @@ periodical_autonomic_post() {
       debug "Let's post!"
       local body="$("$autonomic_post_selector")"
       log "Posting autonomic tweet: $body"
-#      local result="$("$tweet_sh" post "$body")"
-#      if [ $? = 0 ]
-#      then
-#        log '  => successfully posted'
-#        id="$(echo "$result" | jq -r .id_str)"
-#        echo "$body" | cache_body "$id"
-#      else
-#        log '  => failed to post'
-#        log "     result: $result"
-#      fi
+      local result="$("$tweet_sh" post "$body")"
+      if [ $? = 0 ]
+      then
+        log '  => successfully posted'
+        id="$(echo "$result" | jq -r .id_str)"
+        echo "$body" | cache_body "$id"
+      else
+        log '  => failed to post'
+        log "     result: $result"
+      fi
       echo $total_minutes > "$last_post_file"
     fi
 
