@@ -46,7 +46,7 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./scheduled ]
 then
-  messages_allday="$status/scheduled_allday.txt"
+  messages_allday="$status_dir/scheduled_allday.txt"
   echo "" > "$messages_allday"
 
   ls ./scheduled/all* |
