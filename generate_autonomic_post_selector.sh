@@ -47,14 +47,15 @@ cd "$TWEET_BASE_DIR"
 if [ -d ./scheduled ]
 then
   messages_allday="$status_dir/scheduled_allday.txt"
-  echo "" > "$messages_allday"
+  rm -rf "$messages_allday"
+  touch "$messages_allday"
 
   ls ./scheduled/all* |
     sort |
     while read path
   do
     cat "$path" |
-      egrep -v '^#|^\s+$' > "$messages_allday"
+      egrep -v '^#|^\s+$' >> "$messages_allday"
   done
 
   cat << FIN >> "$autonomic_post_selector"
