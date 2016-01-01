@@ -284,6 +284,7 @@ periodical_autonomic_post() {
         log '  => failed to post'
         log "     result: $result"
       fi
+      last_post=$total_minutes
       echo $total_minutes > "$last_post_file"
     fi
 
