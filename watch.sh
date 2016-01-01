@@ -11,6 +11,7 @@ then
 fi
 
 "$tools_dir/generate_responder.sh"
+"$tools_dir/generate_autonomic_post_selector.sh"
 
 
 # Initialize required informations to call APIs
@@ -221,13 +222,6 @@ periodical_autonomic_post() {
   local last_post=0
   [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
 
-  local hours
-  local minutes
-  local total_minutes
-  local lag
-  local probability
-  local should_post
-
   while true
   do
     debug 'Processing autonomic post...'
@@ -239,10 +233,10 @@ periodical_autonomic_post() {
       continue
     fi
 
-    hours=$(date +%H)
-    minutes=$(date +%M)
-    total_minutes=$(( $hours * 60 + $minutes ))
-    should_post=0
+    local hours=$(date +%H)
+    local minutes=$(date +%M)
+    local total_minutes=$(( $hours * 60 + $minutes ))
+    local should_post=0
 
     # 振れ幅の最後のタイミングかどうかを判定
     lag=$(($total_minutes % $INTERVAL_MINUTES))
@@ -259,7 +253,18 @@ periodical_autonomic_post() {
     if [ $shoud_post -eq 1 ]
     then
       debug "Let's post!"
-      "$tools_dir/autonomic_post.sh"
+      local body="$("$autonomic_post_selector")"
+      log "Posting autonomic tweet: $body"
+#      local result="$("$tweet_sh" post "$body")"
+#      if [ $? = 0 ]
+#      then
+#        log '  => successfully posted'
+#        id="$(echo "$result" | jq -r .id_str)"
+#        echo "$body" | cache_body "$id"
+#      else
+#        log '  => failed to post'
+#        log "     result: $result"
+#      fi
       echo $total_minutes > "$last_post_file"
     fi
 

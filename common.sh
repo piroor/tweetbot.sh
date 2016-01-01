@@ -34,6 +34,7 @@ debug() {
 }
 
 responder="$TWEET_BASE_DIR/responder.sh"
+autonomic_post_selector="$TWEET_BASE_DIR/autonomic_post_selector.sh"
 
 status_dir="$TWEET_BASE_DIR/.status"
 mkdir -p "$status_dir"
