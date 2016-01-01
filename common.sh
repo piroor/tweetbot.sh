@@ -28,7 +28,7 @@ log() {
 }
 
 debug() {
-  [ "$DEBUG" = '' ] && return 0
+  [ "$TWEETBOT_DEBUG" = '' ] && return 0
   echo "$*" 1>&2
   echo "[$(date)] debug: $*" >> "$logfile"
 }
