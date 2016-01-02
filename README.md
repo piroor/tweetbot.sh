@@ -438,6 +438,7 @@ You simply have to send DMs like following:
  * `reply`: posts the given message as a reply by the bot.
  * `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
  * `rt` / `retweet`: retweets the given tweet by the bot.
+ * `search-result`: treats the given tweet as a search result.
  * `run`: executes user defined commands.
 
 #### `echo`: returns an echo of the given message.
@@ -580,6 +581,17 @@ Both alias and message are optional.
    * 1st argument: the ID of the tweet to be retweeted.
  * Example
    * `rt 0123456`
+
+#### `search-result`: treats the given tweet as a search result.
+
+ * Parameters
+   * 1st argument: the ID of the tweet to be processed as a new search result.
+ * Example
+   * `search-result 0123456`
+
+When you realized that there is a tweet which should be tracked as a search result but actually not processed, you'll hope to add new response keywords and the existing tweet is processed as a new search result.
+This command just does it.
+Note that the feature possibly process the tweet multiple times.
 
 #### `run`: executes user defined commands.
 
