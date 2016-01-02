@@ -95,8 +95,8 @@ mkdir -p "$body_cache_dir"
 responses_dir="$TWEET_BASE_DIR/responses"
 mkdir -p "$responses_dir"
 
-scheduled_messages_dir="$TWEET_BASE_DIR/scheduled"
-mkdir -p "$scheduled_messages_dir"
+monologues_dir="$TWEET_BASE_DIR/monologues"
+mkdir -p "$monologues_dir"
 
 
 # default personality

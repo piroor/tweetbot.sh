@@ -50,18 +50,18 @@ The base directory should have them:
  * `$TWEET_BASE_DIR/personality.txt` (optional): configures the strategy of the bot.
    The process must be restarted if you modify this file.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
- * `$TWEET_BASE_DIR/scheduled` (optional): a directory to put scheduled messages.
+ * `$TWEET_BASE_DIR/monologue` (optional): a directory to put monologue messages.
 
 If you permit accessing to direct messages for the app, you'll prepare following files also:
 
- * `$TWEET_BASE_DIR/on_response_message_modified.*` (optional): a callback script to be executed when any response message is changed dynamically.
- * `$TWEET_BASE_DIR/on_scheduled_message_modified.*` (optional): a callback script to be executed when any scheduled message is changed dynamically.
+ * `$TWEET_BASE_DIR/on_response_modified.*` (optional): a callback script to be executed when any response message is changed dynamically.
+ * `$TWEET_BASE_DIR/on_monologue_modified.*` (optional): a callback script to be executed when any monologue message is changed dynamically.
  * `$TWEET_BASE_DIR/on_command.*` (optional): a callback script providing user-defined commands via DMs.
 
 And, after you start the `watch.sh`, following files and directories will be saved under the base directory automatically:
 
  * `$TWEET_BASE_DIR/responder.sh`: a script to output one of response message by the given input.
- * `$TWEET_BASE_DIR/monologue_selector.sh`: a script to output one of scheduled message by the given time (or the current time).
+ * `$TWEET_BASE_DIR/monologue_selector.sh`: a script to output one of monologue message by the given time (or the current time).
  * `$TWEET_BASE_DIR/logs`: a directory to store logs.
  * `$TWEET_BASE_DIR/.status`: a directory to store caches and status files.
 
@@ -367,11 +367,11 @@ $ env TWEET_BASE_DIR=/path/to/data/directory /path/to/tweetbot.sh/generate_respo
 ~~~
 
 
-## Definition of scheduled messages (monologues)
+## Definition of monologue messages
 
 ### Typical file placements
 
- * scheduled
+ * monologue
    * morning.txt
    * afternoon.txt
    * all-greeting.txt
@@ -379,10 +379,10 @@ $ env TWEET_BASE_DIR=/path/to/data/directory /path/to/tweetbot.sh/generate_respo
    * all-newyear.txt
    * ...
 
-All files in the `scheduled` directory are scheduled message definition files.
+All files in the `monologue` directory are monologue message definition files.
 They have same format described below.
 
-### Basic format of scheduled message definition files
+### Basic format of monologue message definition files
 
 A definition file contains messages.
 All lines define messages.
@@ -418,3 +418,124 @@ or
 ~~~
 $ env TWEET_BASE_DIR=/path/to/data/directory /path/to/tweetbot.sh/generate_monologue_selector.sh
 ~~~
+
+
+## Administration via DMs
+
+If your screen name is listed in the `ADMINISTRATORS`, you can control the bot via DMs dynamically.
+You simply have to send DMs like following:
+
+ * `+res greeting Good morning!`
+ * `post @friend Thank you!`
+
+### Built-in commands
+
+ * `echo`: returns an echo of the given message.
+ * `test`: returns a response for the given message.
+ * `+res` / `-res`: adds/removes keyword and message definitions for responses.
+ * `+(name of a time span group)` / `-(name of a time span group)`: adds/removes message definitions for monologue.
+ * `tweet` / `post`: posts the given message as a regular tweet of the bot.
+ * `reply`: posts the given message as a reply by the bot.
+ * `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
+ * `rt` / `retweet`: retweets the given tweet by the bot.
+ * `run`: executes user defined commands.
+
+#### `echo`: returns an echo of the given message.
+
+ * Parameters
+   * All arguments: the message.
+ * Example
+   * `echo Hello`
+   * `echo OK?`
+
+Simply returns the given message (except the command name `echo`).
+
+#### `test`: returns a response for the given message.
+
+ * Parameters
+   * All arguments: the message.
+ * Example
+   * `echo Hello`
+   * `echo OK?`
+
+Treats the given message as a fake mention and returns actual response message.
+
+#### `+res`: adds keyword and message definitions for responses.
+
+ * Parameters
+   * 1st argument: a matching keyword.
+   * 2nd argument: a valiation of the keyword. (optional)
+   * Rest arguments: a response message. (optional)
+ * Example
+   * `+res Hello > Ola Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: `Hi! I'm fine!`
+   * `+res Hello > Ola`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: nothing
+   * `+res Hello Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: nothing
+     * response message: `Hi! I'm fine!`
+
+This command registers new keyword, valiation of the keyword, and a response message.
+Both valiation and message are optional.
+
+#### `-res`: removes keyword and message definitions for responses.
+
+ * Parameters
+   * 1st argument: a matching keyword.
+   * 2nd argument: a valiation of the keyword. (optional)
+   * Rest arguments: a response message. (optional)
+ * Example
+   * `-res Hello > Ola Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: `Hi! I'm fine!`
+   * `-res Hello > Ola`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: nothing
+   * `-res Hello Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: nothing
+     * response message: `Hi! I'm fine!`
+
+This command unregisters an existing keyword, valiation of the keyword, and a response message.
+Both valiation and message are optional.
+
+#### `+(name of a time span group)`: adds message definitions for monologue.
+
+ * Parameters
+   * 1st argument: the name of the time span.
+   * 2nd argument: an alias of the time span. (optional)
+   * Rest arguments: a monologue message. (optional)
+ * Example
+   * `-res Hello > Ola Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: `Hi! I'm fine!`
+   * `-res Hello > Ola`
+     * keyword: `Hello`
+     * valiation: `Ola`
+     * response message: nothing
+   * `-res Hello Hi! I'm fine!`
+     * keyword: `Hello`
+     * valiation: nothing
+     * response message: `Hi! I'm fine!`
+
+#### `-(name of a time span group)`: removes message definitions for monologue.
+
+#### `tweet` / `post`: posts the given message as a regular tweet of the bot.
+
+#### `reply`: posts the given message as a reply by the bot.
+
+#### `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
+
+#### `rt` / `retweet`: retweets the given tweet by the bot.
+
+#### `run`: executes user defined commands.
+
+

@@ -5,7 +5,7 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 
 echo 'Generating monologue selector script...' 1>&2
-echo "  sources: $TWEET_BASE_DIR/scheduled" 1>&2
+echo "  sources: $TWEET_BASE_DIR/monologues" 1>&2
 echo "  output : $monologue_selector" 1>&2
 
 cat << FIN > "$monologue_selector"
@@ -67,15 +67,15 @@ FIN
 
 cd "$TWEET_BASE_DIR"
 
-if [ -d ./scheduled ]
+if [ -d ./monologues ]
 then
   for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
   do
     timespans="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"
-    messages_file="$status_dir/scheduled_$group.txt"
+    messages_file="$status_dir/monologue_$group.txt"
     echo '' > "${messages_file}.tmp"
-    ls ./scheduled/$group* |
+    ls ./monologues/$group* |
       sort |
       while read path
     do

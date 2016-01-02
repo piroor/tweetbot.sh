@@ -10,7 +10,7 @@ input="$(cat |
 # +target(>(alias))?( +(body))?
 # -target(>(alias))?( +(body))?
 
-log 'Modifying scheduled message definitions...'
+log 'Modifying monologue definitions...'
 
 operation="$(echo "$input" | $esed "s/^([-+]).*$/\1/")"
 target="$(echo "$input" | $esed "s/^[-+]([^${whitespaces}>&]+).*$/\1/")"
@@ -42,7 +42,7 @@ process_add_command() {
                          # remove dangerous characters
                          $esed -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
 
-  local exact_path="$scheduled_messages_dir/$target.txt"
+  local exact_path="$monologues_dir/$target.txt"
   if [ -f "$exact_path" ]
   then
     add_definition "$exact_path" "$alias" "$body"
@@ -54,10 +54,10 @@ process_add_command() {
   do
     add_definition "$path" "$alias" "$body"
     exit $?
-  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$scheduled_messages_dir" | cut -d ':' -f 1)
+  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
 
   # otherwise, create new definition file.
-  local path="$scheduled_messages_dir/all-${safe_target}.txt"
+  local path="$monologues_dir/all-${safe_target}.txt"
   echo "# $target" > "$path"
   add_definition "$path" "$alias" "$body"
   exit $?
@@ -118,7 +118,7 @@ add_definition() {
 
 
 process_remove_command() {
-  local exact_path="$scheduled_messages_dir/$target.txt"
+  local exact_path="$monologues_dir/$target.txt"
   if [ -f "$exact_path" ]
   then
     remove_definition "$path" "$alias" "$body"
@@ -130,7 +130,7 @@ process_remove_command() {
   do
     remove_definition "$path" "$alias" "$body"
     exit $?
-  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$scheduled_messages_dir" | cut -d ':' -f 1)
+  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
 
   exit 1
 }

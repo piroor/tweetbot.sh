@@ -73,15 +73,15 @@ test_response() {
   fi
 }
 
-modify_response_message() {
+modify_response() {
   local sender="$1"
   local body="$2"
-  local output="$(echo "$body" | "$tools_dir/modify_response_message.sh" 2>&1)"
+  local output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
   local result=$?
   log "$output"
   if [ $result = 0 ]
   then
-    find "$TWEET_BASE_DIR" -type f -name 'on_response_message_modified*' | while read path
+    find "$TWEET_BASE_DIR" -type f -name 'on_response_modified*' | while read path
     do
       log "Processing \"$path\"..."
       cd $TWEET_BASE_DIR
@@ -100,15 +100,15 @@ modify_response_message() {
   fi
 }
 
-modify_scheduled_message() {
+modify_monologue() {
   local sender="$1"
   local body="$2"
-  local output="$(echo "$body" | "$tools_dir/modify_scheduled_message.sh" 2>&1)"
+  local output="$(echo "$body" | "$tools_dir/modify_monologue.sh" 2>&1)"
   local result=$?
   log "$output"
   if [ $result = 0 ]
   then
-    find "$TWEET_BASE_DIR" -type f -name 'on_scheduled_message_modified*' | while read path
+    find "$TWEET_BASE_DIR" -type f -name 'on_monologue_modified*' | while read path
     do
       log "Processing \"$path\"..."
       cd $TWEET_BASE_DIR
@@ -121,9 +121,9 @@ modify_scheduled_message() {
         log "$handler_result"
       fi
     done
-    respond "$sender" "Scheduled message patterns are successfully modified for \"$body\""
+    respond "$sender" "Monologue patterns are successfully modified for \"$body\""
   else
-    respond "$sender" "Failed to modify scheduled message patterns for \"$body\""
+    respond "$sender" "Failed to modify monologue patterns for \"$body\""
   fi
 }
 
@@ -240,10 +240,10 @@ do
       test_response "$sender" "$body"
       ;;
     +res*|-res* )
-      modify_response_message "$sender" "$body"
+      modify_response "$sender" "$body"
       ;;
     +*|-* )
-      modify_scheduled_message "$sender" "$body"
+      modify_monologue "$sender" "$body"
       ;;
     tweet|post )
       post "$sender" "$body"
