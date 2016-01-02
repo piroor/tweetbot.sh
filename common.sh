@@ -285,7 +285,7 @@ cache_body() {
 
 time_to_minutes() {
   local now="$1"
-  if echo"$now" | grep ":" > /dev/null
+  if echo "$now" | grep ":" > /dev/null
   then
     [ "$now" = '' ] && now="$(date +%H):$(date +%M)"
     local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
