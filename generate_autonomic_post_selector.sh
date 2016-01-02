@@ -61,8 +61,8 @@ then
   done
 
   cat << FIN >> "$autonomic_post_selector"
-[ "\$DEBUG" != '' ] && echo "Choosing message from \"$status_dir/all.txt\"" 1>&2
-extract_response "$status_dir/all.txt"
+[ "\$DEBUG" != '' ] && echo "Choosing message from \"$status_dir/scheduled_all.txt\"" 1>&2
+extract_response "$status_dir/scheduled_all.txt"
 exit \$?
 FIN
 fi
