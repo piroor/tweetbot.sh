@@ -42,8 +42,14 @@ do
   # log " => follow $screen_name"
   # "$tweet_sh" follow $screen_name > /dev/null
 
-  is_true "$FAVORITE_SEARCH_RESULTS" && (echo "$tweet" | favorite)
-  is_true "$RETWEET_SEARCH_RESULTS" && (echo "$tweet" | retweet)
+  if is_true "$FAVORITE_SEARCH_RESULTS"
+  then
+    echo "$tweet" | favorite
+  fi
+  if is_true "$RETWEET_SEARCH_RESULTS"
+  then
+    echo "$tweet" | retweet
+  fi
 
   # If we include the screen name into the keywords, simple mentions
   # can be detected as a search result. Even if it has been processed

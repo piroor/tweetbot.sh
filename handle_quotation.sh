@@ -32,7 +32,7 @@ do
   log " me: $me"
   log " body    : $body"
 
-  is_reply=$(echo "$tweet" | is_reply)
+  is_reply=$(echo "$tweet" | is_reply && echo 1)
   log " is_reply: $is_reply"
 
   export SCREEN_NAME="$owner"
@@ -48,9 +48,18 @@ do
 
   echo "$body" | cache_body "$id"
 
-  is_true "$FOLLOW_ON_QUOTED" && (echo "$tweet" | follow_owner)
-  is_true "$FAVORITE_QUOTATIONS" && (echo "$tweet" | favorite)
-  is_true "$RETWEET_QUOTATIONS" && (echo "$tweet" | retweet)
+  if is_true "$FOLLOW_ON_QUOTED"
+  then
+    echo "$tweet" | follow_owner
+  fi
+  if is_true "$FAVORITE_QUOTATIONS"
+  then
+    echo "$tweet" | favorite
+  fi
+  if is_true "$RETWEET_QUOTATIONS"
+  then
+    echo "$tweet" | retweet
+  fi
 
   if is_true "$RESPOND_TO_QUOTATIONS"
   then

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#=============================================================
+# Initialization
+
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 tweet_sh="$tools_dir/tweet.sh/tweet.sh"
@@ -32,16 +35,6 @@ load_keys() {
   export ACCESS_TOKEN_SECRET
 }
 load_keys
-
-case $(uname) in
-  Darwin|*BSD|CYGWIN*)
-    esed="sed -E"
-    ;;
-  *)
-    esed="sed -r"
-    ;;
-esac
-
 
 if [ "$TWEET_BASE_DIR" != '' ]
 then
@@ -91,10 +84,6 @@ scheduled_messages_dir="$TWEET_BASE_DIR/scheduled"
 mkdir -p "$scheduled_messages_dir"
 
 
-whitespaces=' \f\n\r\t　'
-non_whitespaces='[^ \f\n\r\t　]'
-
-
 # default personality
 
 FOLLOW_ON_FOLLOWED=true
@@ -137,32 +126,35 @@ then
 fi
 
 
-# Initialize list of search queries
-query=''
-keywords=''
-keywords_matcher=''
-if [ "$WATCH_KEYWORDS" != '' ]
-then
-  query="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
-          -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g")"
-  keywords="$(echo ",$WATCH_KEYWORDS," |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
-          -e 's/^,|,$//g')"
-  keywords_matcher="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
-          -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
-          -e 's/^\||\|$//g')"
-fi
+#=============================================================
+# Utilities to operate primitive strings
 
+whitespaces=' \f\n\r\t　'
+non_whitespaces='[^ \f\n\r\t　]'
 
-# Utility functions
+# Custom version of sed with extended regexp, "$esed" (like "egerp")
+case $(uname) in
+  Darwin|*BSD|CYGWIN*)
+    esed="sed -E"
+    ;;
+  *)
+    esed="sed -r"
+    ;;
+esac
 
 is_true() {
   echo "$1" | egrep -i "^(1|true|yes)$" > /dev/null
 }
+
+time_to_minutes() {
+  local now="$1"
+  local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
+  local minutes=$(echo "$now" | $esed 's/^[^:]*:0?([0-9]+)$/\1/')
+  echo $(( $hours * 60 + $minutes ))
+}
+
+#=============================================================
+# Utilities to operate tweet JSON strings
 
 expired_by_seconds() {
   local expire_seconds=$1
@@ -175,12 +167,7 @@ expired_by_seconds() {
 
 is_reply() {
   local replied_id="$(jq -r .in_reply_to_status_id_str)"
-  if [ "$replied_id" != 'null' -a "$replied_id" != '' ]
-  then
-    echo 1
-  else
-    echo 0
-  fi
+  [ "$replied_id" != 'null' -a "$replied_id" != '' ]
 }
 
 follow_owner() {
@@ -249,7 +236,7 @@ retweet() {
 }
 
 is_already_replied() {
-  local id=$1
+  local id="$1"
   [ -f "$already_replied_dir/$id" ]
 }
 
@@ -318,17 +305,26 @@ cache_body() {
   done
 }
 
-
-time_to_minutes() {
-  local now="$1"
-  local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
-  local minutes=$(echo "$now" | $esed 's/^[^:]*:0?([0-9]+)$/\1/')
-  echo $(( $hours * 60 + $minutes ))
+# for DM
+is_already_processed_dm() {
+  local id="$1"
+  [ -f "$already_processed_dir/$id" ]
 }
 
-# Randomization
+on_dm_processed() {
+  local id="$1"
+  touch "$already_processed_dir/$id"
+  # remove too old files - store only for recent N messages
+  ls "$already_processed_dir/" | sort | head -n -200 | while read path
+  do
+    rm -rf "$path"
+  done
+}
 
-# echo only one line of all given lines
+
+#=============================================================
+# Utilities for randomization
+
 choose_random_one() {
   local input="$(cat)"
   local n_lines=$(echo "$input" | wc -l)
@@ -336,7 +332,7 @@ choose_random_one() {
   echo "$input" | sed -n "${index}p"
 }
 
-# return 0 with the probability N% (0-100)
+# Succeeds with the probability N% (0-100)
 run_with_probability() {
   [ $(($RANDOM % 100)) -lt $1 ]
 }
@@ -347,3 +343,25 @@ echo_with_probability() {
     cat
   fi
 }
+
+
+#=============================================================
+# Initialize list of search queries
+query=''
+keywords=''
+keywords_matcher=''
+if [ "$WATCH_KEYWORDS" != '' ]
+then
+  query="$(echo "$WATCH_KEYWORDS" |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
+          -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g")"
+  keywords="$(echo ",$WATCH_KEYWORDS," |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
+          -e 's/^,|,$//g')"
+  keywords_matcher="$(echo "$WATCH_KEYWORDS" |
+    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+          -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
+          -e 's/^\||\|$//g')"
+fi

@@ -19,7 +19,7 @@ respond() {
   "$tweet_sh" dm "$sender" "$*" > /dev/null
 }
 
-run_command() {
+run_user_defined_command() {
   local sender="$1"
   local body="$2"
   log 'Running given command...'
@@ -73,15 +73,15 @@ test_response() {
   fi
 }
 
-modify_response() {
+modify_response_message() {
   local sender="$1"
   local body="$2"
-  local output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
+  local output="$(echo "$body" | "$tools_dir/modify_response_message.sh" 2>&1)"
   local result=$?
   log "$output"
   if [ $result = 0 ]
   then
-    find "$TWEET_BASE_DIR" -type f -name 'on_response_modified*' | while read path
+    find "$TWEET_BASE_DIR" -type f -name 'on_response_message_modified*' | while read path
     do
       log "Processing \"$path\"..."
       cd $TWEET_BASE_DIR
@@ -144,7 +144,7 @@ post() {
   fi
 }
 
-reply() {
+reply_to() {
   local sender="$1"
   local body="$2"
   log 'Replying...'
@@ -218,7 +218,7 @@ do
     continue
   fi
 
-  if [ -f "$already_processed_dir/$id" ]
+  if is_already_processed_dm "$id"
   then
     log ' => already processed, ignore it'
     continue
@@ -231,7 +231,7 @@ do
   log "command name = $command_name"
   case "$command_name" in
     run )
-      run_command "$sender" "$body"
+      run_user_defined_command "$sender" "$body"
       ;;
     echo )
       do_echo "$sender" "$body"
@@ -240,7 +240,7 @@ do
       test_response "$sender" "$body"
       ;;
     +res*|-res* )
-      modify_response "$sender" "$body"
+      modify_response_message "$sender" "$body"
       ;;
     +*|-* )
       modify_scheduled_message "$sender" "$body"
@@ -249,7 +249,7 @@ do
       post "$sender" "$body"
       ;;
     reply )
-      reply "$sender" "$body"
+      reply_to "$sender" "$body"
       ;;
     del*|rem* )
       delete "$sender" "$body"
@@ -259,10 +259,5 @@ do
       ;;
   esac
 
-  touch "$already_processed_dir/$id"
-  # remove too old files - store only for recent N messages
-  ls "$already_processed_dir/" | sort | head -n -200 | while read path
-  do
-    rm -rf "$path"
-  done
+  on_dm_processed
 done

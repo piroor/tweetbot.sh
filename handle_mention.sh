@@ -30,7 +30,7 @@ do
   body="$(echo "$tweet" | "$tweet_sh" body)"
   log " body    : $body"
 
-  is_reply=$(echo "$tweet" | is_reply)
+  is_reply=$(echo "$tweet" | is_reply && echo 1)
   log " is_reply: $is_reply"
 
   export SCREEN_NAME="$owner"
@@ -50,13 +50,24 @@ do
   log ' responses:'
   log "$responses"
 
-  is_true "$FOLLOW_ON_MENTIONED" && (echo "$tweet" | follow_owner)
-  is_true "$FAVORITE_MENTIONS" && (echo "$tweet" | favorite)
-  is_true "$RETWEET_MENTIONS" && (echo "$tweet" | retweet)
+  if is_true "$FOLLOW_ON_MENTIONED"
+  then
+    echo "$tweet" | follow_owner
+  fi
+  if is_true "$FAVORITE_MENTIONS"
+  then
+    echo "$tweet" | favorite
+  fi
+  if is_true "$RETWEET_MENTIONS"
+  then
+    echo "$tweet" | retweet
+  fi
 
-  is_true "$RESPOND_TO_MENTIONS" && (
+  if is_true "$RESPOND_TO_MENTIONS"
+  then
     echo "$responses" |
-    sed "s/^/@${owner} /" |
-    post_replies "$id"
-  )
+      # make response body a mention
+      sed "s/^/@${owner} /" |
+      post_replies "$id"
+  fi
 done
