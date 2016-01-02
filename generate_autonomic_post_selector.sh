@@ -23,7 +23,7 @@ choose_random_one() {
   echo "\$input" | sed -n "\${index}p"
 }
 
-extract_response() {
+extract_message() {
   local source="\$1"
   if [ ! -f "\$source" ]
   then
@@ -31,11 +31,11 @@ extract_response() {
     return 0
   fi
 
-  local responses="\$(cat "\$source")"
+  local messages="\$(cat "\$source")"
 
-  [ "\$responses" = '' ] && return 1
+  [ "\$messages" = '' ] && return 1
 
-  echo "\$responses" | choose_random_one
+  echo "\$messages" | choose_random_one
 }
 
 case \$(uname) in
@@ -90,7 +90,7 @@ then
     then
       cat << FIN >> "$autonomic_post_selector"
 [ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$messages_file\"" 1>&2
-extract_response "$messages_file"
+extract_message "$messages_file"
 exit \$?
 
 FIN
@@ -105,7 +105,7 @@ FIN
 if [ \$now -ge $start -a \$now -le $end ]
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
-  message="\$(extract_response "$messages_file")"
+  message="\$(extract_message "$messages_file")"
   if [ "\$message" != '']
   then
     echo "\$message"
