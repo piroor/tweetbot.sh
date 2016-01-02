@@ -50,7 +50,7 @@ The base directory should have them:
  * `$TWEET_BASE_DIR/personality.txt` (optional): configures the strategy of the bot.
    The process must be restarted if you modify this file.
  * `$TWEET_BASE_DIR/responses` (optional): a directory to put response messages.
- * `$TWEET_BASE_DIR/monologue` (optional): a directory to put monologue messages.
+ * `$TWEET_BASE_DIR/monologues` (optional): a directory to put monologue messages.
 
 If you permit accessing to direct messages for the app, you'll prepare following files also:
 
@@ -371,7 +371,7 @@ $ env TWEET_BASE_DIR=/path/to/data/directory /path/to/tweetbot.sh/generate_respo
 
 ### Typical file placements
 
- * monologue
+ * monologues
    * morning.txt
    * afternoon.txt
    * all-greeting.txt
@@ -379,7 +379,7 @@ $ env TWEET_BASE_DIR=/path/to/data/directory /path/to/tweetbot.sh/generate_respo
    * all-newyear.txt
    * ...
 
-All files in the `monologue` directory are monologue message definition files.
+All files in the `monologues` directory are monologue message definition files.
 They have same format described below.
 
 ### Basic format of monologue message definition files
@@ -513,29 +513,80 @@ Both valiation and message are optional.
    * 2nd argument: an alias of the time span. (optional)
    * Rest arguments: a monologue message. (optional)
  * Example
-   * `-res Hello > Ola Hi! I'm fine!`
-     * keyword: `Hello`
-     * valiation: `Ola`
-     * response message: `Hi! I'm fine!`
-   * `-res Hello > Ola`
-     * keyword: `Hello`
-     * valiation: `Ola`
-     * response message: nothing
-   * `-res Hello Hi! I'm fine!`
-     * keyword: `Hello`
-     * valiation: nothing
-     * response message: `Hi! I'm fine!`
+   * `+all > everytime Did you know? I'm a chatterbot!`
+     * group: `all`
+     * alias: `everytime`
+     * monologue: `Did you know? I'm a chatterbot!`
+   * `+all > everytime`
+     * group: `all`
+     * alias: `everytime`
+     * monologue: nothing
+   * `+morning Good morning!`
+     * group: `morning`
+     * alias: nothing
+     * monologue: `Good morning!`
+
+This command registers new monologue and alias of the time span group.
+Both alias and message are optional.
 
 #### `-(name of a time span group)`: removes message definitions for monologue.
 
+ * Parameters
+   * 1st argument: the name of the time span.
+   * 2nd argument: an alias of the time span. (optional)
+   * Rest arguments: a monologue message. (optional)
+ * Example
+   * `-all > everytime Did you know? I'm a chatterbot!`
+     * group: `all`
+     * alias: `everytime`
+     * monologue: `Did you know? I'm a chatterbot!`
+   * `-all > everytime`
+     * group: `all`
+     * alias: `everytime`
+     * monologue: nothing
+   * `-morning Good morning!`
+     * group: `morning`
+     * alias: nothing
+     * monologue: `Good morning!`
+
+This command unregisters an existing monologue and alias of the time span group.
+Both alias and message are optional.
+
 #### `tweet` / `post`: posts the given message as a regular tweet of the bot.
+
+ * Parameters
+   * All arguments: the messge to be postead as a tweet.
+ * Example
+   * `tweet Thank you, my friends!`
 
 #### `reply`: posts the given message as a reply by the bot.
 
+ * Parameters
+   * 1st argument: the ID of the tweet to be replied.
+   * All rest arguments: the messge to be postead as a areply.
+ * Example
+   * `reply 0123456 @friend Sorry, that's a bug of this chatterbot...`
+
 #### `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
+
+ * Parameters
+   * 1st argument: the ID of the tweet to be deleted.
+ * Example
+   * `del 0123456`
 
 #### `rt` / `retweet`: retweets the given tweet by the bot.
 
+ * Parameters
+   * 1st argument: the ID of the tweet to be retweeted.
+ * Example
+   * `rt 0123456`
+
 #### `run`: executes user defined commands.
+
+ * Parameters
+   * All arguments: arguments for user defined commands.
+ * Example
+   * `run list`
+   * `run update`
 
 
