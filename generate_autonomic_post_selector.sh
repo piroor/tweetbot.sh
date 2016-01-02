@@ -56,7 +56,7 @@ time_to_minutes() {
   local now="\$1"
   local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
   local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
-  echo $(( \$hours * 60 + \$minutes ))
+  echo \$(( \$hours * 60 + \$minutes ))
 }
 
 now=\$1
