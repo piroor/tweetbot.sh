@@ -264,7 +264,10 @@ periodical_autonomic_post() {
     else
       probability=$(calculate_autonomic_post_probability $total_minutes)
       debug "Posting probability: $probability %"
-      run_with_probability $probability && should_post=1
+      if run_with_probability $probability
+      then
+        should_post=1
+      fi
     fi
 
     if [ $should_post -eq 1 ]

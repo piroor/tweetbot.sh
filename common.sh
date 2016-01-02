@@ -348,5 +348,8 @@ run_with_probability() {
 }
 
 echo_with_probability() {
-  run_with_probability $1 && cat
+  if run_with_probability $1
+  then
+    cat
+  fi
 }
