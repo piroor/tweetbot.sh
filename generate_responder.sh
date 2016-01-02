@@ -95,49 +95,49 @@ FIN
 [ "\$DEBUG" != '' ] && echo "Not matched to any case" 1>&2
 [ "\$NO_QUESTION" != '' ] && exit 1
 
-  [ "\$DEBUG" != '' ] && echo "Generated response" 1>&2
-  if [ "\$IS_REPLY" = '1' ]
+[ "\$DEBUG" != '' ] && echo "Generated response" 1>&2
+if [ "\$IS_REPLY" = '1' ]
+then
+  # If it is a reply of continuous context, you can two choices:
+  if [ "\$(echo 1 | echo_with_probability $FREQUENCY_OF_CAPRICES)" != '' ]
   then
-    # If it is a reply of continuous context, you can two choices:
-    if [ "\$(echo 1 | echo_with_probability $FREQUENCY_OF_CAPRICES)" != '' ]
+    [ "\$DEBUG" != '' ] && echo "Try to change the topic" 1>&2
+    # 1) Change the topic.
+    #    Then we should reply twite: a "pong" and "question about next topic".
+    pong="\$(extract_response "\$base_dir/$pong_file")"
+
+    question="\$(extract_response "\$base_dir/$topics_file" | echo_with_probability $NEW_TOPIC)"
+    if [ "\$question" != '' ]
     then
-      [ "\$DEBUG" != '' ] && echo "Try to change the topic" 1>&2
-      # 1) Change the topic.
-      #    Then we should reply twite: a "pong" and "question about next topic".
-      pong="\$(extract_response "\$base_dir/$pong_file")"
+      [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
+      # "pong" can be omitted if there is question
+      pong="\$(echo "\$pong" | echo_with_probability 90)"
+      [ "\$pong" != '' ] && pong="\$pong "
 
-      question="\$(extract_response "\$base_dir/$topics_file" | echo_with_probability $NEW_TOPIC)"
-      if [ "\$question" != '' ]
-      then
-        [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
-        # "pong" can be omitted if there is question
-        pong="\$(echo "\$pong" | echo_with_probability 90)"
-        [ "\$pong" != '' ] && pong="\$pong "
-
-        connctor="\$(extract_response "\$base_dir/$connectors_file" | echo_with_probability 95)"
-        [ "\$connector" != '' ] && connctor="\$connctor "
-        question="\$connctor\$question"
-      fi
-    else
-      [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
-      # 2) Continue to talk about the current topic.
-      #    The continueous question should be a part of "pong".
-      pong="\$(extract_response "\$base_dir/$pong_file")"
-      following="\$(extract_response "\$base_dir/$developments_file" | echo_with_probability $CONVERSATION_PERSISTENCE)"
-      if [ "\$following" != '' ]
-      then
-        pong="\$(echo "\$pong" | echo_with_probability 50)"
-        pong="\$pong \$following"
-      fi
+      connctor="\$(extract_response "\$base_dir/$connectors_file" | echo_with_probability 95)"
+      [ "\$connector" != '' ] && connctor="\$connctor "
+      question="\$connctor\$question"
     fi
   else
-    # If it is not a reply, we always start new conversation without "pong".
-    question="\$(extract_response "\$base_dir/$topics_file")"
+    [ "\$DEBUG" != '' ] && echo "Continue to talk" 1>&2
+    # 2) Continue to talk about the current topic.
+    #    The continueous question should be a part of "pong".
+    pong="\$(extract_response "\$base_dir/$pong_file")"
+    following="\$(extract_response "\$base_dir/$developments_file" | echo_with_probability $CONVERSATION_PERSISTENCE)"
+    if [ "\$following" != '' ]
+    then
+      pong="\$(echo "\$pong" | echo_with_probability 50)"
+      pong="\$pong \$following"
+    fi
   fi
+else
+  # If it is not a reply, we always start new conversation without "pong".
+  question="\$(extract_response "\$base_dir/$topics_file")"
+fi
 
-  # Then output each responses.
-  [ "\$pong" != '' ] && echo "\$pong"
-  [ "\$question" != '' ] && echo "\$question"
+# Then output each responses.
+[ "\$pong" != '' ] && echo "\$pong"
+[ "\$question" != '' ] && echo "\$question"
 
 exit 0
 
