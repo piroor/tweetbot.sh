@@ -116,7 +116,7 @@ else
       #    Then we should reply twite: a "pong" and "question about next topic".
       pong="\$(extract_response "\$base_dir/$pong_file")"
 
-      question="\$(extract_response "\$base_dir/$questions_file" | echo_with_probability $ENDLESSNESS)"
+      question="\$(extract_response "\$base_dir/$questions_file" | echo_with_probability $NEW_TOPIC)"
       if [ "\$question" != '' ]
       then
         [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
@@ -133,7 +133,7 @@ else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file")"
-      following="\$(extract_response "\$base_dir/$following_questions_file" | echo_with_probability $CONVERSATION_SPAN)"
+      following="\$(extract_response "\$base_dir/$following_questions_file" | echo_with_probability $CONVERSATION_PERSISTENCE)"
       if [ "\$following" != '' ]
       then
         pong="\$(echo "\$pong" | echo_with_probability 50)"
