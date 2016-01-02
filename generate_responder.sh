@@ -90,21 +90,11 @@ FIN
   connectors_file='./responses/_connectors.txt'
   topics_file='./responses/_topics.txt'
   developments_file='./responses/_developments.txt'
-  default_file='./responses/_default.txt'
   cat << FIN >> "$responder"
 # fallback to generated-patterns
 [ "\$DEBUG" != '' ] && echo "Not matched to any case" 1>&2
 [ "\$NO_QUESTION" != '' ] && exit 1
 
-# Use "default" responses only if it is the first mention
-# (not a reply of existing context)
-if [ -f "\$base_dir/$default_file" \
-     -a "\$IS_REPLY" != '1' \
-     -a "\$(echo 1 | echo_with_probability $OBSESSION_TO_SELF_TOPICS)" = '' ]
-then
-  [ "\$DEBUG" != '' ] && echo "Default response" 1>&2
-  extract_response "\$base_dir/$default_file"
-else
   [ "\$DEBUG" != '' ] && echo "Generated response" 1>&2
   if [ "\$IS_REPLY" = '1' ]
   then
@@ -148,7 +138,6 @@ else
   # Then output each responses.
   [ "\$pong" != '' ] && echo "\$pong"
   [ "\$question" != '' ] && echo "\$question"
-fi
 
 exit 0
 
