@@ -44,23 +44,25 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./scheduled ]
 then
-  messages_allday="$status_dir/scheduled_allday.txt"
-  echo '' > "${messages_allday}.tmp"
-
-  ls ./scheduled/all* |
-    sort |
-    while read path
+  for group in all morning noon afternoon evening night midnight
   do
-    # convert CR+LF => LF for safety.
-    nkf -Lu "$path" >> "${messages_allday}.tmp"
-    echo '' >> "$messages_allday"
+    messages_file="$status_dir/scheduled_$group.txt"
+    echo '' > "${messages_file}.tmp"
+    ls ./scheduled/$group* |
+      sort |
+      while read path
+    do
+      # convert CR+LF => LF for safety.
+      nkf -Lu "$path" >> "${messages_file}.tmp"
+      echo '' >> "$messages_file"
+    done
+    egrep -v "^#|^[$whitespaces]*$" "${messages_file}.tmp" > "$messages_file"
+    rm -rf "${messages_file}.tmp"
   done
-  egrep -v "^#|^[$whitespaces]*$" "${messages_allday}.tmp" > "$messages_allday"
-  rm -rf "${messages_allday}.tmp"
 
   cat << FIN >> "$autonomic_post_selector"
-[ "\$DEBUG" != '' ] && echo "Choosing message from \"$messages_allday\"" 1>&2
-extract_response "$messages_allday"
+[ "\$DEBUG" != '' ] && echo "Choosing message from \"$status_dir/all.txt\"" 1>&2
+extract_response "$status_dir/all.txt"
 exit \$?
 FIN
 fi
