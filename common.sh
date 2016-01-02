@@ -31,6 +31,7 @@ load_keys() {
   export ACCESS_TOKEN
   export ACCESS_TOKEN_SECRET
 }
+load_keys
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*)
