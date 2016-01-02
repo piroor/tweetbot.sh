@@ -321,15 +321,9 @@ cache_body() {
 
 time_to_minutes() {
   local now="$1"
-  if echo "$now" | grep ":" > /dev/null
-  then
-    [ "$now" = '' ] && now="$(date +%H):$(date +%M)"
-    local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
-    local minutes=$(echo "$now" | $esed 's/^[^:]*:0?([0-9]+)$/\1/')
-    echo $(( $hours * 60 + $minutes ))
-  else
-    echo $now
-  fi
+  local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
+  local minutes=$(echo "$now" | $esed 's/^[^:]*:0?([0-9]+)$/\1/')
+  echo $(( $hours * 60 + $minutes ))
 }
 
 # Randomization

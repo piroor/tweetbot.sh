@@ -239,7 +239,7 @@ periodical_autonomic_post() {
   do
     debug 'Processing autonomic post...'
 
-    local total_minutes=$(time_to_minutes)
+    local total_minutes=$(time_to_minutes $(date +%H:%M))
     debug "  $total_minutes minutes past from 00:00"
 
     # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
