@@ -61,7 +61,7 @@ time_to_minutes() {
 
 now=\$1
 [ "\$now" = '' ] && now="\$(date +%H:%M)"
-now=$(time_to_minutes $now)
+now=\$(time_to_minutes \$now)
 
 FIN
 
