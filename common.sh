@@ -78,7 +78,7 @@ kill_descendants() {
 }
 
 responder="$TWEET_BASE_DIR/responder.sh"
-autonomic_post_selector="$TWEET_BASE_DIR/autonomic_post_selector.sh"
+monologue_selector="$TWEET_BASE_DIR/monologue_selector.sh"
 
 status_dir="$TWEET_BASE_DIR/.status"
 mkdir -p "$status_dir"
@@ -126,13 +126,13 @@ CONVERSATION_PERSISTENCE=40
 MAX_BODY_CACHE=1000
 ADMINISTRATORS=''
 WATCH_KEYWORDS=''
-INTERVAL_MINUTES=30
-AUTONOMIC_POST_TIME_SPAN="morning/06:00-07:00 \
-                          noon/12:00-13:00 \
-                          afternoon/15:00-15:30 \
-                          evening/17:30-18:30 \
-                          night/19:00-21:00 \
-                          midnight/23:00-24:00,00:00-03:00"
+MONOLOGUE_INTERVAL_MINUTES=60
+MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
+                     noon/12:00-13:00 \
+                     afternoon/15:00-15:30 \
+                     evening/17:30-18:30 \
+                     night/19:00-21:00 \
+                     midnight/23:00-24:00,00:00-03:00"
 
 personality_file="$TWEET_BASE_DIR/personality.txt"
 if [ -f "$personality_file" ]

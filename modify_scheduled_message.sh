@@ -107,7 +107,7 @@ add_definition() {
     else
       log 'Successfully added.'
       normalize_contents "$path"
-      "$tools_dir/generate_autonomic_post_selector.sh"
+      "$tools_dir/generate_monologue_selector.sh"
     fi
     return 0
   else
@@ -171,7 +171,7 @@ remove_definition() {
     else
       log 'Successfully removed.'
       normalize_contents "$path"
-      "$tools_dir/generate_autonomic_post_selector.sh"
+      "$tools_dir/generate_monologue_selector.sh"
       if egrep -v "^#|^[$whitespaces]*$" "$path" > /dev/null
       then
         log 'There is no more body.'

@@ -11,7 +11,7 @@ then
 fi
 
 "$tools_dir/generate_responder.sh"
-"$tools_dir/generate_autonomic_post_selector.sh"
+"$tools_dir/generate_monologue_selector.sh"
 
 
 # Initialize required informations to call APIs
@@ -197,7 +197,7 @@ periodical_fetch_direct_messages() {
 periodical_fetch_direct_messages &
 
 
-# Sub process 4: posting autonomic tweets
+# Sub process 4: posting monologue tweets
 # ・計算の始点は00:00
 # ・指定間隔の1/3か10分の短い方を、「投稿時間の振れ幅」とする。
 #   30分間隔なら、振れ幅は10分。00:25から00:35の間のどこかで投稿する。
@@ -212,7 +212,7 @@ max_lag=$(( $INTERVAL_MINUTES / 3 ))
 [ $max_lag -gt 10 ] && max_lag=10
 half_max_lag=$(( $max_lag / 2 ))
 
-calculate_autonomic_post_probability() {
+calculate_monologue_probability() {
   local target_minutes=$1
   if [ "$target_minutes" = '' ]
   then
@@ -239,8 +239,8 @@ calculate_autonomic_post_probability() {
   fi
 }
 
-periodical_autonomic_post() {
-  local last_post_file="$status_dir/last_autonomic_post"
+periodical_monologue() {
+  local last_post_file="$status_dir/last_monologue"
   local last_post=''
   [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
 
@@ -248,7 +248,7 @@ periodical_autonomic_post() {
 
   while true
   do
-    debug 'Processing autonomic post...'
+    debug 'Processing monologue...'
 
     local total_minutes=$(time_to_minutes $(date +%H:%M))
     debug "  $total_minutes minutes past from 00:00"
@@ -273,7 +273,7 @@ periodical_autonomic_post() {
       debug "Nothing was posted in this period."
       should_post=1
     else
-      probability=$(calculate_autonomic_post_probability $total_minutes)
+      probability=$(calculate_monologue_probability $total_minutes)
       debug "Posting probability: $probability %"
       if run_with_probability $probability
       then
@@ -284,8 +284,8 @@ periodical_autonomic_post() {
     if [ $should_post -eq 1 ]
     then
       debug "Let's post!"
-      local body="$("$autonomic_post_selector")"
-      log "Posting autonomic tweet: $body"
+      local body="$("$monologue_selector")"
+      log "Posting monologue tweet: $body"
       local result="$("$tweet_sh" post "$body")"
       if [ $? = 0 ]
       then
@@ -303,7 +303,7 @@ periodical_autonomic_post() {
     sleep $process_interval
   done
 }
-periodical_autonomic_post &
+periodical_monologue &
 
 
 wait
