@@ -210,6 +210,10 @@ max_lag=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
 [ $max_lag -gt 10 ] && max_lag=10
 half_max_lag=$(( $max_lag / 2 ))
 
+abs() {
+  echo "sqrt($1 ^ 2)" | bc
+}
+
 calculate_monologue_probability() {
   local target_minutes=$1
   if [ "$target_minutes" = '' ]
@@ -223,7 +227,7 @@ calculate_monologue_probability() {
   # 目標時刻からのずれがhalf_max_lagを超えている場合、目標時刻より手前である
   if [ $lag -gt $half_max_lag ]
   then
-    lag=$(echo "sqrt(($lag - $MONOLOGUE_INTERVAL_MINUTES) ^ 2)" | bc)
+    lag=$(abs $(($lag - $MONOLOGUE_INTERVAL_MINUTES)))
   fi
 
   local probability=$(echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
@@ -254,7 +258,16 @@ periodical_monologue() {
     # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
     if [ "$last_post" != '' ]
     then
-      if [ $(($total_minutes - $last_post)) -lt $max_lag ]
+      local delta=$(($total_minutes - $last_post))
+      debug "  delta from $last_post: $delta"
+      if [ $delta -lt 0 ]
+      then
+        last_post=$(( $last_post - (24 * 60) ))
+        debug "  last_post => $last_post"
+        echo $last_post > "$last_post_file"
+      fi
+      debug "  absolute delta: $(abs $(($total_minutes - $last_post)))"
+      if [ $(abs $(($total_minutes - $last_post))) -lt $max_lag ]
       then
         debug 'Already posted in this period.'
         sleep $process_interval
