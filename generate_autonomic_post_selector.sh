@@ -95,7 +95,7 @@ exit \$?
 
 FIN
     else
-      for timespan in $(echo "$timespans" | 'sed s/,/ /g')
+      for timespan in $(echo "$timespans" | sed 's/,/ /g')
       do
         start="$(echo "$timespan" | cut -d '-' -f 1)"
         start="$(time_to_minutes "$start")"
