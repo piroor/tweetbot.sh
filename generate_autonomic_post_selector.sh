@@ -38,14 +38,40 @@ extract_response() {
   echo "\$responses" | choose_random_one
 }
 
+case \$(uname) in
+  Darwin|*BSD|CYGWIN*)
+    esed="sed -E"
+    ;;
+  *)
+    esed="sed -r"
+    ;;
+esac
+
+
+now=\$1
+
+if [ "\$now" = '' ]
+then
+  now="\$(date +%H):\$(date +%M)"
+fi
+
+if echo"\$now" | grep ":" > /dev/null
+then
+  local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
+  local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
+  now=\$(( \$hours * 60 + \$minutes ))
+fi
+
 FIN
 
 cd "$TWEET_BASE_DIR"
 
 if [ -d ./scheduled ]
 then
-  for group in all morning noon afternoon evening night midnight
+  for group in $(echo "$AUTONOMIC_POST_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
   do
+    timespans="$(echo "$group" | cut -d '/' -f 2-)"
+    group="$(echo "$group" | cut -d '/' -f 1)"
     messages_file="$status_dir/scheduled_$group.txt"
     echo '' > "${messages_file}.tmp"
     ls ./scheduled/$group* |
@@ -58,17 +84,38 @@ then
     done
     egrep -v "^#|^[$whitespaces]*$" "${messages_file}.tmp" > "$messages_file"
     rm -rf "${messages_file}.tmp"
-  done
 
-  cat << FIN >> "$autonomic_post_selector"
-[ "\$DEBUG" != '' ] && echo "Choosing message from \"$status_dir/scheduled_all.txt\"" 1>&2
-extract_response "$status_dir/scheduled_all.txt"
+    # no timespan given
+    if [ "$timespans" = "$group" ]
+    then
+      cat << FIN >> "$autonomic_post_selector"
+[ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$messages_file\"" 1>&2
+extract_response "$messages_file"
 exit \$?
+
 FIN
+    else
+      for timespan in $(echo "$timespans" | 'sed s/,/ /g')
+      do
+        start="$(echo "$timespan" | cut -d '-' -f 1)"
+        start="$(time_to_minutes "$start")"
+        end="$(echo "$timespan" | cut -d '-' -f 2)"
+        end="$(time_to_minutes "$end")"
+        cat << FIN >> "$autonomic_post_selector"
+if [ \$now -ge $start -a \$now -le $end ]
+then
+  [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
+  extract_response "$messages_file"
+  exit \$?
+fi
+
+FIN
+     done
+    fi
+  done
 fi
 
 cat << FIN >> "$autonomic_post_selector"
-
 exit 1
 FIN
 
