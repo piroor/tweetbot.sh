@@ -186,8 +186,7 @@ retweet() {
   log 'Retweeting...'
   local retweet_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local output="$("$tweet_sh" retweet "$retweet_target" 2>&1)"
-  result=$?
-  if [ $result = 0 ]
+  if [ $? = 0 ]
   then
     log "Successfully retweeted: \"$retweet_target\""
     respond "$sender" "Successfully retweeted: \"$retweet_target\""
@@ -195,6 +194,25 @@ retweet() {
     log "$output"
     log "Failed to retweet \"$retweet_target\""
     respond "$sender" "Failed to retweet \"$retweet_target\""
+  fi
+}
+
+handle_search_result() {
+  local sender="$1"
+  local body="$2"
+  log 'Processing a search result...'
+  local target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  local tweet="$("$tweet_sh" fetch "$target")"
+  
+  local output="$(echo "$tweet" | "$tools_dir/handle_search_result.sh" 2>&1)"
+  if [ $? = 0 ]
+  then
+    log "Successfully processed a search result: \"$target\""
+    respond "$sender" "Successfully processed a search result: \"$target\""
+  else
+    log "$output"
+    log "Failed to process a search result \"$target\""
+    respond "$sender" "Failed to process a search result \"$target\""
   fi
 }
 
@@ -256,6 +274,9 @@ do
       ;;
     rt|retweet )
       retweet "$sender" "$body"
+      ;;
+    search-result )
+      handle_search_result "$sender" "$body"
       ;;
   esac
 
