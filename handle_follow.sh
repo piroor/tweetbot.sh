@@ -14,14 +14,14 @@ do
 
   if is_true "$FOLLOW_ON_FOLLOWED"
   then
-  log " => follow back $follower"
-  result="$("$tweet_sh" follow $follower)"
-  if [ $? = 0 ]
-  then
-    log '  => successfully followed'
-  else
-    log "  => failed to follow $follower"
-    log "     result: $result"
-  fi
+    log " => follow back $follower"
+    result="$("$tweet_sh" follow $follower)"
+    if [ $? = 0 ]
+    then
+      log '  => successfully followed'
+    else
+      log "  => failed to follow $follower"
+      log "     result: $result"
+    fi
   fi
 done
