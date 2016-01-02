@@ -13,4 +13,9 @@ do
   url="https://twitter.com/$owner/status/$id"
   log '=============================================================='
   log "Retweeted by $owner at $url"
+
+  if is_true "$FOLLOW_ON_RETWEETED"
+  then
+    echo "$tweet" | follow_owner
+  fi
 done
