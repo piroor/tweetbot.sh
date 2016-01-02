@@ -105,8 +105,12 @@ FIN
 if [ \$now -ge $start -a \$now -le $end ]
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
-  extract_response "$messages_file"
-  exit \$?
+  message="\$(extract_response "$messages_file")"
+  if [ "\$message" != '']
+  then
+    echo "\$message"
+    exit \$?
+  fi
 fi
 
 FIN
