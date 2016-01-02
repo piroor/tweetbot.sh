@@ -206,9 +206,9 @@ periodical_fetch_direct_messages &
 # ・ただし、振れ幅の最後のタイミングでまだ投稿されていなければ、必ず投稿する。
 
 # minimum interval = 10minutes
-[ $INTERVAL_MINUTES -le 10 ] && INTERVAL_MINUTES=10
+[ $MONOLOGUE_INTERVAL_MINUTES -le 10 ] && MONOLOGUE_INTERVAL_MINUTES=10
 
-max_lag=$(( $INTERVAL_MINUTES / 3 ))
+max_lag=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
 [ $max_lag -gt 10 ] && max_lag=10
 half_max_lag=$(( $max_lag / 2 ))
 
@@ -221,11 +221,11 @@ calculate_monologue_probability() {
   fi
 
   # 目標時刻から何分ずれているかを求める
-  local lag=$(($target_minutes % $INTERVAL_MINUTES))
+  local lag=$(($target_minutes % $MONOLOGUE_INTERVAL_MINUTES))
   # 目標時刻からのずれがhalf_max_lagを超えている場合、目標時刻より手前である
   if [ $lag -gt $half_max_lag ]
   then
-    lag=$(echo "sqrt(($lag - $INTERVAL_MINUTES) ^ 2)" | bc)
+    lag=$(echo "sqrt(($lag - $MONOLOGUE_INTERVAL_MINUTES) ^ 2)" | bc)
   fi
 
   local probability=$(echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
@@ -267,7 +267,7 @@ periodical_monologue() {
     local should_post=0
 
     # 振れ幅の最後のタイミングかどうかを判定
-    lag=$(($total_minutes % $INTERVAL_MINUTES))
+    lag=$(($total_minutes % $MONOLOGUE_INTERVAL_MINUTES))
     if [ $lag -eq $half_max_lag ]
     then
       debug "Nothing was posted in this period."
