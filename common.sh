@@ -4,8 +4,43 @@ work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 
-source "$tweet_sh"
-load_keys
+load_keys() {
+  if [ "$CONSUMER_KEY" = '' -a \
+       -f "$work_dir/tweet.client.key" ]
+  then
+    log 'Using client key at the current directory.'
+    source "$work_dir/tweet.client.key"
+  fi
+
+  if [ "$CONSUMER_KEY" = '' -a \
+       -f ~/.tweet.client.key ]
+  then
+    log 'Using client key at the home directory.'
+    source ~/.tweet.client.key
+  fi
+
+  if [ "$CONSUMER_KEY" = '' -a \
+       -f "$tools_dir/tweet.client.key" ]
+  then
+    log 'Using client key at the tools directory.'
+    source "$tools_dir/tweet.client.key"
+  fi
+
+  export CONSUMER_KEY
+  export CONSUMER_SECRET
+  export ACCESS_TOKEN
+  export ACCESS_TOKEN_SECRET
+}
+
+case $(uname) in
+  Darwin|*BSD|CYGWIN*)
+    esed="sed -E"
+    ;;
+  *)
+    esed="sed -r"
+    ;;
+esac
+
 
 if [ "$TWEET_BASE_DIR" != '' ]
 then
