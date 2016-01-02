@@ -87,6 +87,12 @@ MAX_BODY_CACHE=1000
 ADMINISTRATORS=''
 WATCH_KEYWORDS=''
 INTERVAL_MINUTES=30
+AUTONOMIC_POST_TIME_SPAN="morning/06:00-07:00 \
+                          noon/12:00-13:00 \
+                          afternoon/15:00-15:30 \
+                          evening/17:30-18:30 \
+                          night/19:00-21:00 \
+                          midnight/23:00-24:00,00:00-03:00"
 
 personality_file="$TWEET_BASE_DIR/personality.txt"
 if [ -f "$personality_file" ]
@@ -276,6 +282,19 @@ cache_body() {
   done
 }
 
+
+time_to_minutes() {
+  local now="$1"
+  if echo"$now" | grep ":" > /dev/null
+  then
+    [ "$now" = '' ] && now="$(date +%H):$(date +%M)"
+    local hours=$(echo "$now" | $esed 's/^0?([0-9]+):.*$/\1/')
+    local minutes=$(echo "$now" | $esed 's/^[^:]*:0?([0-9]+)$/\1/')
+    echo $(( $hours * 60 + $minutes ))
+  else
+    echo $now
+  fi
+}
 
 # Randomization
 
