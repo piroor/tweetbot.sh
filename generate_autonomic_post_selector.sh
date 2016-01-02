@@ -16,6 +16,15 @@ cat << FIN > "$autonomic_post_selector"
 
 base_dir="\$(cd "\$(dirname "\$0")" && pwd)"
 
+case \$(uname) in
+  Darwin|*BSD|CYGWIN*)
+    esed="sed -E"
+    ;;
+  *)
+    esed="sed -r"
+    ;;
+esac
+
 choose_random_one() {
   local input="\$(cat)"
   local n_lines="\$(echo "\$input" | wc -l)"
@@ -32,35 +41,27 @@ extract_message() {
   fi
 
   local messages="\$(cat "\$source")"
-
   [ "\$messages" = '' ] && return 1
-
   echo "\$messages" | choose_random_one
 }
 
-case \$(uname) in
-  Darwin|*BSD|CYGWIN*)
-    esed="sed -E"
-    ;;
-  *)
-    esed="sed -r"
-    ;;
-esac
+echo_with_probability() {
+  if [ \$(($RANDOM % 100)) -lt \$1 ]
+  then
+    cat
+  fi
+}
 
+time_to_minutes() {
+  local now="\$1"
+  local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
+  local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
+  echo $(( \$hours * 60 + \$minutes ))
+}
 
 now=\$1
-
-if [ "\$now" = '' ]
-then
-  now="\$(date +%H):\$(date +%M)"
-fi
-
-if echo "\$now" | grep ":" > /dev/null
-then
-  hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
-  minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
-  now=\$(( \$hours * 60 + \$minutes ))
-fi
+[ "\$now" = '' ] && now="\$(date +%H:%M)"
+now=$(time_to_minutes $now)
 
 FIN
 
@@ -105,7 +106,7 @@ FIN
 if [ \$now -ge $start -a \$now -le $end ]
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
-  message="\$(extract_message "$messages_file")"
+  message="\$(extract_message "$messages_file" | echo_with_probability 60)"
   if [ "\$message" != '']
   then
     echo "\$message"
