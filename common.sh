@@ -62,6 +62,21 @@ debug() {
   echo "[$(date)] debug: $*" >> "$logfile"
 }
 
+# Orphan processes can be left after Ctrl-C or something,
+# because there can be detached. We manually find them and kill all.
+kill_descendants() {
+  local target_pid=$1
+  local children=$(ps --no-heading --ppid $target_pid -o pid)
+  for child in $children
+  do
+    kill_descendants $child
+  done
+  if [ $target_pid != $$ ]
+  then
+    kill $target_pid 2>&1 > /dev/null
+  fi
+}
+
 responder="$TWEET_BASE_DIR/responder.sh"
 autonomic_post_selector="$TWEET_BASE_DIR/autonomic_post_selector.sh"
 

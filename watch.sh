@@ -40,7 +40,18 @@ fi
 # Kill all forked children always!
 # Ctrl-C sometimes fails to kill descendant processes,
 # so we have to use custom "kill_descendants" function...
-
+kill_descendants() {
+  local target_pid=$1
+  local children=$(ps --no-heading --ppid $target_pid -o pid)
+  for child in $children
+  do
+    kill_descendants $child
+  done
+  if [ $target_pid != $$ ]
+  then
+    kill $target_pid 2>&1 > /dev/null
+  fi
+}
 self_pid=$$
 trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
