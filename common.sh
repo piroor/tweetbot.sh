@@ -11,21 +11,21 @@ load_keys() {
   if [ "$CONSUMER_KEY" = '' -a \
        -f "$work_dir/tweet.client.key" ]
   then
-    log 'Using client key at the current directory.'
+    echo 'Using client key at the current directory.' 1>&2
     source "$work_dir/tweet.client.key"
   fi
 
   if [ "$CONSUMER_KEY" = '' -a \
        -f ~/.tweet.client.key ]
   then
-    log 'Using client key at the home directory.'
+    echo 'Using client key at the home directory.' 1>&2
     source ~/.tweet.client.key
   fi
 
   if [ "$CONSUMER_KEY" = '' -a \
        -f "$tools_dir/tweet.client.key" ]
   then
-    log 'Using client key at the tools directory.'
+    echo 'Using client key at the tools directory.' 1>&2
     source "$tools_dir/tweet.client.key"
   fi
 
