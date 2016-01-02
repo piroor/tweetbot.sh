@@ -88,8 +88,8 @@ FIN
 
   pong_file='./responses/_pong.txt'
   connectors_file='./responses/_connectors.txt'
-  questions_file='./responses/_questions.txt'
-  following_questions_file='./responses/_following-questions.txt'
+  topics_file='./responses/_topics.txt'
+  developments_file='./responses/_developments.txt'
   default_file='./responses/_default.txt'
   cat << FIN >> "$responder"
 # fallback to generated-patterns
@@ -116,7 +116,7 @@ else
       #    Then we should reply twite: a "pong" and "question about next topic".
       pong="\$(extract_response "\$base_dir/$pong_file")"
 
-      question="\$(extract_response "\$base_dir/$questions_file" | echo_with_probability $NEW_TOPIC)"
+      question="\$(extract_response "\$base_dir/$topics_file" | echo_with_probability $NEW_TOPIC)"
       if [ "\$question" != '' ]
       then
         [ "\$DEBUG" != '' ] && echo "Changing topic" 1>&2
@@ -133,7 +133,7 @@ else
       # 2) Continue to talk about the current topic.
       #    The continueous question should be a part of "pong".
       pong="\$(extract_response "\$base_dir/$pong_file")"
-      following="\$(extract_response "\$base_dir/$following_questions_file" | echo_with_probability $CONVERSATION_PERSISTENCE)"
+      following="\$(extract_response "\$base_dir/$developments_file" | echo_with_probability $CONVERSATION_PERSISTENCE)"
       if [ "\$following" != '' ]
       then
         pong="\$(echo "\$pong" | echo_with_probability 50)"
@@ -142,7 +142,7 @@ else
     fi
   else
     # If it is not a reply, we always start new conversation without "pong".
-    question="\$(extract_response "\$base_dir/$questions_file")"
+    question="\$(extract_response "\$base_dir/$topics_file")"
   fi
 
   # Then output each responses.
