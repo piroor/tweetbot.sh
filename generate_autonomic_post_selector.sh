@@ -57,8 +57,8 @@ fi
 
 if echo "\$now" | grep ":" > /dev/null
 then
-  local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
-  local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
+  hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
+  minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
   now=\$(( \$hours * 60 + \$minutes ))
 fi
 
