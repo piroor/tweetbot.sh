@@ -55,7 +55,7 @@ then
   now="\$(date +%H):\$(date +%M)"
 fi
 
-if echo"\$now" | grep ":" > /dev/null
+if echo "\$now" | grep ":" > /dev/null
 then
   local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
   local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
