@@ -589,4 +589,70 @@ Both alias and message are optional.
    * `run list`
    * `run update`
 
+### User defined DM commands
 
+If there is any executable file named with the prefix `on_command` (like `on_command.sh`, `on_command.rb`, etc.), it is kicked by the DM command `run` with two arguments: the screen name of the sender, and the message body.
+
+This is a sample script to implement `run list` command to return all file names in the `responses` directory:
+
+~~~
+#!/usr/bin/env bash
+
+sender="$1"
+command="$2"
+
+tweet_sh='tweetbot.sh/tweet.sh/tweet.sh'
+
+list_responses() {
+  list="$(cd responses &&
+            ls * |
+            sort |
+            sed 's/.txt$//' |
+            paste -s -d ',')"
+  echo "list: $list"
+  "$tweet_sh" dm $sender "$list" > /dev/null
+}
+
+case "$command" in
+  list* )
+    list_responses
+    ;;
+esac
+~~~
+
+
+### Callback script for DM commands to modify response message definitions
+
+If there is any executable file named with the prefix `on_response_modified` (like `on_response_modified.sh`, `on_response_modified.rb`, etc.), it is kicked by DM commands `+res` and `-res`.
+For example, this is a sample script to do following:
+
+ * Renames newly added definition file with a prefix `300_`.
+ * Commits and pushes changes to the Git repository.
+
+~~~
+#!/usr/bin/env bash
+
+find responses -name "autoadd_*" | while read path
+do
+  mv "$path" "$(echo "$path" | sed 's/autoadd_/300_/')"
+done
+
+git add responses
+git commit -m "Add new response"
+git push
+~~~
+
+### Callback script for DM commands to modify monologue message definitions
+
+If there is any executable file named with the prefix `on_monologue_modified` (like `on_monologue_modified.sh`, `on_monologue_modified.rb`, etc.), it is kicked by DM commands `+(tine span)` and `-(tine span)`.
+For example, this is a sample script to do following:
+
+ * Commits and pushes changes to the Git repository.
+
+~~~
+#!/usr/bin/env bash
+
+git add scheduled
+git commit -m "Add new monologue"
+git push
+~~~
