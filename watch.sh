@@ -267,7 +267,7 @@ periodical_monologue() {
         echo $last_post > "$last_post_file"
       fi
       debug "  absolute delta: $(abs $(($total_minutes - $last_post)))"
-      if [ $(abs $(($total_minutes - $last_post))) -lt $max_lag ]
+      if [ $(abs $(($total_minutes - $last_post))) -le $max_lag ]
       then
         debug 'Already posted in this period.'
         sleep $process_interval
