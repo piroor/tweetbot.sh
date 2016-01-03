@@ -377,7 +377,7 @@ echo_with_probability() {
 
 try_lock() {
   local name="$1"
-  mkdir "$status_dir/lock.$name" > /dev/null
+  mkdir "$status_dir/lock.$name" 2>&1 > /dev/null
 }
 
 try_lock_until_success() {
