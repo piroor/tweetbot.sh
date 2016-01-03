@@ -100,7 +100,7 @@ if [ \$now -ge $start -a \$now -le $end ]
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
   message="\$(extract_message "$messages_file" | echo_with_probability 60)"
-  if [ "\$message" != '']
+  if [ "\$message" != '' ]
   then
     echo "\$message"
     exit \$?
