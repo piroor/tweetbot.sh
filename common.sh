@@ -51,11 +51,12 @@ mkdir -p "$log_dir"
 
 logfile="$log_dir/general.log"
 logmodule="$TWEET_LOGMODULE"
+logdate_format='%Y-%m-%d %H:%M:%s'
 
 log() {
   local logmodule_part=''
   [ "$logmodule" != '' ] && logmodule_part=" $logmodule"
-  local message="[$(date)$logmodule_part] $*"
+  local message="[$(date +$logdate_format)$logmodule_part] $*"
   echo "$message" 1>&2
   echo "$message" >> "$logfile"
 }
@@ -64,7 +65,7 @@ debug() {
   [ "$TWEETBOT_DEBUG" = '' ] && return 0
   local logmodule_part=''
   [ "$logmodule" != '' ] && logmodule_part=" $logmodule"
-  local message="[$(date)$logmodule_part] <debug> $*"
+  local message="[$(date +$logdate_format)$logmodule_part] <debug> $*"
   echo "$message" 1>&2
   echo "$message" >> "$logfile"
 }
