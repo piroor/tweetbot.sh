@@ -267,6 +267,12 @@ on_replied() {
 post_replies() {
   local id=$1
 
+  if is_already_replied "$id"
+  then
+    log '  => already replied'
+    return 1
+  fi
+
   log "Sending replies to $id..."
   while read -r body
   do
@@ -289,6 +295,12 @@ post_quotation() {
   local owner=$1
   local id=$2
   local url="https://twitter.com/$owner/status/$id"
+
+  if is_already_replied "$id"
+  then
+    log '  => already replied'
+    return 1
+  fi
 
   log "Quoting the tweet $id by $owner..."
   while read -r body
