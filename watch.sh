@@ -221,7 +221,7 @@ calculate_monologue_probability() {
   # 目標時刻から何分ずれているかを求める
   local lag=$(($target_minutes % $MONOLOGUE_INTERVAL_MINUTES))
   # 目標時刻からのずれがhalf_intervalを超えている場合、目標時刻より手前方向のずれと見なす
-  [ $lag -gt $half_interval ] lag=$(($MONOLOGUE_INTERVAL_MINUTES - $lag))
+  [ $lag -gt $half_interval ] && lag=$(($MONOLOGUE_INTERVAL_MINUTES - $lag))
 
   local probability=$(( 100 - ($lag * 80 / $max_lag) + 10 ))
   if [ $probability -lt 10 ]
