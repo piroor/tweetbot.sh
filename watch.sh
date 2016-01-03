@@ -254,7 +254,7 @@ periodical_monologue() {
       debug "  delta from $last_post: $delta"
       if [ $delta -lt 0 ]
       then
-        delta=$(( $one_day_in_minutes - $last_post ))
+        delta=$(( $one_day_in_minutes - $last_post + $current_minutes ))
         debug "  delta => $delta"
       fi
       if [ $delta -le $period_span ]
