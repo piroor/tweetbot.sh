@@ -339,13 +339,6 @@ on_dm_processed() {
 #=============================================================
 # Utilities for randomization
 
-choose_random_one() {
-  local input="$(cat)"
-  local n_lines=$(echo "$input" | wc -l)
-  local index=$(((\$RANDOM % $n_lines) + 1))
-  echo "$input" | sed -n "${index}p"
-}
-
 # Succeeds with the probability N% (0-100)
 run_with_probability() {
   [ $(($RANDOM % 100)) -lt $1 ]

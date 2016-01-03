@@ -25,13 +25,6 @@ case \$(uname) in
     ;;
 esac
 
-choose_random_one() {
-  local input="\$(cat)"
-  local n_lines="\$(echo "\$input" | wc -l)"
-  local index=\$(((\$RANDOM % \$n_lines) + 1))
-  echo "\$input" | sed -n "\${index}p"
-}
-
 extract_message() {
   local source="\$1"
   if [ ! -f "\$source" ]
@@ -42,7 +35,7 @@ extract_message() {
 
   local messages="\$(cat "\$source")"
   [ "\$messages" = '' ] && return 1
-  echo "\$messages" | choose_random_one
+  echo "\$messages" | shuf -n 1
 }
 
 echo_with_probability() {

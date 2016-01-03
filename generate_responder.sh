@@ -22,13 +22,6 @@ input="\$(cat |
             # normalize waves
             sed 's/〜/～/g')"
 
-choose_random_one() {
-  local input="\$(cat)"
-  local n_lines="\$(echo "\$input" | wc -l)"
-  local index=\$(((\$RANDOM % \$n_lines) + 1))
-  echo "\$input" | sed -n "\${index}p"
-}
-
 # echo the input with the probability N% (0-100)
 echo_with_probability() {
   local probability=\$1
@@ -50,7 +43,7 @@ extract_response() {
 
   [ "\$responses" = '' ] && return 1
 
-  echo "\$responses" | choose_random_one
+  echo "\$responses" | shuf -n 1
 }
 
 FIN
