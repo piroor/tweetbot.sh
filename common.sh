@@ -51,7 +51,7 @@ mkdir -p "$log_dir"
 
 logfile="$log_dir/general.log"
 logmodule="$TWEET_LOGMODULE"
-logdate_format='%Y-%m-%d %H:%M:%s'
+logdate_format='%Y-%m-%d %H:%M:%S'
 
 log() {
   local logmodule_part=''
