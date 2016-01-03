@@ -50,16 +50,23 @@ log_dir="$TWEET_BASE_DIR/logs"
 mkdir -p "$log_dir"
 
 logfile="$log_dir/general.log"
+logmodule=''
 
 log() {
-  echo "$*" 1>&2
-  echo "[$(date)] $*" >> "$logfile"
+  local logmodule_part=''
+  [ "$logmodule" != '' ] && logmodule_part=" $logmodule"
+  local message="[$(date)$logmodule_part] $*"
+  echo "$message" 1>&2
+  echo "$message" >> "$logfile"
 }
 
 debug() {
   [ "$TWEETBOT_DEBUG" = '' ] && return 0
-  echo "$*" 1>&2
-  echo "[$(date)] debug: $*" >> "$logfile"
+  local logmodule_part=''
+  [ "$logmodule" != '' ] && logmodule_part=" $logmodule"
+  local message="[$(date)$logmodule_part] <debug> $*"
+  echo "$message" 1>&2
+  echo "$message" >> "$logfile"
 }
 
 # Orphan processes can be left after Ctrl-C or something,

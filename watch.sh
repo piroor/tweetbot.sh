@@ -77,6 +77,7 @@ COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET
 #   https://dev.twitter.com/streaming/overview/request-parameters#track
 
 periodical_search() {
+  logmodule='search'
   local count=100
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
@@ -97,6 +98,7 @@ periodical_search() {
       debug "=> $tweet"
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
+      debug "New search result detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       if [ $id -gt $last_id ]
@@ -113,6 +115,7 @@ periodical_search() {
       # into the streaming API. To prevent duplicated responses,
       # I handle it with delay for now...
       sleep 30s
+      debug "Processing $id as $type..."
       case "$type" in
         mention )
           echo "$tweet" | "$tools_dir/handle_mention.sh"
@@ -157,6 +160,7 @@ fi
 #   in the stream.
 
 periodical_fetch_direct_messages() {
+  logmodule='dm'
   local count=100
   local last_id_file="$status_dir/last_fetched_dm"
   local last_id=''
@@ -172,9 +176,9 @@ periodical_fetch_direct_messages() {
     debug 'Processing results of REST direct messages API...'
     while read -r message
     do
-      debug "=> $message"
       [ "$message" = '' ] && continue
       id="$(echo "$message" | jq -r .id_str)"
+      debug "New DM detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       if [ $id -gt $last_id ]
@@ -233,6 +237,7 @@ calculate_monologue_probability() {
 }
 
 periodical_monologue() {
+  logmodule='monologue'
   local last_post_file="$status_dir/last_monologue"
   local last_post=''
   [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
