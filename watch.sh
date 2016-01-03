@@ -238,27 +238,26 @@ periodical_monologue() {
   [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
 
   local process_interval=1m
+  local one_day_in_minutes=$(( 24 * 60 ))
 
   while true
   do
     debug 'Processing monologue...'
 
-    local total_minutes=$(time_to_minutes $(date +%H:%M))
-    debug "  $total_minutes minutes past from 00:00"
+    local current_minutes=$(time_to_minutes $(date +%H:%M))
+    debug "  $current_minutes minutes past from 00:00"
 
     # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
     if [ "$last_post" != '' ]
     then
-      local delta=$(($total_minutes - $last_post))
+      local delta=$(($current_minutes - $last_post))
       debug "  delta from $last_post: $delta"
       if [ $delta -lt 0 ]
       then
-        last_post=$(( $last_post - (24 * 60) ))
-        debug "  last_post => $last_post"
-        echo $last_post > "$last_post_file"
+        delta=$(( $one_day_in_minutes - $last_post ))
+        debug "  delta => $delta"
       fi
-      debug "  absolute delta: $(abs $(($total_minutes - $last_post)))"
-      if [ $(abs $(($total_minutes - $last_post))) -le $period_span ]
+      if [ $delta -le $period_span ]
       then
         debug 'Already posted in this period.'
         sleep $process_interval
@@ -269,13 +268,13 @@ periodical_monologue() {
     local should_post=0
 
     # 振れ幅の最後のタイミングかどうかを判定
-    lag=$(($total_minutes % $MONOLOGUE_INTERVAL_MINUTES))
+    lag=$(($current_minutes % $MONOLOGUE_INTERVAL_MINUTES))
     if [ $lag -eq $max_lag ]
     then
       debug "Nothing was posted in this period."
       should_post=1
     else
-      probability=$(calculate_monologue_probability $total_minutes)
+      probability=$(calculate_monologue_probability $current_minutes)
       debug "Posting probability: $probability %"
       if run_with_probability $probability
       then
@@ -298,8 +297,8 @@ periodical_monologue() {
         log '  => failed to post'
         log "     result: $result"
       fi
-      last_post=$total_minutes
-      echo $total_minutes > "$last_post_file"
+      last_post=$current_minutes
+      echo $current_minutes > "$last_post_file"
     fi
 
     sleep $process_interval
