@@ -58,7 +58,7 @@ trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
 
 # Sub process 1: watching mentions with the streaming API
 
-COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\""
+COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" TWEET_LOGMODULE='streaming'"
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
@@ -118,16 +118,20 @@ periodical_search() {
       debug "Processing $id as $type..."
       case "$type" in
         mention )
-          echo "$tweet" | "$tools_dir/handle_mention.sh"
+          echo "$tweet" |
+            env TWEET_LOGMODULE='search' "$tools_dir/handle_mention.sh"
           ;;
         retweet )
-          echo "$tweet" | "$tools_dir/handle_retweet.sh"
+          echo "$tweet" |
+            env TWEET_LOGMODULE='search' "$tools_dir/handle_retweet.sh"
           ;;
         quotation )
-          echo "$tweet" | "$tools_dir/handle_quotation.sh"
+          echo "$tweet" |
+            env TWEET_LOGMODULE='search' "$tools_dir/handle_quotation.sh"
           ;;
         search-result )
-          echo "$tweet" | "$tools_dir/handle_search_result.sh"
+          echo "$tweet" |
+            env TWEET_LOGMODULE='search' "$tools_dir/handle_search_result.sh"
           ;;
       esac
       sleep 3s
@@ -186,7 +190,8 @@ periodical_fetch_direct_messages() {
         last_id="$id"
         echo "$last_id" > "$last_id_file"
       fi
-      echo "$message" | "$tools_dir/handle_dm.sh"
+      echo "$message" |
+        env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
