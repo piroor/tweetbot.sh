@@ -265,24 +265,18 @@ periodical_monologue() {
       fi
     fi
 
-    local should_post=0
-
     # 振れ幅の最後のタイミングかどうかを判定
     lag=$(($current_minutes % $MONOLOGUE_INTERVAL_MINUTES))
     if [ $lag -eq $max_lag ]
     then
       debug "Nothing was posted in this period."
-      should_post=1
+      probability=100
     else
       probability=$(calculate_monologue_probability $current_minutes)
-      debug "Posting probability: $probability %"
-      if run_with_probability $probability
-      then
-        should_post=1
-      fi
     fi
 
-    if [ $should_post -eq 1 ]
+    debug "Posting probability: $probability %"
+    if run_with_probability $probability
     then
       debug "Let's post!"
       local body="$("$monologue_selector")"
