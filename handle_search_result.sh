@@ -11,12 +11,16 @@ do
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$screen_name/status/$id"
 
+  key="search_result.$id"
+  try_lock_until_success "$key"
+
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
 
   if echo "$tweet" | expired_by_seconds $((24 * 60 * 60))
   then
     log " => ignored, because this is tweeted one day or more ago"
+    unlock "$key"
     continue
   fi
 
@@ -26,6 +30,7 @@ do
   if echo "$body" | egrep "^RT @[^:]+:" > /dev/null
   then
     log " => ignored, because this is a retweet"
+    unlock "$key"
     continue
   fi
 
@@ -36,6 +41,7 @@ do
     # Don't favorite and reply to the tweet
     # if it is a "don't respond" case.
     log " => don't response case"
+    unlock "$key"
     continue
   fi
 
@@ -63,10 +69,13 @@ do
       if [ $? != 0 -o "$responses" = '' ]
       then
         log " => don't quote case"
-        continue
+        unlock "$key"
+      else
+        echo "$responses" |
+          post_quotation "$screen_name" "$id"
       fi
-      echo "$responses" |
-        post_quotation "$screen_name" "$id"
     fi
   fi
+
+  unlock "$key"
 done

@@ -11,6 +11,9 @@ do
   owner="$(echo "$tweet" | jq -r .user.screen_name)"
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$owner/status/$id"
+
+  try_lock_until_success "retweet.$id"
+
   log '=============================================================='
   log "Retweeted by $owner at $url"
 
@@ -18,4 +21,6 @@ do
   then
     echo "$tweet" | follow_owner
   fi
+
+  unlock "retweet.$id"
 done

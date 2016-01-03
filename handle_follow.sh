@@ -9,6 +9,9 @@ while read -r event
 do
   follower="$(echo "$event" | jq -r .source.screen_name)"
 
+  key="follow.$follower"
+  try_lock_until_success "$key"
+
   log '=============================================================='
   log "Followed by $follower"
 
@@ -24,4 +27,6 @@ do
       log "     result: $result"
     fi
   fi
+
+  unlock "$key"
 done

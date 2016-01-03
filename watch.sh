@@ -53,7 +53,7 @@ kill_descendants() {
   fi
 }
 self_pid=$$
-trap 'kill_descendants $self_pid; exit 0' HUP INT QUIT KILL TERM
+trap 'kill_descendants $self_pid; clear_all_lock; exit 0' HUP INT QUIT KILL TERM
 
 
 # Sub process 1: watching mentions with the streaming API
@@ -110,10 +110,6 @@ periodical_search() {
                   -s "$my_screen_name" \
                   -k "$keywords_for_search_results")"
       debug "   type: $type"
-      # When the REST search founds the tweet, it also appears
-      # into the streaming API. To prevent duplicated responses,
-      # I handle it with delay for now...
-      sleep 30s
       debug "Processing $id as $type..."
       case "$type" in
         mention )

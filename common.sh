@@ -373,6 +373,34 @@ echo_with_probability() {
 
 
 #=============================================================
+# Misc.
+
+try_lock() {
+  local name="$1"
+  mkdir "$status_dir/lock.$name" > /dev/null
+}
+
+try_lock_until_success() {
+  local name="$1"
+  while true
+  do
+    try_lock "$name" && break
+    sleep 1s
+  done
+}
+
+unlock() {
+  local name="$1"
+  rm -rf "$status_dir/lock.$name"
+}
+
+clear_all_lock() {
+  (cd $status_dir &&
+    rm -rf lock.*)
+}
+
+
+#=============================================================
 # Initialize list of search queries
 query=''
 keywords=''

@@ -12,18 +12,23 @@ do
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$owner/status/$id"
 
+  key="quotation.$id"
+  try_lock_until_success "$key"
+
   log '=============================================================='
   log "Quoted by $owner at $url"
 
   if echo "$tweet" | expired_by_seconds $((30 * 60))
   then
     log " => ignored, because this is tweeted 30 minutes or more ago"
+    unlock "$key"
     continue
   fi
 
   if is_already_replied "$id"
   then
     log '  => already responded'
+    unlock "$key"
     continue
   fi
 
@@ -43,6 +48,7 @@ do
     # Don't follow, favorite, and reply to the tweet
     # if it is a "don't respond" case.
     log " no response"
+    unlock "$key"
     continue
   fi
 
@@ -84,10 +90,12 @@ do
       if [ $? != 0 -o "$responses" = '' ]
       then
         log " => don't quote case"
-        continue
+      else
+        echo "$responses" |
+          post_quotation "$owner" "$id"
       fi
-      echo "$responses" |
-        post_quotation "$owner" "$id"
     fi
   fi
+
+  unlock "$key"
 done
