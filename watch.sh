@@ -95,7 +95,6 @@ periodical_search() {
     debug 'Processing results of REST search API...'
     while read -r tweet
     do
-      debug "=> $tweet"
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
       debug "New search result detected: $id"
