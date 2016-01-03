@@ -216,13 +216,15 @@ handle_search_result() {
   fi
 }
 
-while read -r message
+lock_key=''
+
+while unlock "$lock_key" && read -r message
 do
   sender="$(echo "$message" | jq -r .sender_screen_name)"
   id="$(echo "$message" | jq -r .id_str)"
 
-  key="dm.$id"
-  try_lock_until_success "$key"
+  lock_key="dm.$id"
+  try_lock_until_success "$lock_key"
 
   log '=============================================================='
   log "DM $id from $sender"
@@ -230,21 +232,18 @@ do
   if echo "$message" | expired_by_seconds $((30 * 60))
   then
     log " => ignored, because this is sent 30 minutes or more ago"
-    unlock "$key"
     continue
   fi
 
   if echo "$sender" | egrep -v "$administrators" > /dev/null
   then
     log ' => not an administrator, ignore it'
-    unlock "$key"
     continue
   fi
 
   if is_already_processed_dm "$id"
   then
     log ' => already processed, ignore it'
-    unlock "$key"
     continue
   fi
 
@@ -287,5 +286,4 @@ do
   esac
 
   on_dm_processed
-  unlock "$key"
 done

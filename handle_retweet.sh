@@ -6,13 +6,16 @@ source "$tools_dir/common.sh"
 
 logfile="$log_dir/handle_retweet.log"
 
-while read -r tweet
+lock_key=''
+
+while unlock "$lock_key" && read -r tweet
 do
   owner="$(echo "$tweet" | jq -r .user.screen_name)"
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$owner/status/$id"
 
-  try_lock_until_success "retweet.$id"
+  lock_key="retweet.$id"
+  try_lock_until_success "$lock_key"
 
   log '=============================================================='
   log "Retweeted by $owner at $url"
@@ -21,6 +24,4 @@ do
   then
     echo "$tweet" | follow_owner
   fi
-
-  unlock "retweet.$id"
 done

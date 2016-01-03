@@ -6,14 +6,16 @@ source "$tools_dir/common.sh"
 
 logfile="$log_dir/handle_mention.log"
 
-while read -r tweet
+lock_key=''
+
+while unlock "$lock_key" && read -r tweet
 do
   owner="$(echo "$tweet" | jq -r .user.screen_name)"
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$owner/status/$id"
 
-  key="mention.$id"
-  try_lock_until_success "$key"
+  lock_key="mention.$id"
+  try_lock_until_success "$lock_key"
 
   log '=============================================================='
   log "Mentioned by $owner at $url"
@@ -21,14 +23,12 @@ do
   if echo "$tweet" | expired_by_seconds $((30 * 60))
   then
     log " => ignored, because this is tweeted 30 minutes or more ago"
-    unlock "$key"
     continue
   fi
 
   if is_already_replied "$id"
   then
     log '  => already replied'
-    unlock "$key"
     continue
   fi
 
@@ -47,7 +47,6 @@ do
     # Don't follow, favorite, and reply to the tweet
     # if it is a "don't respond" case.
     log " no response"
-    unlock "$key"
     continue
   fi
 
@@ -76,6 +75,4 @@ do
       sed "s/^/@${owner} /" |
       post_replies "$id"
   fi
-
-  unlock "$key"
 done

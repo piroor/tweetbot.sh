@@ -391,6 +391,7 @@ try_lock_until_success() {
 
 unlock() {
   local name="$1"
+  [ "$name" = '' ] && return 0
   rm -rf "$status_dir/lock.$name"
 }
 

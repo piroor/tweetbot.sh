@@ -5,12 +5,14 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 logfile="$log_dir/handle_follow.log"
 
-while read -r event
+lock_key=''
+
+while unlock "$lock_key" && read -r event
 do
   follower="$(echo "$event" | jq -r .source.screen_name)"
 
-  key="follow.$follower"
-  try_lock_until_success "$key"
+  lock_key="follow.$follower"
+  try_lock_until_success "$lock_key"
 
   log '=============================================================='
   log "Followed by $follower"
@@ -27,6 +29,4 @@ do
       log "     result: $result"
     fi
   fi
-
-  unlock "$key"
 done

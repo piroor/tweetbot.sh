@@ -5,14 +5,16 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 logfile="$log_dir/handle_search_result.log"
 
-while read -r tweet
+lock_key=''
+
+while unlock "$lock_key" && read -r tweet
 do
   screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
   id="$(echo "$tweet" | jq -r .id_str)"
   url="https://twitter.com/$screen_name/status/$id"
 
-  key="search_result.$id"
-  try_lock_until_success "$key"
+  lock_key="search_result.$id"
+  try_lock_until_success "$lock_key"
 
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
@@ -20,7 +22,6 @@ do
   if echo "$tweet" | expired_by_seconds $((24 * 60 * 60))
   then
     log " => ignored, because this is tweeted one day or more ago"
-    unlock "$key"
     continue
   fi
 
@@ -30,7 +31,6 @@ do
   if echo "$body" | egrep "^RT @[^:]+:" > /dev/null
   then
     log " => ignored, because this is a retweet"
-    unlock "$key"
     continue
   fi
 
@@ -41,7 +41,6 @@ do
     # Don't favorite and reply to the tweet
     # if it is a "don't respond" case.
     log " => don't response case"
-    unlock "$key"
     continue
   fi
 
@@ -69,13 +68,10 @@ do
       if [ $? != 0 -o "$responses" = '' ]
       then
         log " => don't quote case"
-        unlock "$key"
       else
         echo "$responses" |
           post_quotation "$screen_name" "$id"
       fi
     fi
   fi
-
-  unlock "$key"
 done
