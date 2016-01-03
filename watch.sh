@@ -206,9 +206,10 @@ periodical_fetch_direct_messages &
 # minimum interval = 10minutes
 [ $MONOLOGUE_INTERVAL_MINUTES -le 10 ] && MONOLOGUE_INTERVAL_MINUTES=10
 
-max_lag=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
-[ $max_lag -gt 10 ] && max_lag=10
-half_max_lag=$(( $max_lag / 2 ))
+period_span=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
+[ $period_span -gt 10 ] && period_span=10
+max_lag=$(( $period_span / 2 ))
+half_interval=$(( $MONOLOGUE_INTERVAL_MINUTES / 2 ))
 
 abs() {
   echo "sqrt($1 ^ 2)" | bc
@@ -216,24 +217,14 @@ abs() {
 
 calculate_monologue_probability() {
   local target_minutes=$1
-  if [ "$target_minutes" = '' ]
-  then
-    echo 0
-    return 1
-  fi
 
   # 目標時刻から何分ずれているかを求める
   local lag=$(($target_minutes % $MONOLOGUE_INTERVAL_MINUTES))
-  # 目標時刻からのずれがhalf_max_lagを超えている場合、目標時刻より手前である
-  if [ $lag -gt $half_max_lag ]
-  then
-    lag=$(abs $(($lag - $MONOLOGUE_INTERVAL_MINUTES)))
-  fi
+  # 目標時刻からのずれがhalf_intervalを超えている場合、目標時刻より手前方向のずれと見なす
+  [ $lag -gt $half_interval ] lag=$(($MONOLOGUE_INTERVAL_MINUTES - $lag))
 
-  local probability=$(echo "scale=1; (($half_max_lag - $lag) / $half_max_lag * 80) + 10" |
-                        bc |
-                        $esed 's/\..+$//')
-  if [ $probability -lt 0 ]
+  local probability=$(( 100 - ($lag / $max_lag * 80) + 10 ))
+  if [ $probability -lt 10 ]
   then
     echo 0
   else
@@ -267,7 +258,7 @@ periodical_monologue() {
         echo $last_post > "$last_post_file"
       fi
       debug "  absolute delta: $(abs $(($total_minutes - $last_post)))"
-      if [ $(abs $(($total_minutes - $last_post))) -le $max_lag ]
+      if [ $(abs $(($total_minutes - $last_post))) -le $period_span ]
       then
         debug 'Already posted in this period.'
         sleep $process_interval
@@ -279,7 +270,7 @@ periodical_monologue() {
 
     # 振れ幅の最後のタイミングかどうかを判定
     lag=$(($total_minutes % $MONOLOGUE_INTERVAL_MINUTES))
-    if [ $lag -eq $half_max_lag ]
+    if [ $lag -eq $max_lag ]
     then
       debug "Nothing was posted in this period."
       should_post=1
