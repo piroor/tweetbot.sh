@@ -187,9 +187,19 @@ expired_by_seconds() {
   [ $((now - created_at)) -gt $expire_seconds ]
 }
 
+is_protected_user() {
+  cat | jq -r .user.protected | grep 'true' > /dev/null
+}
+
 is_reply() {
   local replied_id="$(jq -r .in_reply_to_status_id_str)"
   [ "$replied_id" != 'null' -a "$replied_id" != '' ]
+}
+
+other_replied_people() {
+  cat |
+    $esed -e "s/^((@[^ ]+[$whitespaces]+)+).*/\1/" \
+          -e "s/@${TWEET_SCREEN_NAME}[$whitespaces]+//"
 }
 
 follow_owner() {

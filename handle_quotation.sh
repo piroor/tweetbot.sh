@@ -61,7 +61,11 @@ do
   then
     echo "$tweet" | favorite
   fi
-  if is_true "$RETWEET_QUOTATIONS"
+
+  is_protected=$(echo "$tweet" | is_protected_user && echo 1)
+
+  # Don't RT protected user's tweet!
+  if [ "$is_protected" != '1' ] && is_true "$RETWEET_QUOTATIONS"
   then
     echo "$tweet" | retweet
   fi
@@ -74,15 +78,22 @@ do
       # regenerate responses with is_reply parameter
       responses="$(echo "$body" | env IS_REPLY=$is_reply "$responder")"
       log " response: $response"
+      other_replied_people="$(echo "$body" | other_replied_people)"
       echo "$responses" |
+        # make response body a mention
+        sed "s/^/@$owner $other_replied_people/" |
         post_replies "$id"
     elif echo "$body" | egrep "^[\._,:;]?@$me" > /dev/null
     then
       log "Seems to be a mention but for public."
       log " response: $response"
+      other_replied_people="$(echo "$body" | other_replied_people)"
       echo "$responses" |
+        # make response body a mention
+        sed "s/^/.@$owner $other_replied_people/" |
         post_replies "$id"
-    else
+    elif [ "$is_protected" != '1' ] # Don't quote protected tweet!
+    then
       log "Seems to be an RT with quotation."
       # Don't post default questions as quotation!
       responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"

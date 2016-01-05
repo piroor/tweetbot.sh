@@ -51,7 +51,11 @@ do
   then
     echo "$tweet" | favorite
   fi
-  if is_true "$RETWEET_SEARCH_RESULTS"
+
+  is_protected=$(echo "$tweet" | is_protected_user && echo 1)
+
+  # Don't RT protected user's tweet!
+  if [ "$is_protected" != '1' ] && is_true "$RETWEET_SEARCH_RESULTS"
   then
     echo "$tweet" | retweet
   fi
@@ -61,7 +65,7 @@ do
   # as a mention, we should retweet it.
   if echo "$body" | sed "s/^@$me//" | egrep -i "$keywords_matcher" > /dev/null
   then
-    if is_true "$RESPOND_TO_SEARCH_RESULTS"
+    if [ "$is_protected" != '1' ] && is_true "$RESPOND_TO_SEARCH_RESULTS"
     then
       # Don't post default questions as quotation!
       responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
