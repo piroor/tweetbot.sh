@@ -135,7 +135,8 @@ periodical_search() {
                 -l "$lang" \
                 -c "$count" \
                 -s "$last_id" |
-                jq -c '.statuses[]')
+                jq -c '.statuses[]' |
+                tac)
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
@@ -191,7 +192,8 @@ periodical_fetch_direct_messages() {
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
                 -s "$last_id" |
-                jq -c '.[]')
+                jq -c '.[]' |
+                tac)
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
     sleep 3m
   done
