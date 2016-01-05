@@ -70,9 +70,12 @@ do
 
   if is_true "$RESPOND_TO_MENTIONS"
   then
+    other_replied_people="$(echo "$body" |
+                              $esed -e "s/^((@[^ ]+[$whitespaces]+)+).*/\1/" \
+                                    -e "s/@${TWEET_SCREEN_NAME}[$whitespaces]+//")"
     echo "$responses" |
       # make response body a mention
-      sed "s/^/@${owner} /" |
+      sed "s/^/@$owner $other_replied_people/" |
       post_replies "$id"
   fi
 done
