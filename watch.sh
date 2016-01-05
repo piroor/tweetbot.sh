@@ -195,7 +195,7 @@ periodical_fetch_direct_messages() {
                 jq -c '.[]' |
                 tac)
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
-    sleep 3m
+    sleep 1m
   done
 }
 periodical_fetch_direct_messages &
