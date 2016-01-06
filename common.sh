@@ -198,7 +198,7 @@ is_reply() {
 
 other_replied_people() {
   cat |
-    $esed -e "s/^((@[^ ]+[$whitespaces]+)+).*/\1/" \
+    $esed -e "s/^((@[^$whitespaces]+[$whitespaces]+)+)?.*/\1/" \
           -e "s/@${TWEET_SCREEN_NAME}[$whitespaces]+//"
 }
 
