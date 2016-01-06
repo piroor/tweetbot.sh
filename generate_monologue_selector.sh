@@ -76,7 +76,8 @@ then
       nkf -Lu "$path" >> "${messages_file}.tmp"
       echo '' >> "$messages_file"
     done
-    egrep -v "^#|^[$whitespaces]*$" "${messages_file}.tmp" > "$messages_file"
+    egrep -v "^#|^[$whitespaces]*$" "${messages_file}.tmp" |
+      shuf > "$messages_file"
     rm -rf "${messages_file}.tmp"
 
     # no timespan given
