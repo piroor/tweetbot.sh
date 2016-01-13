@@ -19,10 +19,13 @@ do
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
 
+  if [ "$FORCE_PROCESS" != 'yes' ]
+  then
   if echo "$tweet" | expired_by_seconds $((24 * 60 * 60))
   then
     log " => ignored, because this is tweeted one day or more ago"
     continue
+  fi
   fi
 
   body="$(echo "$tweet" | "$tweet_sh" body)"

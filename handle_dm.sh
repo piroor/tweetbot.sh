@@ -204,7 +204,7 @@ handle_search_result() {
   local target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local tweet="$("$tweet_sh" fetch "$target")"
   
-  local output="$(echo "$tweet" | "$tools_dir/handle_search_result.sh" 2>&1)"
+  local output="$(echo "$tweet" | env FORCE_PROCESS=yes "$tools_dir/handle_search_result.sh" 2>&1)"
   if [ $? = 0 ]
   then
     log "Successfully processed a search result: \"$target\""

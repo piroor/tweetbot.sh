@@ -269,7 +269,7 @@ retweet() {
 
 is_already_replied() {
   local id="$1"
-  [ -f "$already_replied_dir/$id" ]
+  [ -f "$already_replied_dir/$id" -a "$FORCE_PROCESS" != 'yes' ]
 }
 
 on_replied() {
