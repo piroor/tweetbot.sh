@@ -400,12 +400,32 @@ Typical contents of a definition file are here:
 (all-greeting.txt)
 
 ~~~
+# comment
+
 Hi! I'm a chatterbot. Please talk with me!
 Yeah! I'm a chatterbot. Please talk with me!
 Did you know? I'm a chatterbot!
 ~~~
 
+All comment lines starting with `#` are ignored.
+
 This file must be encoded in UTF-8.
+
+#### Directive to specify range of dates
+
+You can specify activation dates for each definition file, like:
+
+~~~
+# date: 2016.01.01-2016.01.10
+
+Happy new year!
+Hi, happy new year!
+~~~
+
+Wildcard is also available. For example:
+
+ * `# date: *.01.01-*.01.10` will be useful for messages like "happy new year" for every year.
+ * `# date: *.*.01-*.*.03` will be useful for messages like "hey, don't forget to do the monthly task!" for every month.
 
 #### Detection order of multiple definition files
 
