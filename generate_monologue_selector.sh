@@ -80,7 +80,8 @@ then
 message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
               while read path
             do
-              date_span="\$(grep '^# *date:')"
+              should_use=0
+              date_span="\$(egrep '^# *date:' \$path)"
               if [ "\$date_span" != '' ]
               then
                 start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3")"
@@ -90,7 +91,10 @@ message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
                 today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
                 [ \$start -gt \$today ] && continue
                 [ \$end -lt \$today ] && continue
+                should_use=1
               fi
+
+              [ \$should_use -eq 0 ] && continue
 
               # convert CR+LF => LF for safety.
               nkf -Lu "\$path" |
