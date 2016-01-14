@@ -52,6 +52,17 @@ time_to_minutes() {
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
+date_to_serial() {
+  local date="\$1"
+  local year=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\1/')
+  local month=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\2/')
+  local day=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\3/')
+  [ "\$year" = '*' ] && year=\$(date +%Y | \$esed 's/^0+//')
+  [ "\$month" = '*' ] && month=\$(date +%M | \$esed 's/^0+//')
+  [ "\$day" = '*' ] && day=\$(date +%d | \$esed 's/^0+//')
+  echo \$(( (\$year * 10000) + (\$month * 100) + \$day ))
+}
+
 now=\$1
 [ "\$now" = '' ] && now="\$(date +%H:%M)"
 now=\$(time_to_minutes \$now)
@@ -62,7 +73,7 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./monologues ]
 then
-  for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all seasonal
+  for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
   do
     timespans="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"
@@ -106,8 +117,26 @@ FIN
   done
 
   cat << FIN >> "$monologue_selector"
-[ "\$DEBUG" != '' ] && echo "Seasonal case: choosing message from \"$status_dir/monologue_seasonal.txt\"" 1>&2
-message="\$(extract_message "$status_dir/monologue_seasonal.txt" | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
+[ "\$DEBUG" != '' ] && echo "Finding seasonal topics..." 1>&2
+message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
+              while read path
+            do
+              date_span="\$(grep '^# *date:')"
+              if [ "\$date_span" != '' ]
+              then
+                start="\$(echo "\$date_span" | cut -d '-' -f 1)"
+                start="\$(date_to_serial "\$start")"
+                end="\$(echo "\$date_span" | cut -d '-' -f 2)"
+                end="\$(date_to_serial "\$end")"
+                today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
+                [ \$start -gt \$today ] && continue
+                [ \$end -lt \$today ] && continue
+              fi
+
+              # convert CR+LF => LF for safety.
+              nkf -Lu "\$path" |
+                grep -v '^#'
+            done | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
 if [ "\$message" != '' ]
 then
   echo "\$message"
