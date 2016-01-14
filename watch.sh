@@ -84,6 +84,7 @@ periodical_search() {
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local keywords_for_search_results="$(echo "$query" | sed 's/ OR /,/g')"
   local id
+  local owner
   local type
   if [ "$last_id" != '' ]
   then
@@ -97,7 +98,8 @@ periodical_search() {
     do
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
-      debug "New search result detected: $id"
+      owner="$(echo "$tweet" | jq -r .user.screen_name)"
+      debug "New search result detected: https://twitter.com/$owner/status/$id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       if [ $id -gt $last_id ]
