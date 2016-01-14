@@ -39,7 +39,7 @@ extract_message() {
 }
 
 echo_with_probability() {
-  if [ \$(($RANDOM % 100)) -lt \$1 ]
+  if [ \$((\$RANDOM % 100)) -lt \$1 ]
   then
     cat
   fi
@@ -77,12 +77,12 @@ if [ -d ./monologues ]
 then
   cat << FIN >> "$monologue_selector"
 [ "\$DEBUG" != '' ] && echo "Finding seasonal message..." 1>&2
-message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
+message="\$(cd "$TWEET_BASE_DIR"; ls ./monologues/seasonal* |
               while read path
             do
               should_use=0
 
-              date_span="\$(egrep '^# *date:' \$path | \$esed 's/^#[^:]+:[^0-9]*//')"
+              date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9]*//')"
               if [ "\$date_span" != '' ]
               then
                 start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
@@ -99,8 +99,8 @@ message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
 
               # convert CR+LF => LF for safety.
               nkf -Lu "\$path" |
-                grep -v '^#'
-            done | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
+                egrep -v '^#|^ *$'
+            done | shuf -n 1 | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
 if [ "\$message" != '' ]
 then
   echo "\$message"
