@@ -58,7 +58,10 @@ trap 'kill_descendants $self_pid; clear_all_lock; exit 0' HUP INT QUIT KILL TERM
 
 # Sub process 1: watching mentions with the streaming API
 
-COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" TWEET_LOGMODULE='streaming'"
+watch_mentions() {
+  local COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" TWEET_LOGMODULE='streaming'"
+  while true
+  do
 "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
   -k "$keywords" \
   -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
@@ -66,8 +69,12 @@ COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET
   -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
   -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
   -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
-  -s "$COMMON_ENV $tools_dir/handle_search_result.sh" \
-  &
+  -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
+    log "Tracking of mentions is unexpectedly stopped. Reconnect after 10sec."
+    sleep 10 # for safety
+  done
+}
+watch_mentions &
 
 
 # Sub process 2: polling for the REST search API
