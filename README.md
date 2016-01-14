@@ -432,6 +432,12 @@ Wildcard is also available. For example:
 The bot will choose one of messages from all files which have same prefix like `all`.
 There is no order.
 
+All definition files are used by the order:
+
+ 1. First, messages are found from the `timely` group. It will be used with the probability 20%.
+ 2. Next, messages are found from groups defined by `MONOLOGUE_TIME_SPAN` for the time span.
+ 3. Finally, messages are found from the `all` group.
+
 #### What you must do when you modify monologue definition files
 
 `watch.sh` scans all existing definition files on its startup, however, new messages and definition files added after the `watch.sh` is started won't be loaded.
