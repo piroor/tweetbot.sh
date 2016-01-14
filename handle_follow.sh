@@ -17,7 +17,7 @@ do
   log '=============================================================='
   log "Followed by $follower"
 
-  user="$(echo "$tweet" | jq -c .source)"
+  user="$(echo "$event" | jq -c .source)"
 
   if echo "$user" | is_protected_user
   then
