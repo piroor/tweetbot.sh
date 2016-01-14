@@ -148,7 +148,6 @@ extract_message "$status_dir/monologue_all.txt"
 exit \$?
 
 FIN
-    else
 
 fi
 
