@@ -27,7 +27,7 @@ esac
 
 extract_message_from_group() {
   local group="\$1"
-  (cd "$TWEET_BASE_DIR"; ls ./monologues/$group* |
+  (cd "$TWEET_BASE_DIR"; ls ./monologues/\$group* |
      while read path
      do
        read_messages "\$path"
