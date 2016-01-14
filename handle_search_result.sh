@@ -55,7 +55,7 @@ do
     echo "$tweet" | favorite
   fi
 
-  is_protected=$(echo "$tweet" | is_protected_user && echo 1)
+  is_protected=$(echo "$tweet" | is_protected_tweet && echo 1)
 
   # Don't RT protected user's tweet!
   if [ "$is_protected" != '1' ] && is_true "$RETWEET_SEARCH_RESULTS"

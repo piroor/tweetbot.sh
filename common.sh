@@ -187,8 +187,32 @@ expired_by_seconds() {
   [ $((now - created_at)) -gt $expire_seconds ]
 }
 
-is_protected_user() {
+is_protected_tweet() {
   cat | jq -r .user.protected | grep 'true' > /dev/null
+}
+
+is_protected_user() {
+  cat | jq -r .protected | grep 'true' > /dev/null
+}
+
+is_spam_like_user() {
+  local user="$(cat)"
+
+  local count="$(echo "$user" | jq -r .statuses_count)"
+  if [ "$count" != 'null' -a $count < 100 ]
+  then
+    log " => too less tweets ($count < 100)"
+    return 0
+  fi
+
+  local description="$(echo "$user" | jq -r .description)"
+  if [ "$description" = '' ]
+  then
+    log " => no description"
+    return 0
+  fi
+
+  return 1
 }
 
 is_reply() {
@@ -208,6 +232,20 @@ follow_owner() {
   local owner="$(echo "$tweet" | jq -r .user.screen_name)"
 
   log "Trying to follow to the owner of $id, $owner..."
+
+  user="$(echo "$tweet" | jq -c .user)"
+
+  if echo "$user" | is_protected_user
+  then
+    log " => protected user should not be followed to avoid privacy issues"
+    return 0
+  fi
+
+  if echo "$user" | is_spam_like_user
+  then
+    log " => spam like user should not be followed"
+    return 0
+  fi
 
   if echo "$tweet" | jq -r .user.following | grep "false"
   then
