@@ -84,9 +84,9 @@ message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
               date_span="\$(egrep '^# *date:' \$path)"
               if [ "\$date_span" != '' ]
               then
-                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
+                start="\$(echo "\$date_span" | \$esed "s/.*\$date_matcher-\$date_matcher.*/\1.\2.\3/")"
                 start="\$(date_to_serial "\$start")"
-                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
+                end="\$(echo "\$date_span" | \$esed "s/.*\$date_matcher-\$date_matcher.*/\4.\5.\6/")"
                 end="\$(date_to_serial "\$end")"
                 today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
                 [ \$start -gt \$today ] && continue
