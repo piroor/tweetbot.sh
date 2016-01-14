@@ -62,7 +62,7 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./monologues ]
 then
-  for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
+  for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all seasonal
   do
     timespans="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"
@@ -80,16 +80,8 @@ then
       shuf > "$messages_file"
     rm -rf "${messages_file}.tmp"
 
-    # no timespan given
-    if [ "$timespans" = "$group" ]
+    if [ "$timespans" != "$group" ]
     then
-      cat << FIN >> "$monologue_selector"
-[ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$messages_file\"" 1>&2
-extract_message "$messages_file"
-exit \$?
-
-FIN
-    else
       for timespan in $(echo "$timespans" | sed 's/,/ /g')
       do
         start="$(echo "$timespan" | cut -d '-' -f 1)"
@@ -112,6 +104,23 @@ FIN
      done
     fi
   done
+
+  cat << FIN >> "$monologue_selector"
+[ "\$DEBUG" != '' ] && echo "Seasonal case: choosing message from \"$status_dir/monologue_seasonal.txt\"" 1>&2
+message="\$(extract_message "$status_dir/monologue_seasonal.txt" | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
+if [ "\$message" != '' ]
+then
+  echo "\$message"
+  exit \$?
+fi
+
+[ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$status_dir/monologue_all.txt\"" 1>&2
+extract_message "$status_dir/monologue_all.txt"
+exit \$?
+
+FIN
+    else
+
 fi
 
 cat << FIN >> "$monologue_selector"
