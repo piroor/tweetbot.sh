@@ -75,6 +75,35 @@ cd "$TWEET_BASE_DIR"
 
 if [ -d ./monologues ]
 then
+  cat << FIN >> "$monologue_selector"
+[ "\$DEBUG" != '' ] && echo "Finding seasonal message..." 1>&2
+message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
+              while read path
+            do
+              date_span="\$(grep '^# *date:')"
+              if [ "\$date_span" != '' ]
+              then
+                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3")"
+                start="\$(date_to_serial "\$start")"
+                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6")"
+                end="\$(date_to_serial "\$end")"
+                today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
+                [ \$start -gt \$today ] && continue
+                [ \$end -lt \$today ] && continue
+              fi
+
+              # convert CR+LF => LF for safety.
+              nkf -Lu "\$path" |
+                grep -v '^#'
+            done | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
+if [ "\$message" != '' ]
+then
+  echo "\$message"
+  exit \$?
+fi
+
+FIN
+
   for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
   do
     timespans="$(echo "$group" | cut -d '/' -f 2-)"
@@ -119,32 +148,6 @@ FIN
   done
 
   cat << FIN >> "$monologue_selector"
-[ "\$DEBUG" != '' ] && echo "Finding seasonal topics..." 1>&2
-message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
-              while read path
-            do
-              date_span="\$(grep '^# *date:')"
-              if [ "\$date_span" != '' ]
-              then
-                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3")"
-                start="\$(date_to_serial "\$start")"
-                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6")"
-                end="\$(date_to_serial "\$end")"
-                today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
-                [ \$start -gt \$today ] && continue
-                [ \$end -lt \$today ] && continue
-              fi
-
-              # convert CR+LF => LF for safety.
-              nkf -Lu "\$path" |
-                grep -v '^#'
-            done | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
-if [ "\$message" != '' ]
-then
-  echo "\$message"
-  exit \$?
-fi
-
 [ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$status_dir/monologue_all.txt\"" 1>&2
 extract_message "$status_dir/monologue_all.txt"
 exit \$?
