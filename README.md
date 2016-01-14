@@ -92,6 +92,8 @@ FOLLOW_ON_MENTIONED=true
 FOLLOW_ON_QUOTED=true
 FOLLOW_ON_RETWEETED=false
 
+SPAM_USER_PATTERN='follow *(back|me)'
+
 FAVORITE_MENTIONS=true
 FAVORITE_QUOTATIONS=true
 FAVORITE_SEARCH_RESULTS=true
@@ -143,6 +145,13 @@ FOLLOW_ON_FOLLOWED=true
 FOLLOW_ON_MENTIONED=true
 FOLLOW_ON_QUOTED=true
 FOLLOW_ON_RETWEETED=false
+~~~
+
+And, you can define blacklist filter to ignore spam accounts.
+The pattern is evaluated as an extended regular expression.
+
+~~~
+SPAM_USER_PATTERN='follow *(back|me)'
 ~~~
 
 #### Auto favorite

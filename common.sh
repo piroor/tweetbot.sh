@@ -114,6 +114,8 @@ FOLLOW_ON_MENTIONED=true
 FOLLOW_ON_QUOTED=true
 FOLLOW_ON_RETWEETED=false
 
+SPAM_USER_PATTERN='follow *(back|me)'
+
 FAVORITE_MENTIONS=true
 FAVORITE_QUOTATIONS=true
 FAVORITE_SEARCH_RESULTS=true
@@ -151,8 +153,8 @@ fi
 #=============================================================
 # Utilities to operate primitive strings
 
-whitespaces=' \f\n\r\t@'
-non_whitespaces='[^ \f\n\r\t@]'
+whitespaces=' \f\n\r\tã€€'
+non_whitespaces='[^ \f\n\r\tã€€]'
 
 # Custom version of sed with extended regexp, "$esed" (like "egerp")
 case $(uname) in
@@ -209,6 +211,12 @@ is_spam_like_user() {
   if [ "$description" = '' ]
   then
     log " => no description"
+    return 0
+  fi
+
+  if echo "$description" | egrep "$SPAM_USER_PATTERN" > /dev/null
+  then
+    log " => matched to the spam pattern"
     return 0
   fi
 
