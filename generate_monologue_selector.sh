@@ -60,7 +60,7 @@ date_to_serial() {
   local month=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\2/")
   local day=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\3/")
   [ "\$year" = '*' ] && year=\$(date +%Y | \$esed 's/^0+//')
-  [ "\$month" = '*' ] && month=\$(date +%M | \$esed 's/^0+//')
+  [ "\$month" = '*' ] && month=\$(date +%m | \$esed 's/^0+//')
   [ "\$day" = '*' ] && day=\$(date +%d | \$esed 's/^0+//')
   echo \$(( (\$year * 10000) + (\$month * 100) + \$day ))
 }
@@ -81,14 +81,15 @@ message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
               while read path
             do
               should_use=0
-              date_span="\$(egrep '^# *date:' \$path)"
+
+              date_span="\$(egrep '^# *date:' \$path | \$esed 's/^#[^:]+:[^0-9]*//')"
               if [ "\$date_span" != '' ]
               then
-                start="\$(echo "\$date_span" | \$esed "s/.*\$date_matcher-\$date_matcher.*/\1.\2.\3/")"
+                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
                 start="\$(date_to_serial "\$start")"
-                end="\$(echo "\$date_span" | \$esed "s/.*\$date_matcher-\$date_matcher.*/\4.\5.\6/")"
+                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
                 end="\$(date_to_serial "\$end")"
-                today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
+                today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
                 [ \$start -gt \$today ] && continue
                 [ \$end -lt \$today ] && continue
                 should_use=1
