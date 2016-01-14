@@ -63,7 +63,6 @@ date_to_serial() {
 
 read_messages() {
   local path="\$1"
-  local should_use=0
 
   local date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9*]*//')"
   if [ "\$date_span" != '' ]
@@ -75,10 +74,7 @@ read_messages() {
     local today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
     [ \$start -gt \$today ] && return 0
     [ \$end -lt \$today ] && return 0
-    should_use=1
   fi
-
-  [ \$should_use -eq 0 ] && return 0
 
   # convert CR+LF => LF for safety.
   nkf -Lu "\$path" |
