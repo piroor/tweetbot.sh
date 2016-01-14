@@ -202,6 +202,18 @@ is_spam_like_user() {
 
   local spam_level=0
 
+  if [ "$(echo "$user" | jq -r .default_profile)" = 'true' ]
+  then
+    log " => default profile"
+    spam_level=$(($spam_level + 1))
+  fi
+
+  if [ "$(echo "$user" | jq -r .default_profile_image)" = 'true' ]
+  then
+    log " => default icon"
+    spam_level=$(($spam_level + 1))
+  fi
+
   local created_at="$(echo "$user" | jq -r .created_at)"
   local created_at=$(date -d "$created_at" +%s)
   local now=$(date +%s)
