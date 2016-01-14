@@ -52,11 +52,13 @@ time_to_minutes() {
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
+date_matcher='0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)'
+
 date_to_serial() {
   local date="\$1"
-  local year=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\1/')
-  local month=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\2/')
-  local day=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\3/')
+  local year=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\1/")
+  local month=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\2/")
+  local day=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\3/")
   [ "\$year" = '*' ] && year=\$(date +%Y | \$esed 's/^0+//')
   [ "\$month" = '*' ] && month=\$(date +%M | \$esed 's/^0+//')
   [ "\$day" = '*' ] && day=\$(date +%d | \$esed 's/^0+//')
@@ -124,9 +126,9 @@ message="\$(ls $TWEET_BASE_DIR/monologues/seasonal* |
               date_span="\$(grep '^# *date:')"
               if [ "\$date_span" != '' ]
               then
-                start="\$(echo "\$date_span" | cut -d '-' -f 1)"
+                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3")"
                 start="\$(date_to_serial "\$start")"
-                end="\$(echo "\$date_span" | cut -d '-' -f 2)"
+                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6")"
                 end="\$(date_to_serial "\$end")"
                 today="\$(date_to_serial "\$(date +%Y.%M.%d)")"
                 [ \$start -gt \$today ] && continue
