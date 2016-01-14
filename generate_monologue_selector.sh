@@ -82,7 +82,7 @@ message="\$(cd "$TWEET_BASE_DIR"; ls ./monologues/seasonal* |
             do
               should_use=0
 
-              date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9]*//')"
+              date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9*]*//')"
               if [ "\$date_span" != '' ]
               then
                 start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
