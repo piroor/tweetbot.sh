@@ -25,17 +25,13 @@ case \$(uname) in
     ;;
 esac
 
-extract_message() {
-  local source="\$1"
-  if [ ! -f "\$source" ]
-  then
-    echo ""
-    return 0
-  fi
-
-  local messages="\$(cat "\$source")"
-  [ "\$messages" = '' ] && return 1
-  echo "\$messages" | shuf -n 1
+extract_message_from_group() {
+  local group="\$1"
+  (cd "$TWEET_BASE_DIR"; ls ./monologues/$group* |
+     while read path
+     do
+       read_messages "\$path"
+     done | shuf -n 1)
 }
 
 echo_with_probability() {
@@ -65,6 +61,30 @@ date_to_serial() {
   echo \$(( (\$year * 10000) + (\$month * 100) + \$day ))
 }
 
+read_messages() {
+  local path="\$1"
+  local should_use=0
+
+  local date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9*]*//')"
+  if [ "\$date_span" != '' ]
+  then
+    local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
+    local start="\$(date_to_serial "\$start")"
+    local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
+    local end="\$(date_to_serial "\$end")"
+    local today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
+    [ \$start -gt \$today ] && return 0
+    [ \$end -lt \$today ] && return 0
+    should_use=1
+  fi
+
+  [ \$should_use -eq 0 ] && return 0
+
+  # convert CR+LF => LF for safety.
+  nkf -Lu "\$path" |
+    egrep -v '^#|^ *$'
+}
+
 now=\$1
 [ "\$now" = '' ] && now="\$(date +%H:%M)"
 now=\$(time_to_minutes \$now)
@@ -76,31 +96,8 @@ cd "$TWEET_BASE_DIR"
 if [ -d ./monologues ]
 then
   cat << FIN >> "$monologue_selector"
-[ "\$DEBUG" != '' ] && echo "Finding seasonal message..." 1>&2
-message="\$(cd "$TWEET_BASE_DIR"; ls ./monologues/seasonal* |
-              while read path
-            do
-              should_use=0
-
-              date_span="\$(egrep '^# *date:' "\$path" | \$esed 's/^#[^:]+:[^0-9*]*//')"
-              if [ "\$date_span" != '' ]
-              then
-                start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
-                start="\$(date_to_serial "\$start")"
-                end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
-                end="\$(date_to_serial "\$end")"
-                today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
-                [ \$start -gt \$today ] && continue
-                [ \$end -lt \$today ] && continue
-                should_use=1
-              fi
-
-              [ \$should_use -eq 0 ] && continue
-
-              # convert CR+LF => LF for safety.
-              nkf -Lu "\$path" |
-                egrep -v '^#|^ *$'
-            done | shuf -n 1 | echo_with_probability $SEASONAL_TOPIC_PROBABILITY)"
+[ "\$DEBUG" != '' ] && echo "Finding timely message..." 1>&2
+message="\$(extract_message_from_group 'timely' | echo_with_probability $TIMELY_TOPIC_PROBABILITY)"
 if [ "\$message" != '' ]
 then
   echo "\$message"
@@ -113,20 +110,6 @@ FIN
   do
     timespans="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"
-    messages_file="$status_dir/monologue_$group.txt"
-    echo '' > "${messages_file}.tmp"
-    ls ./monologues/$group* |
-      sort |
-      while read path
-    do
-      # convert CR+LF => LF for safety.
-      nkf -Lu "$path" >> "${messages_file}.tmp"
-      echo '' >> "$messages_file"
-    done
-    egrep -v "^#|^[$whitespaces]*$" "${messages_file}.tmp" |
-      shuf > "$messages_file"
-    rm -rf "${messages_file}.tmp"
-
     if [ "$timespans" != "$group" ]
     then
       for timespan in $(echo "$timespans" | sed 's/,/ /g')
@@ -138,8 +121,8 @@ FIN
         cat << FIN >> "$monologue_selector"
 if [ \$now -ge $start -a \$now -le $end ]
 then
-  [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$messages_file\"" 1>&2
-  message="\$(extract_message "$messages_file" | echo_with_probability 60)"
+  [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$group\"" 1>&2
+  message="\$(extract_message_from_group '$group' | echo_with_probability 60)"
   if [ "\$message" != '' ]
   then
     echo "\$message"
@@ -153,8 +136,8 @@ FIN
   done
 
   cat << FIN >> "$monologue_selector"
-[ "\$DEBUG" != '' ] && echo "Allday case: choosing message from \"$status_dir/monologue_all.txt\"" 1>&2
-extract_message "$status_dir/monologue_all.txt"
+[ "\$DEBUG" != '' ] && echo "Allday case" 1>&2
+extract_message_from_group 'all'
 exit \$?
 
 FIN
