@@ -213,7 +213,7 @@ is_spam_like_user() {
   fi
 
   local count="$(echo "$user" | jq -r .statuses_count)"
-  if [ "$count" != 'null' -a $count -lt 100 ]
+  if [ $count -lt 100 ]
   then
     log " => too less tweets ($count < 100)"
     spam_level=$(($spam_level + 1))
