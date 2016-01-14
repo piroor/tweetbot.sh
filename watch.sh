@@ -62,14 +62,14 @@ watch_mentions() {
   local COMMON_ENV="env TWEET_SCREEN_NAME=\"$TWEET_SCREEN_NAME\" TWEET_BASE_DIR=\"$TWEET_BASE_DIR\" TWEET_LOGMODULE='streaming'"
   while true
   do
-"$tools_dir/tweet.sh/tweet.sh" watch-mentions \
-  -k "$keywords" \
-  -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
-  -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
-  -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
-  -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
-  -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
-  -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
+    "$tools_dir/tweet.sh/tweet.sh" watch-mentions \
+      -k "$keywords" \
+      -m "$COMMON_ENV $tools_dir/handle_mention.sh" \
+      -r "$COMMON_ENV $tools_dir/handle_retweet.sh" \
+      -q "$COMMON_ENV $tools_dir/handle_quotation.sh" \
+      -f "$COMMON_ENV $tools_dir/handle_follow.sh" \
+      -d "$COMMON_ENV $tools_dir/handle_dm.sh" \
+      -s "$COMMON_ENV $tools_dir/handle_search_result.sh"
     log "Tracking of mentions is unexpectedly stopped. Reconnect after 10sec."
     sleep 10 # for safety
   done
