@@ -66,17 +66,17 @@ read_messages() {
 
   while read directive
   do
-  local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
-  if [ "\$date_span" != '' ]
-  then
-    local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
-    local start="\$(date_to_serial "\$start")"
-    local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
-    local end="\$(date_to_serial "\$end")"
-    local today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
-    [ \$start -gt \$today ] && return 0
-    [ \$end -lt \$today ] && return 0
-  fi
+    local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
+    if [ "\$date_span" != '' ]
+    then
+      local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
+      local start="\$(date_to_serial "\$start")"
+      local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
+      local end="\$(date_to_serial "\$end")"
+      local today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
+      [ \$start -gt \$today ] && return 0
+      [ \$end -lt \$today ] && return 0
+    fi
   done < <(egrep '^# *date:' "\$path")
 
   # convert CR+LF => LF for safety.
