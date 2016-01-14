@@ -52,7 +52,7 @@ time_to_minutes() {
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
-date_matcher='0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)'
+date_matcher='0*([0-9]+|\*).0*([0-9]+|\*).0*([0-9]+|\*)'
 
 date_to_serial() {
   local date="\$1"
