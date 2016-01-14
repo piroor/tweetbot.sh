@@ -22,13 +22,13 @@ do
   if echo "$user" | is_protected_user
   then
     log " => protected user should not be followed to avoid privacy issues"
-    return 0
+    continue
   fi
 
   if echo "$user" | is_spam_like_user
   then
     log " => spam like user should not be followed"
-    return 0
+    continue
   fi
 
   if is_true "$FOLLOW_ON_FOLLOWED"
