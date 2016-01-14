@@ -200,23 +200,31 @@ is_protected_user() {
 is_spam_like_user() {
   local user="$(cat)"
 
+  local spam_level=0
+
   local count="$(echo "$user" | jq -r .statuses_count)"
-  if [ "$count" != 'null' -a $count < 100 ]
+  if [ "$count" != 'null' -a $count -lt 100 ]
   then
     log " => too less tweets ($count < 100)"
-    return 0
+    spam_level=$(($spam_level + 1))
   fi
 
   local description="$(echo "$user" | jq -r .description)"
   if [ "$description" = '' ]
   then
     log " => no description"
-    return 0
+    spam_level=$(($spam_level + 1))
   fi
 
   if echo "$description" | egrep "$SPAM_USER_PATTERN" > /dev/null
   then
     log " => matched to the spam pattern"
+    spam_level=$(($spam_level + 1))
+  fi
+
+  if [ $spam_level -gt 2 ]
+  then
+    log " => spam level $spam_level: this account is detected as a spam."
     return 0
   fi
 
