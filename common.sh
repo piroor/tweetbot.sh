@@ -244,7 +244,7 @@ is_spam_like_user() {
     spam_level=$(($spam_level + 1))
   fi
 
-  if [ $spam_level -gt 2 ]
+  if [ $spam_level -ge 2 ]
   then
     log " => spam level $spam_level: this account is detected as a spam."
     return 0
