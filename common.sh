@@ -202,6 +202,16 @@ is_spam_like_user() {
 
   local spam_level=0
 
+  local created_at="$(echo "$user" | jq -r .created_at)"
+  local created_at=$(date -d "$created_at" +%s)
+  local now=$(date +%s)
+  local one_year_in_seconds=$((365 * 24 * 60 * 60))
+  if [ $((now - created_at)) -lt $one_year_in_seconds ]
+  then
+    log " => recently created"
+    spam_level=$(($spam_level + 1))
+  fi
+
   local count="$(echo "$user" | jq -r .statuses_count)"
   if [ "$count" != 'null' -a $count -lt 100 ]
   then
