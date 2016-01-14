@@ -54,9 +54,9 @@ time_to_minutes() {
 
 date_to_serial() {
   local date="\$1"
-  local year=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\1/')
-  local month=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\2/')
-  local day=\$(echo "\$date" | \$esed 's/^0*([0-9*]+)\.0*([0-9*]+).0*([0-9*]+)\$/\3/')
+  local year=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\1/')
+  local month=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\2/')
+  local day=\$(echo "\$date" | \$esed 's/^0*([0-9*]+).0*([0-9*]+).0*([0-9*]+)\$/\3/')
   [ "\$year" = '*' ] && year=\$(date +%Y | \$esed 's/^0+//')
   [ "\$month" = '*' ] && month=\$(date +%M | \$esed 's/^0+//')
   [ "\$day" = '*' ] && day=\$(date +%d | \$esed 's/^0+//')
