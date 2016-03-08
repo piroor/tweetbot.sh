@@ -229,6 +229,12 @@ do
   log '=============================================================='
   log "DM $id from $sender"
 
+  if [ "$sender" = "$TWEET_SCREEN_NAME" ]
+  then
+    log " => ignored, because this is my activity"
+    continue
+  fi
+
   if echo "$message" | expired_by_seconds $((30 * 60))
   then
     log " => ignored, because this is sent 30 minutes or more ago"

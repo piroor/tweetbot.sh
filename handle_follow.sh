@@ -17,6 +17,12 @@ do
   log '=============================================================='
   log "Followed by $follower"
 
+  if [ "$follower" = "$TWEET_SCREEN_NAME" ]
+  then
+    log " => ignored, because this is my activity"
+    continue
+  fi
+
   user="$(echo "$event" | jq -c .source)"
 
   if echo "$user" | is_protected_user

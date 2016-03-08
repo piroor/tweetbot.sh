@@ -19,6 +19,12 @@ do
   log '=============================================================='
   log "Search result found, tweeted by $screen_name at $url"
 
+  if [ "$owner" = "$TWEET_SCREEN_NAME" ]
+  then
+    log " => ignored, because this is my activity"
+    continue
+  fi
+
   if [ "$FORCE_PROCESS" != 'yes' ]
     then
     if echo "$tweet" | expired_by_seconds $((24 * 60 * 60))

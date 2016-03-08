@@ -20,6 +20,12 @@ do
   log '=============================================================='
   log "Retweeted by $owner at $url"
 
+  if [ "$owner" = "$TWEET_SCREEN_NAME" ]
+  then
+    log " => ignored, because this is my activity"
+    continue
+  fi
+
   if is_true "$FOLLOW_ON_RETWEETED"
   then
     echo "$tweet" | follow_owner
