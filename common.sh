@@ -29,6 +29,8 @@ load_keys() {
     source "$tools_dir/tweet.client.key"
   fi
 
+  export MY_SCREEN_NAME
+  export MY_LANGUAGE
   export CONSUMER_KEY
   export CONSUMER_SECRET
   export ACCESS_TOKEN
@@ -262,7 +264,7 @@ is_reply() {
 other_replied_people() {
   cat |
     $esed -e "s/^((@[^$whitespaces]+[$whitespaces]+)+)?.*/\1/" \
-          -e "s/@${TWEET_SCREEN_NAME}[$whitespaces]+//"
+          -e "s/@${MY_SCREEN_NAME}[$whitespaces]+//"
 }
 
 follow_owner() {

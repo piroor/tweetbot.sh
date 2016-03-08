@@ -73,6 +73,8 @@ And, after you start the `watch.sh`, following files and directories will be sav
 Put [informations of a generated API key](https://apps.twitter.com/), with the format:
 
 ~~~
+MY_SCREEN_NAME=xxxxxxxxxxx
+MY_LANGUAGE=xx
 CONSUMER_KEY=xxxxxxxxxxxxxxxxxxx
 CONSUMER_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ACCESS_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

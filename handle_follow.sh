@@ -17,7 +17,7 @@ do
   log '=============================================================='
   log "Followed by $follower"
 
-  if [ "$follower" = "$TWEET_SCREEN_NAME" ]
+  if [ "$follower" = "$MY_SCREEN_NAME" ]
   then
     log " => ignored, because this is my activity"
     continue

@@ -20,7 +20,7 @@ do
   log '=============================================================='
   log "Mentioned by $owner at $url"
 
-  if [ "$owner" = "$TWEET_SCREEN_NAME" ]
+  if [ "$owner" = "$MY_SCREEN_NAME" ]
   then
     log " => ignored, because this is my activity"
     continue

@@ -229,7 +229,7 @@ do
   log '=============================================================='
   log "DM $id from $sender"
 
-  if [ "$sender" = "$TWEET_SCREEN_NAME" ]
+  if [ "$sender" = "$MY_SCREEN_NAME" ]
   then
     log " => ignored, because this is my activity"
     continue

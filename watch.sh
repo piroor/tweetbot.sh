@@ -16,18 +16,10 @@ fi
 
 # Initialize required informations to call APIs
 
-me="$("$tools_dir/tweet.sh/tweet.sh" showme)"
-my_screen_name="$(echo "$me" | jq -r .screen_name | tr -d '\n')"
-lang="$(echo "$me" | jq -r .lang | tr -d '\n')"
-if [ "$lang" = 'null' -o "$lang" = '' ]
-then
-  lang="en"
-fi
+log " my screen name: $MY_SCREEN_NAME"
+log " lang          : $MY_LANGUAGE"
 
-log " my screen name: $my_screen_name"
-log " lang          : $lang"
-
-export TWEET_SCREEN_NAME="$my_screen_name"
+export TWEET_SCREEN_NAME="$MY_SCREEN_NAME"
 
 if [ "$WATCH_KEYWORDS" != '' ]
 then
@@ -116,7 +108,6 @@ periodical_search() {
       fi
       type="$(echo "$tweet" |
                 "$tools_dir/tweet.sh/tweet.sh" type \
-                  -s "$my_screen_name" \
                   -k "$keywords_for_search_results")"
       debug "   type: $type"
       debug "Processing $id as $type..."
@@ -141,7 +132,6 @@ periodical_search() {
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$query" \
-                -l "$lang" \
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.statuses[]' |
