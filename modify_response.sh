@@ -113,7 +113,7 @@ add_definition() {
       normalize_contents "$path"
       if [ "$response" != '' ]
       then
-        local index=$(cat "$path" | egrep -v '^#|^$' | \
+        local index=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                       grep -x -n "$response" | cut -d ':' -f 1)
         log "New response is added at $index."
       fi
@@ -175,7 +175,7 @@ remove_definition() {
       if echo "$response" | egrep '^[0-9]+$' > /dev/null
       then
         log "Removing body at $response..."
-        local line=$(cat "$path" | egrep -v '^#|^$' | \
+        local line=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                      sed -n -e "${response}p")
         log " => \"$line\""
         $esed -e "/^${line}$/d" -i "$path"
@@ -193,7 +193,7 @@ remove_definition() {
       log 'Successfully removed.'
       normalize_contents "$path"
       "$tools_dir/generate_responder.sh"
-      if egrep -v "^#|^[$whitespaces]*$" "$path" > /dev/null
+      if [ "$(egrep -v "^#|^[$whitespaces]*$" "$path" | wc -l)" = 0 ]
       then
         log 'There is no more response message.'
         loc 'Note: this keyword works as a filter to ignore mentions.'

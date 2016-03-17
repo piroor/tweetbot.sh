@@ -109,7 +109,7 @@ add_definition() {
       normalize_contents "$path"
       if [ "$body" != '' ]
       then
-        local index=$(cat "$path" | egrep -v '^#|^$' | \
+        local index=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                       grep -x -n "$body" | cut -d ':' -f 1)
         log "New body is added at $index."
       fi
@@ -171,7 +171,7 @@ remove_definition() {
       if echo "$body" | egrep '^[0-9]+$' > /dev/null
       then
         log "Removing body at $body..."
-        local line=$(cat "$path" | egrep -v '^#|^$' | \
+        local line=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                      sed -n -e "${body}p")
         log " => \"$line\""
         $esed -e "/^${line}$/d" -i "$path"
@@ -189,7 +189,7 @@ remove_definition() {
       log 'Successfully removed.'
       normalize_contents "$path"
       "$tools_dir/generate_monologue_selector.sh"
-      if egrep -v "^#|^[$whitespaces]*$" "$path" > /dev/null
+      if [ "$(egrep -v "^#|^[$whitespaces]*$" "$path" | wc -l)" = 0 ]
       then
         log 'There is no more body.'
       fi
