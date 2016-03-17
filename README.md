@@ -526,7 +526,7 @@ Both valiation and message are optional.
  * Parameters
    * 1st argument: a matching keyword.
    * 2nd argument: a valiation of the keyword. (optional)
-   * Rest arguments: a response message. (optional)
+   * Rest arguments: a response message, or an index of an existing message to be removed. (optional)
  * Example
    * `-res Hello > Ola Hi! I'm fine!`
      * keyword: `Hello`
@@ -540,6 +540,10 @@ Both valiation and message are optional.
      * keyword: `Hello`
      * valiation: nothing
      * response message: `Hi! I'm fine!`
+   * `-res Hello 10`
+     * keyword: `Hello`
+     * valiation: nothing
+     * response message: specified with the index `10`, so, the tenth message in the definition file will be removed.
 
 This command unregisters an existing keyword, valiation of the keyword, and a response message.
 Both valiation and message are optional.
@@ -572,7 +576,7 @@ Both alias and message are optional.
  * Parameters
    * 1st argument: the name of the time span.
    * 2nd argument: an alias of the time span. (optional)
-   * Rest arguments: a monologue message. (optional)
+   * Rest arguments: a monologue message, or an index of an existing message to be removed. (optional)
  * Example
    * `-all > everytime Did you know? I'm a chatterbot!`
      * group: `all`
@@ -586,6 +590,10 @@ Both alias and message are optional.
      * group: `morning`
      * alias: nothing
      * monologue: `Good morning!`
+   * `-morning 10`
+     * group: `morning`
+     * valiation: nothing
+     * response message: specified with the index `10`, so, the tenth message in the definition file will be removed.
 
 This command unregisters an existing monologue and alias of the time span group.
 Both alias and message are optional.
