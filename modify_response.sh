@@ -170,6 +170,16 @@ remove_definition() {
       log "Removing response \"$response\"..."
       $esed -e "/^[$whitespaces]*${response}[$whitespaces]*$/d" -i "$path"
       modified=1
+    else
+      # specified by an index
+      if echo "$response" | egrep '^[0-9]+$' > /dev/null
+      then
+        log "Removing body at $response..."
+        local line=$(cat "$path" | egrep -v '^#|^$' | \
+                     sed -n -e "${response}p")
+        $esed -e "/^${line}$/d" -i "$path"
+        modified=1
+      fi
     fi
   fi
 

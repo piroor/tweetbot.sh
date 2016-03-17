@@ -166,6 +166,16 @@ remove_definition() {
       log "Removing body \"$body\"..."
       $esed -e "/^[$whitespaces]*${body}[$whitespaces]*$/d" -i "$path"
       modified=1
+    else
+      # specified by an index
+      if echo "$body" | egrep '^[0-9]+$' > /dev/null
+      then
+        log "Removing body at $body..."
+        local line=$(cat "$path" | egrep -v '^#|^$' | \
+                     sed -n -e "${body}p")
+        $esed -e "/^${line}$/d" -i "$path"
+        modified=1
+      fi
     fi
   fi
 
