@@ -177,6 +177,7 @@ remove_definition() {
         log "Removing body at $response..."
         local line=$(cat "$path" | egrep -v '^#|^$' | \
                      sed -n -e "${response}p")
+        log " => \"$line\""
         $esed -e "/^${line}$/d" -i "$path"
         modified=1
       fi
