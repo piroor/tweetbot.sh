@@ -79,7 +79,7 @@ modify_response() {
   local output="$(echo "$body" | "$tools_dir/modify_response.sh" 2>&1)"
   local result=$?
   log "$output"
-  respond "$sender" "$output"
+  respond "$sender" "$(echo "$output" | paste -s -d ', ')"
   if [ $result = 0 ]
   then
     find "$TWEET_BASE_DIR" -type f -name 'on_response_modified*' | while read path
@@ -107,7 +107,7 @@ modify_monologue() {
   local output="$(echo "$body" | "$tools_dir/modify_monologue.sh" 2>&1)"
   local result=$?
   log "$output"
-  respond "$sender" "$output"
+  respond "$sender" "$(echo "$output" | paste -s -d ', ')"
   if [ $result = 0 ]
   then
     find "$TWEET_BASE_DIR" -type f -name 'on_monologue_modified*' | while read path
