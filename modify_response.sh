@@ -111,6 +111,12 @@ add_definition() {
     else
       log 'Successfully added.'
       normalize_contents "$path"
+      if [ "$response" != '' ]
+      then
+        local index=$(cat "$path" | egrep -v '^#|^$' | \
+                      grep -x -n "$response" | cut -d ':' -f 1)
+        log "New response is added at $index"
+      fi
       "$tools_dir/generate_responder.sh"
     fi
     return 0
