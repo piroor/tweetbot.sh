@@ -115,7 +115,7 @@ add_definition() {
       then
         local index=$(cat "$path" | egrep -v '^#|^$' | \
                       grep -x -n "$response" | cut -d ':' -f 1)
-        log "New response is added at $index"
+        log "New response is added at $index."
       fi
       "$tools_dir/generate_responder.sh"
     fi

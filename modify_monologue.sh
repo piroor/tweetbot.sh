@@ -111,7 +111,7 @@ add_definition() {
       then
         local index=$(cat "$path" | egrep -v '^#|^$' | \
                       grep -x -n "$body" | cut -d ':' -f 1)
-        log "New body is added at $index"
+        log "New body is added at $index."
       fi
       "$tools_dir/generate_monologue_selector.sh"
     fi
