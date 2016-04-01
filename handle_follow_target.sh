@@ -66,6 +66,5 @@ do
     continue
   fi
 
-  log " => follow $screen_name"
-  "$tweet_sh" follow $screen_name > /dev/null
+  echo "$tweet" | follow_owner
 done
