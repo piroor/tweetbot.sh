@@ -142,7 +142,7 @@ periodical_search() {
       last_id="$(($last_id + 1))"
       echo "$last_id" > "$last_id_file"
     fi
-    sleep 2m
+    sleep 3m
   done
 }
 if [ "$query" != '' ]
@@ -305,6 +305,64 @@ periodical_monologue() {
   done
 }
 periodical_monologue &
+
+
+# Sub process 5: polling for the REST search API to follow new users
+
+periodical_auto_follow() {
+  logmodule='auto_follow'
+  local count=100
+  local last_id_file="$status_dir/last_auto_follow"
+  local last_id=''
+  [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
+  local id
+  local owner
+  local type
+  if [ "$last_id" != '' ]
+  then
+    log "Doing search to auto-follow for newer than $last_id"
+  fi
+
+  while true
+  do
+    debug 'Processing results to auto-follow of REST search API...'
+    while read -r tweet
+    do
+      [ "$tweet" = '' ] && continue
+      id="$(echo "$tweet" | jq -r .id_str)"
+      owner="$(echo "$tweet" | jq -r .user.screen_name)"
+      debug "New search result detected: https://twitter.com/$owner/status/$id"
+      [ "$id" = '' -o "$id" = 'null' ] && continue
+      [ "$last_id" = '' ] && last_id="$id"
+      if [ $id -gt $last_id ]
+      then
+        last_id="$id"
+        echo "$last_id" > "$last_id_file"
+      fi
+      env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
+      sleep 3s
+    done < <("$tools_dir/tweet.sh/tweet.sh" search \
+                -q "$AUTO_FOLLOW_QUERY" \
+                -c "$count" \
+                -s "$last_id" |
+                jq -c '.statuses[]' |
+                tac)
+    if [ "$last_id" != '' ]
+    then
+      # increment "since id" to bypass cached search results
+      last_id="$(($last_id + 1))"
+      echo "$last_id" > "$last_id_file"
+    fi
+    sleep 3m
+  done
+}
+if [ "$AUTO_FOLLOW_QUERY" != '' ]
+then
+  log "Start to follow search results with the query \"$AUTO_FOLLOW_QUERY\"..."
+  periodical_auto_follow &
+else
+  log "No auto follow queriy."
+fi
 
 
 wait
