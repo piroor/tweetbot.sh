@@ -372,21 +372,38 @@ post_replies() {
   fi
 
   log "Sending replies to $id..."
+  local result="$(cat | post_sequential_tweets "$id")"
+  if [ $? = 0 ]
+  then
+    log '  => successfully responded'
+  else
+    log '  => failed to reply'
+    log "     result: $result"
+  fi
+}
+
+post_sequential_tweets() {
+  local previous_id="$1"
+  local result
   while read -r body
   do
-    local result="$("$tweet_sh" reply "$id" "$body")"
+    if [ "$previous_id" != '' ]
+    then
+      result="$("$tweet_sh" reply "$previous_id" "$body")"
+    else
+      result="$("$tweet_sh" post "$body")"
+    fi
+
     if [ $? = 0 ]
     then
-      log '  => successfully responded'
-      on_replied "$id"
-      # send following resposnes as a sequential tweets
-      id="$(echo "$result" | jq -r .id_str)"
-      echo "$body" | cache_body "$id"
+      on_replied "$previous_id"
+      previous_id="$(echo "$result" | jq -r .id_str)"
+      echo "$body" | cache_body "$previous_id"
     else
-      log '  => failed to reply'
-      log "     result: $result"
+      return 1
     fi
   done
+  return 0
 }
 
 post_quotation() {

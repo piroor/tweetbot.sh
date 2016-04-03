@@ -287,12 +287,10 @@ periodical_monologue() {
       debug "Let's post!"
       local body="$("$monologue_selector")"
       log "Posting monologue tweet: $body"
-      local result="$("$tweet_sh" post "$body")"
+      local result="$(echo "$body" | $esed -e 's/<BR>/\n/gi' | ost_sequential_tweets)"
       if [ $? = 0 ]
       then
         log '  => successfully posted'
-        id="$(echo "$result" | jq -r .id_str)"
-        echo "$body" | cache_body "$id"
       else
         log '  => failed to post'
         log "     result: $result"
