@@ -287,14 +287,7 @@ periodical_monologue() {
       debug "Let's post!"
       local body="$("$monologue_selector")"
       log "Posting monologue tweet: $body"
-      local result="$(echo "$body" | $esed -e 's/<BR>/\n/gi' | post_sequential_tweets)"
-      if [ $? = 0 ]
-      then
-        log '  => successfully posted'
-      else
-        log '  => failed to post'
-        log "     result: $result"
-      fi
+      echo "$body" | $esed -e 's/<BR>/\n/gi' | post_sequential_tweets
       last_post=$current_minutes
       echo $current_minutes > "$last_post_file"
     fi

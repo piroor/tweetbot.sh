@@ -372,14 +372,8 @@ post_replies() {
   fi
 
   log "Sending replies to $id..."
-  local result="$(cat | post_sequential_tweets "$id")"
-  if [ $? = 0 ]
-  then
-    log '  => successfully responded'
-  else
-    log '  => failed to reply'
-    log "     result: $result"
-  fi
+  cat | post_sequential_tweets "$id"
+  return $?
 }
 
 post_sequential_tweets() {
@@ -399,7 +393,10 @@ post_sequential_tweets() {
       on_replied "$previous_id"
       previous_id="$(echo "$result" | jq -r .id_str)"
       echo "$body" | cache_body "$previous_id"
+      log '  => successfully posted'
     else
+      log '  => failed to post'
+      log "     result: $result"
       return 1
     fi
   done
