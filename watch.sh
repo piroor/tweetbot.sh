@@ -287,7 +287,7 @@ periodical_monologue() {
       debug "Let's post!"
       local body="$("$monologue_selector")"
       log "Posting monologue tweet: $body"
-      local result="$(echo "$body" | $esed -e 's/<BR>/\n/gi' | ost_sequential_tweets)"
+      local result="$(echo "$body" | $esed -e 's/<BR>/\n/gi' | post_sequential_tweets)"
       if [ $? = 0 ]
       then
         log '  => successfully posted'
