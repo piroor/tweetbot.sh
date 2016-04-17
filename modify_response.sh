@@ -196,7 +196,7 @@ remove_definition() {
       if [ "$(egrep -v "^#|^[$whitespaces]*$" "$path" | wc -l)" = 0 ]
       then
         log 'There is no more response message.'
-        loc 'Note: this keyword works as a filter to ignore mentions.'
+        log 'Note: this keyword works as a filter to ignore mentions.'
       fi
     fi
     return 0
