@@ -289,7 +289,7 @@ follow_owner() {
     return 0
   fi
 
-  if echo "$tweet" | jq -r .user.following | grep "false"
+  if echo "$tweet" | jq -r .user.following | grep "false" > /dev/null
   then
     log " => follow $owner"
     result="$("$tweet_sh" follow $owner)"
@@ -311,7 +311,7 @@ favorite() {
 
   log "Trying to favorite $id..."
 
-  if echo "$tweet" | jq -r .favorited | grep "false"
+  if echo "$tweet" | jq -r .favorited | grep "false" > /dev/null
   then
     log " => favorite $id"
     result="$("$tweet_sh" favorite $id)"
@@ -333,7 +333,7 @@ retweet() {
 
   log "Trying to retweet $id..."
 
-  if echo "$tweet" | jq -r .retweeted | grep "false"
+  if echo "$tweet" | jq -r .retweeted | grep "false" > /dev/null
   then
     log " => retweet $id"
     result="$("$tweet_sh" retweet $id)"
