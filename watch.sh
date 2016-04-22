@@ -136,6 +136,12 @@ periodical_search() {
                 -s "$last_id" |
                 jq -c '.statuses[]' |
                 tac)
+    #NOTE: This must be done with a process substitution instead of
+    #      simple pipeline, because we need to execute the loop in
+    #      the same process, not a sub process.
+    #      (sub-process loop produced by "tweet.sh | tac | while read..."
+    #       cannot update the "last_id" in this scope.)
+
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
