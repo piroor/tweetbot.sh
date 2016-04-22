@@ -92,7 +92,7 @@ periodical_search() {
 
   while true
   do
-    debug 'Processing results of REST search API...'
+    debug "Processing results of REST search API (newer than $last_id)..."
     "$tools_dir/tweet.sh/tweet.sh" search \
       -q "$query" \
       -c "$count" \
@@ -173,7 +173,7 @@ periodical_fetch_direct_messages() {
 
   while true
   do
-    debug 'Processing results of REST direct messages API...'
+    debug "Processing results of REST direct messages API (newer than $last_id)..."
     "$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
       -c "$count" \
       -s "$last_id" |
@@ -318,7 +318,7 @@ periodical_auto_follow() {
 
   while true
   do
-    debug 'Processing results to auto-follow of REST search API...'
+    debug "Processing results to auto-follow of REST search API (newer than $last_id)..."
     "$tools_dir/tweet.sh/tweet.sh" search \
       -q "$AUTO_FOLLOW_QUERY" \
       -c "$count" \
