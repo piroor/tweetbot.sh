@@ -186,8 +186,7 @@ time_to_minutes() {
 
 expired_by_seconds() {
   local expire_seconds=$1
-  local tweet="$(cat)"
-  local created_at="$(echo "$tweet" | jq -r .created_at | date -f - +%s)"
+  local created_at="$(cat | jq -r .created_at | date -f - +%s)"
   local now=$(date +%s)
   [ $((now - created_at)) -gt $expire_seconds ]
 }
