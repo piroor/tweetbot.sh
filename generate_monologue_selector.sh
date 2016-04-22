@@ -42,9 +42,8 @@ echo_with_probability() {
 }
 
 time_to_minutes() {
-  local now="\$1"
-  local hours=\$(echo "\$now" | \$esed 's/^0?([0-9]+):.*\$/\1/')
-  local minutes=\$(echo "\$now" | \$esed 's/^[^:]*:0?([0-9]+)\$/\1/')
+  local hours minutes
+  read hours minutes <<< "\$(cat | \$esed 's/^0?([0-9]+):0?([0-9]+)\$/\1 \2/')"
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
