@@ -66,7 +66,7 @@ date_to_serial() {
 read_messages() {
   local path="\$1"
 
-  egrep '^# *date:' "\$path" | while read directive
+  while read directive
   do
     local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
     if [ "\$date_span" != '' ]
@@ -77,7 +77,12 @@ read_messages() {
       [ \$start -gt \$today ] && return 0
       [ \$end -lt \$today ] && return 0
     fi
-  done
+  done < <(egrep '^# *date:' "\$path")
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process, not a sub process.
+  #      ("return" in a sub-process loop produced by "egrep | while read..."
+  #       cannot return actually.)
 
   # convert CR+LF => LF for safety.
   nkf -Lu "\$path" |
