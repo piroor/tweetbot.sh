@@ -86,7 +86,7 @@ read_messages() {
 
 now=\$1
 [ "\$now" = '' ] && now="\$(date +%H:%M)"
-now=\$(time_to_minutes \$now)
+now=\$(echo "\$now" | time_to_minutes)
 
 FIN
 
@@ -113,10 +113,8 @@ FIN
     then
       for timespan in $(echo "$timespans" | sed 's/,/ /g')
       do
-        start="$(echo "$timespan" | cut -d '-' -f 1)"
-        start="$(time_to_minutes "$start")"
-        end="$(echo "$timespan" | cut -d '-' -f 2)"
-        end="$(time_to_minutes "$end")"
+        start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
+        end="$(echo "$timespan" | cut -d '-' -f 2 | time_to_minutes)"
         cat << FIN >> "$monologue_selector"
 if [ \$now -ge $start -a \$now -le $end ]
 then
