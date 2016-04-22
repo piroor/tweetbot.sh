@@ -64,7 +64,7 @@ date_to_serial() {
 read_messages() {
   local path="\$1"
 
-  while read directive
+  egrep '^# *date:' "\$path" | while read directive
   do
     local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
     if [ "\$date_span" != '' ]
@@ -77,7 +77,7 @@ read_messages() {
       [ \$start -gt \$today ] && return 0
       [ \$end -lt \$today ] && return 0
     fi
-  done < <(egrep '^# *date:' "\$path")
+  done
 
   # convert CR+LF => LF for safety.
   nkf -Lu "\$path" |

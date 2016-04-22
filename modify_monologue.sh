@@ -50,11 +50,13 @@ process_add_command() {
   fi
 
   # if there is any file including the target in its aliases, then reuse it.
-  while read path
+  egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" |
+    cut -d ':' -f 1 |
+    while read path
   do
     add_definition "$path" "$alias" "$body"
     exit $?
-  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
+  done
 
   # otherwise, create new definition file.
   local path="$monologues_dir/all-${safe_target}.txt"
@@ -132,11 +134,13 @@ process_remove_command() {
   fi
 
   # if there is any file including the target in its target definitions, then reuse it.
-  while read path
+  egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" |
+    cut -d ':' -f 1 |
+    while read path
   do
     remove_definition "$path" "$alias" "$body"
     exit $?
-  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
+  done
 
   exit 1
 }

@@ -93,7 +93,13 @@ periodical_search() {
   while true
   do
     debug 'Processing results of REST search API...'
-    while read -r tweet
+    "$tools_dir/tweet.sh/tweet.sh" search \
+      -q "$query" \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.statuses[]' |
+      tac |
+      while read -r tweet
     do
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
@@ -130,12 +136,7 @@ periodical_search() {
           ;;
       esac
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$query" \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.statuses[]' |
-                tac)
+    done
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
@@ -173,7 +174,12 @@ periodical_fetch_direct_messages() {
   while true
   do
     debug 'Processing results of REST direct messages API...'
-    while read -r message
+    "$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.[]' |
+      tac |
+      while read -r message
     do
       [ "$message" = '' ] && continue
       id="$(echo "$message" | jq -r .id_str)"
@@ -188,11 +194,7 @@ periodical_fetch_direct_messages() {
       echo "$message" |
         env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm.sh"
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.[]' |
-                tac)
+    done
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
     sleep 1m
   done
@@ -317,7 +319,13 @@ periodical_auto_follow() {
   while true
   do
     debug 'Processing results to auto-follow of REST search API...'
-    while read -r tweet
+    "$tools_dir/tweet.sh/tweet.sh" search \
+      -q "$AUTO_FOLLOW_QUERY" \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.statuses[]' |
+      tac |
+      while read -r tweet
     do
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
@@ -332,12 +340,7 @@ periodical_auto_follow() {
       fi
       env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$AUTO_FOLLOW_QUERY" \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.statuses[]' |
-                tac)
+    done
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
