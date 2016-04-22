@@ -187,8 +187,7 @@ time_to_minutes() {
 expired_by_seconds() {
   local expire_seconds=$1
   local tweet="$(cat)"
-  local created_at="$(echo "$tweet" | jq -r .created_at)"
-  local created_at=$(date -d "$created_at" +%s)
+  local created_at="$(echo "$tweet" | jq -r .created_at | date -f - +%s)"
   local now=$(date +%s)
   [ $((now - created_at)) -gt $expire_seconds ]
 }
@@ -218,8 +217,7 @@ is_spam_like_user() {
     spam_level=$(($spam_level + 1))
   fi
 
-  local created_at="$(echo "$user" | jq -r .created_at)"
-  local created_at=$(date -d "$created_at" +%s)
+  local created_at="$(echo "$user" | jq -r .created_at | date -f - +%s)"
   local now=$(date +%s)
   local one_year_in_seconds=$((365 * 24 * 60 * 60))
   if [ $((now - created_at)) -lt $one_year_in_seconds ]
