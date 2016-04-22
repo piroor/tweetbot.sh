@@ -252,7 +252,7 @@ periodical_monologue() {
   do
     debug 'Processing monologue...'
 
-    local current_minutes=$(time_to_minutes $(date +%H:%M))
+    local current_minutes=$(date +%H:%M | time_to_minutes)
     debug "  $current_minutes minutes past from 00:00"
 
     # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
