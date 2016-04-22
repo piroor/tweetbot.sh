@@ -52,12 +52,17 @@ date_matcher='0*([0-9]+|\*).0*([0-9]+|\*).0*([0-9]+|\*)'
 
 date_to_serial() {
   local date="\$1"
-  local year=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\1/")
-  local month=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\2/")
-  local day=\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\3/")
-  [ "\$year" = '*' ] && year=\$(date +%Y | \$esed 's/^0+//')
-  [ "\$month" = '*' ] && month=\$(date +%m | \$esed 's/^0+//')
-  [ "\$day" = '*' ] && day=\$(date +%d | \$esed 's/^0+//')
+
+  local month year day
+  read year month day <<< "\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\1 \2 \3/")"
+
+  local current_year current_month current_day
+  read current_year current_month current_day <<< "\$(date +'%Y %m %d')"
+
+  [ "\$year" = '*' ] && year=\$(echo "\$current_year" | \$esed 's/^0+//')
+  [ "\$month" = '*' ] && month=\$(echo "\$current_month" | \$esed 's/^0+//')
+  [ "\$day" = '*' ] && day=\$(echo "\$current_day" | \$esed 's/^0+//')
+
   echo \$(( (\$year * 10000) + (\$month * 100) + \$day ))
 }
 
