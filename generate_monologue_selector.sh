@@ -50,10 +50,8 @@ time_to_minutes() {
 date_matcher='0*([0-9]+|\*).0*([0-9]+|\*).0*([0-9]+|\*)'
 
 date_to_serial() {
-  local date="\$1"
-
   local month year day
-  read year month day <<< "\$(echo "\$date" | \$esed "s/^\$date_matcher\$/\1 \2 \3/")"
+  read year month day <<< "\$(cat | \$esed "s/^\$date_matcher\$/\1 \2 \3/")"
 
   local current_year current_month current_day
   read current_year current_month current_day <<< "\$(date +'%Y %m %d')"
@@ -73,11 +71,9 @@ read_messages() {
     local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
     if [ "\$date_span" != '' ]
     then
-      local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/")"
-      local start="\$(date_to_serial "\$start")"
-      local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/")"
-      local end="\$(date_to_serial "\$end")"
-      local today="\$(date_to_serial "\$(date +%Y.%m.%d)")"
+      local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/" | date_to_serial)"
+      local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/" | date_to_serial)"
+      local today="\$(echo "\$(date +%Y.%m.%d)" | date_to_serial)"
       [ \$start -gt \$today ] && return 0
       [ \$end -lt \$today ] && return 0
     fi
