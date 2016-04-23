@@ -45,23 +45,25 @@ process_add_command() {
                          $esed -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
 
   # if there is any file including the keyword in its name, then reuse it.
-  find "$responses_dir" \
-       -type f -name "*${keyword}*" \
-       -or -name "*${safe_keyword}*" |
-    while read path
+  while read path
   do
     add_definition "$path" "$alias" "$response"
     exit $?
-  done
+  done < <(find "$responses_dir" -type f \
+                                 -name "*${keyword}*" \
+                                 -or -name "*${safe_keyword}*")
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process, not a sub process.
+  #      ("exit" in a sub-process loop produced by "find | while read..."
+  #       cannot exit actually.)
 
   # if there is any file including the keyword in its keyword definitions, then reuse it.
-  egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" |
-    cut -d ':' -f 1 |
-    while read path
+  while read path
   do
     add_definition "$path" "$alias" "$response"
     exit $?
-  done
+  done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   # otherwise, create new definition file.
   local path="$responses_dir/autoadd_${safe_keyword}.txt"
@@ -132,21 +134,23 @@ add_definition() {
 
 process_remove_command() {
   # if there is any file including the keyword in its name, then reuse it.
-  find "$responses_dir" -type f -name "*${keyword}*" |
-    while read path
+  while read path
   do
     remove_definition "$path" "$alias" "$response"
     exit $?
-  done
+  done < <(find "$responses_dir" -type f -name "*${keyword}*")
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process, not a sub process.
+  #      ("exit" in a sub-process loop produced by "find | while read..."
+  #       cannot exit actually.)
 
   # if there is any file including the keyword in its keyword definitions, then reuse it.
-  egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" |
-    cut -d ':' -f 1 |
-    while read path
+  while read path
   do
     remove_definition "$path" "$alias" "$response"
     exit $?
-  done
+  done < <(egrep -r "^#[$whitespaces]*${keyword}[$whitespaces]*$" "$responses_dir" | cut -d ':' -f 1)
 
   exit 1
 }

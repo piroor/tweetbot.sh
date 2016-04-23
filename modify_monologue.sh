@@ -50,13 +50,16 @@ process_add_command() {
   fi
 
   # if there is any file including the target in its aliases, then reuse it.
-  egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" |
-    cut -d ':' -f 1 |
-    while read path
+  while read path
   do
     add_definition "$path" "$alias" "$body"
     exit $?
-  done
+  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process, not a sub process.
+  #      ("exit" in a sub-process loop produced by "egrep | cut | while read..."
+  #       cannot exit actually.)
 
   # otherwise, create new definition file.
   local path="$monologues_dir/all-${safe_target}.txt"
@@ -134,13 +137,16 @@ process_remove_command() {
   fi
 
   # if there is any file including the target in its target definitions, then reuse it.
-  egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" |
-    cut -d ':' -f 1 |
-    while read path
+  while read path
   do
     remove_definition "$path" "$alias" "$body"
     exit $?
-  done
+  done < <(egrep -r "^#[$whitespaces]*($target|$alias)[$whitespaces]*$" "$monologues_dir" | cut -d ':' -f 1)
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process, not a sub process.
+  #      ("exit" in a sub-process loop produced by "egrep | cut | while read..."
+  #       cannot exit actually.)
 
   exit 1
 }
