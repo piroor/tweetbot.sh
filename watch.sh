@@ -155,6 +155,8 @@ periodical_search() {
 # Sub process 3: process queued search results
 
 periodical_process_queue() {
+  # minimum interval = 10minutes
+  [ $PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES=10
   while true
   do
     debug 'Processing queued search results...'
