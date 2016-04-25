@@ -7,6 +7,9 @@ logfile="$log_dir/handle_search_result.log"
 
 lock_key=''
 
+queue_dir="$status_dir/search_result_queue"
+mkdir -p "$queue_dir"
+
 while unlock "$lock_key" && read -r tweet
 do
   screen_name="$(echo "$tweet" | jq -r .user.screen_name)"
@@ -53,38 +56,5 @@ do
     continue
   fi
 
-  # log " => follow $screen_name"
-  # "$tweet_sh" follow $screen_name > /dev/null
-
-  if is_true "$FAVORITE_SEARCH_RESULTS"
-  then
-    echo "$tweet" | favorite
-  fi
-
-  is_protected=$(echo "$tweet" | is_protected_tweet && echo 1)
-
-  # Don't RT protected user's tweet!
-  if [ "$is_protected" != '1' ] && is_true "$RETWEET_SEARCH_RESULTS"
-  then
-    echo "$tweet" | retweet
-  fi
-
-  # If we include the screen name into the keywords, simple mentions
-  # can be detected as a search result. Even if it has been processed
-  # as a mention, we should retweet it.
-  if echo "$body" | sed "s/^@$me//" | egrep -i "$keywords_matcher" > /dev/null
-  then
-    if [ "$is_protected" != '1' ] && is_true "$RESPOND_TO_SEARCH_RESULTS"
-    then
-      # Don't post default questions as quotation!
-      responses="$(echo "$body" | env NO_QUESTION=1 "$responder")"
-      if [ $? != 0 -o "$responses" = '' ]
-      then
-        log " => don't quote case"
-      else
-        echo "$responses" |
-          post_quotation "$screen_name" "$id"
-      fi
-    fi
-  fi
+  echo "$tweet" > "$queue_dir/queued.$id.$screen_name"
 done
