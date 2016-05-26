@@ -356,7 +356,10 @@ is_too_frequent_mention() {
   local users="$1"
   local user
   local mentions
-  for user in $users
+  local all_users="$(cat <(cat | users_in_body) \
+                         <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
+                       sort | uniq | paste -s -d ' ')"
+  for user in $all_users
   do
     user="$(echo "$user" | $esed -e 's/^@//')"
     mentions="$(cd "$already_replied_dir"; find . -name "*.$user.*" -cmin -60 | wc -l)"
@@ -371,7 +374,11 @@ is_too_frequent_mention() {
 on_replied() {
   local users="$1"
   local id="$2"
-  touch "$already_replied_dir/$id.$(echo "$users" | $esed -e 's/ +/./g')."
+  local all_users="$(cat <(cat | users_in_body) \
+                         <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
+                       sort | uniq | paste -s -d '.')"
+
+  touch "$already_replied_dir/$id.$(echo "$all_users" | $esed -e 's/ +/./g')."
   # remove too old files
   find "$already_replied_dir" -ctime +1 | while read path
   do
@@ -379,9 +386,16 @@ on_replied() {
   done
 }
 
+users_in_body() {
+  while read -r body
+  do
+    echo "$body" | $esed -e 's/ +/\n/g' | grep -E '^\.?@' | $esed -e 's/^.*@//'
+  done
+}
+
 post_replies() {
-  local users="$1"
-  local id="$2"
+  local id="$1"
+  local users="$2"
 
   if is_already_replied "$id"
   then
@@ -389,19 +403,22 @@ post_replies() {
     return 1
   fi
 
-  if is_too_frequent_mention "$users"
+  local body="$(cat)"
+
+  if echo "$body" | is_too_frequent_mention "$users"
   then
     log '  => too frequent mention for same user'
     return 1
   fi
 
   log "Sending replies to $id..."
-  cat | post_sequential_tweets "$id"
+  echo "$body" | post_sequential_tweets "$id" "$users"
   return $?
 }
 
 post_sequential_tweets() {
   local previous_id="$1"
+  local users="$2"
   local result
   while read -r body
   do
@@ -414,7 +431,7 @@ post_sequential_tweets() {
 
     if [ $? = 0 ]
     then
-      on_replied "$MY_SCREEN_NAME" "$previous_id"
+      echo "$body" | on_replied "$previous_id" "$users"
       previous_id="$(echo "$result" | jq -r .id_str)"
       echo "$body" | cache_body "$previous_id"
       log '  => successfully posted'
@@ -438,6 +455,12 @@ post_quotation() {
     return 1
   fi
 
+  if is_too_frequent_mention "$owner"
+  then
+    log '  => too frequent mention for same user'
+    return 1
+  fi
+
   log "Quoting the tweet $id by $owner..."
   while read -r body
   do
@@ -445,7 +468,7 @@ post_quotation() {
     if [ $? = 0 ]
     then
       log '  => successfully quoted'
-      on_replied "$owner" "$id"
+      echo "$body" | on_replied "$id" "$owner"
       # send following resposnes as a sequential tweets
       id="$(echo "$result" | jq -r .id_str)"
       echo "$body $url" | cache_body "$id"

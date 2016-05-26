@@ -80,6 +80,6 @@ do
     echo "$responses" |
       # make response body a mention
       sed "s/^/@$owner $other_replied_people/" |
-      post_replies "@$owner $other_replied_people" "$id"
+      post_replies "$id" "@$owner $other_replied_people"
   fi
 done

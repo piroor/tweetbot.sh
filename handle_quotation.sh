@@ -88,7 +88,7 @@ do
       echo "$responses" |
         # make response body a mention
         sed "s/^/@$owner $other_replied_people/" |
-        post_replies "@$owner $other_replied_people" "$id"
+        post_replies "$id" "@$owner $other_replied_people"
     elif echo "$body" | egrep "^[\._,:;]?@$me" > /dev/null
     then
       log "Seems to be a mention but for public."
@@ -97,7 +97,7 @@ do
       echo "$responses" |
         # make response body a mention
         sed "s/^/.@$owner $other_replied_people/" |
-        post_replies "@$owner $other_replied_people" "$id"
+        post_replies "$id" "@$owner $other_replied_people"
     elif [ "$is_protected" != '1' ] # Don't quote protected tweet!
     then
       log "Seems to be an RT with quotation."
