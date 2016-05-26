@@ -135,7 +135,8 @@ FREQUENCY_OF_CAPRICES=66
 NEW_TOPIC=66
 CONVERSATION_PERSISTENCE=40
 
-MAX_MENTIONS_IN_ONE_HOUR=10
+MENTION_LIMIT_PERIOD_MIN=120
+MAX_MENTIONS_IN_PERIOD=10
 
 MAX_BODY_CACHE=1000
 ADMINISTRATORS=''
@@ -360,8 +361,8 @@ is_too_frequent_mention() {
   for user in $all_users
   do
     user="$(echo "$user" | $esed -e 's/^@//')"
-    mentions="$(cd "$already_replied_dir"; find . -name "*.$user.*" -cmin -60 | wc -l)"
-    if [ $mentions -gt $MAX_MENTIONS_IN_ONE_HOUR ]
+    mentions="$(cd "$already_replied_dir"; find . -name "*.$user.*" -cmin -$MENTION_LIMIT_PERIOD_MIN | wc -l)"
+    if [ $mentions -gt $MAX_MENTIONS_IN_PERIOD ]
     then
       return 0
     fi
