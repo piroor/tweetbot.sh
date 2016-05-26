@@ -356,10 +356,7 @@ is_too_frequent_mention() {
   local users="$1"
   local user
   local mentions
-  local body="$(cat)"
-  local all_users="$(cat <(echo "$body" | users_in_body) \
-                         <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
-                       sort | uniq | paste -s -d ' ')"
+  local all_users="$(cat | unified_users_from_body_and_args "$users")"
   for user in $all_users
   do
     user="$(echo "$user" | $esed -e 's/^@//')"
@@ -375,10 +372,7 @@ is_too_frequent_mention() {
 on_replied() {
   local id="$1"
   local users="$2"
-  local body="$(cat)"
-  local all_users="$(cat <(echo "$body" | users_in_body) \
-                         <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
-                       sort | uniq | paste -s -d '.')"
+  local all_users="$(cat | unified_users_from_body_and_args "$users")"
 
   touch "$already_replied_dir/$id.$(echo "$all_users" | $esed -e 's/ +/./g')."
   # remove too old files
@@ -386,6 +380,13 @@ on_replied() {
   do
     rm -rf "$path"
   done
+}
+
+unified_users_from_body_and_args() {
+  local body="$(cat)"
+  cat <(echo "$body" | users_in_body) \
+      <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
+    sort | uniq | tr -d '\n' | paste -s -d '.'
 }
 
 users_in_body() {
