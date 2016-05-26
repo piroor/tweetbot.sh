@@ -373,8 +373,8 @@ is_too_frequent_mention() {
 }
 
 on_replied() {
-  local users="$1"
-  local id="$2"
+  local id="$1"
+  local users="$2"
   local body="$(cat)"
   local all_users="$(cat <(echo "$body" | users_in_body) \
                          <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
