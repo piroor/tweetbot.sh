@@ -135,6 +135,8 @@ FREQUENCY_OF_CAPRICES=66
 NEW_TOPIC=66
 CONVERSATION_PERSISTENCE=40
 
+MAX_MENTIONS_IN_ONE_HOUR=10
+
 MAX_BODY_CACHE=1000
 ADMINISTRATORS=''
 WATCH_KEYWORDS=''
@@ -346,12 +348,30 @@ retweet() {
 
 is_already_replied() {
   local id="$1"
-  [ -f "$already_replied_dir/$id" -a "$FORCE_PROCESS" != 'yes' ]
+  [ "$FORCE_PROCESS" != 'yes' ] &&
+    [ "$(cd "$already_replied_dir"; find . -name "$id.*")" != '' ]
+}
+
+is_too_frequent_mention() {
+  local users="$1"
+  local user
+  local mentions
+  for user in $users
+  do
+    user="$(echo "$user" | $esed -e 's/^@//')"
+    mentions="$(cd "$already_replied_dir"; find . -name "*.$user.*" -cmin -60 | wc -l)"
+    if [ $mentions -gt $MAX_MENTIONS_IN_ONE_HOUR ]
+    then
+      return 0
+    fi
+  done
+  return 1
 }
 
 on_replied() {
-  local id="$1"
-  touch "$already_replied_dir/$id"
+  local users="$1"
+  local id="$2"
+  touch "$already_replied_dir/$id.$(echo "$user" | $esed -e 's/ +/./g')."
   # remove too old files
   find "$already_replied_dir" -ctime +1 | while read path
   do
@@ -360,11 +380,18 @@ on_replied() {
 }
 
 post_replies() {
-  local id=$1
+  local users="$1"
+  local id="$2"
 
   if is_already_replied "$id"
   then
     log '  => already replied'
+    return 1
+  fi
+
+  if is_too_frequent_mention "$users"
+  then
+    log '  => too frequent mention for same user'
     return 1
   fi
 
@@ -387,7 +414,7 @@ post_sequential_tweets() {
 
     if [ $? = 0 ]
     then
-      on_replied "$previous_id"
+      on_replied "$MY_SCREEN_NAME" "$previous_id"
       previous_id="$(echo "$result" | jq -r .id_str)"
       echo "$body" | cache_body "$previous_id"
       log '  => successfully posted'
@@ -418,7 +445,7 @@ post_quotation() {
     if [ $? = 0 ]
     then
       log '  => successfully quoted'
-      on_replied "$id"
+      on_replied "$owner" "$id"
       # send following resposnes as a sequential tweets
       id="$(echo "$result" | jq -r .id_str)"
       echo "$body $url" | cache_body "$id"
