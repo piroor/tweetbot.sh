@@ -371,7 +371,7 @@ is_too_frequent_mention() {
 on_replied() {
   local users="$1"
   local id="$2"
-  touch "$already_replied_dir/$id.$(echo "$user" | $esed -e 's/ +/./g')."
+  touch "$already_replied_dir/$id.$(echo "$users" | $esed -e 's/ +/./g')."
   # remove too old files
   find "$already_replied_dir" -ctime +1 | while read path
   do
