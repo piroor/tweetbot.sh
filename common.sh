@@ -356,7 +356,8 @@ is_too_frequent_mention() {
   local users="$1"
   local user
   local mentions
-  local all_users="$(cat <(cat | users_in_body) \
+  local body="$(cat)"
+  local all_users="$(cat <(echo "$body" | users_in_body) \
                          <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
                        sort | uniq | paste -s -d ' ')"
   for user in $all_users
@@ -374,7 +375,8 @@ is_too_frequent_mention() {
 on_replied() {
   local users="$1"
   local id="$2"
-  local all_users="$(cat <(cat | users_in_body) \
+  local body="$(cat)"
+  local all_users="$(cat <(echo "$body" | users_in_body) \
                          <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
                        sort | uniq | paste -s -d '.')"
 
@@ -389,7 +391,7 @@ on_replied() {
 users_in_body() {
   while read -r body
   do
-    echo "$body" | $esed -e 's/ +/\n/g' | grep -E '^\.?@' | $esed -e 's/^.*@//'
+    echo "$body" | $esed -e 's/ +/\n/g' | grep -E '^\.?@.' | $esed -e 's/^.*@//'
   done
 }
 
