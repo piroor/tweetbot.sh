@@ -411,6 +411,8 @@ Did you know? I'm a chatterbot!
 
 All comment lines starting with `#` are ignored.
 
+If you hope to post multiple tweets sequentially, write them in one line delimiting with `\t` (`\u0009`, hard tab).
+
 This file must be encoded in UTF-8.
 
 #### Directive to specify range of dates
