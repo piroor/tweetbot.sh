@@ -477,6 +477,7 @@ You simply have to send DMs like following:
  * `reply`: posts the given message as a reply by the bot.
  * `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
  * `rt` / `retweet`: retweets the given tweet by the bot.
+ * `fav` / `favorite`: add favorite to the given tweet by the bot.
  * `search-result`: treats the given tweet as a search result.
  * `run`: executes user defined commands.
 
