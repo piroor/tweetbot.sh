@@ -199,6 +199,22 @@ retweet() {
   fi
 }
 
+favorite() {
+  local body="$1"
+  log 'Adding favorite...'
+  local favorite_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  local output="$("$tweet_sh" favorite "$favorite_target" 2>&1)"
+  if [ $? = 0 ]
+  then
+    log "Successfully favorited: \"$favorite_target\""
+    respond "$sender" "Successfully favorited: \"$favorite_target\""
+  else
+    log "$output"
+    log "Failed to favorite \"$favorite_target\""
+    respond "$sender" "Failed to favorite \"$favorite_target\""
+  fi
+}
+
 handle_search_result() {
   local sender="$1"
   local body="$2"
@@ -287,6 +303,9 @@ do
       ;;
     rt|retweet )
       retweet "$sender" "$body"
+      ;;
+    fav|favorite )
+      favorite "$body"
       ;;
     search-result )
       handle_search_result "$sender" "$body"
