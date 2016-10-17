@@ -110,7 +110,10 @@ periodical_search() {
                 "$tools_dir/tweet.sh/tweet.sh" type \
                   -k "$keywords_for_search_results")"
       debug "   type: $type"
-      debug "Processing $id as $type..."
+      if [ "$type" != '' ]
+      then
+        log "Processing $id as $type..."
+      fi
       case "$type" in
         mention )
           echo "$tweet" |
