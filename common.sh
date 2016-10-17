@@ -235,6 +235,7 @@ is_spam_like_user() {
     spam_level=$(($spam_level + 1))
   fi
 
+  local screen_name="$(echo "$user" | jq -r .screen_name)"
   local description="$(echo "$user" | jq -r .description)"
   if [ "$description" = '' ]
   then
@@ -242,7 +243,7 @@ is_spam_like_user() {
     spam_level=$(($spam_level + 1))
   fi
 
-  if echo "$description" | egrep "$SPAM_USER_PATTERN" > /dev/null
+  if echo "@$screen_name $description" | egrep "$SPAM_USER_PATTERN" > /dev/null
   then
     log " => matched to the spam pattern"
     spam_level=$(($spam_level + 1))
