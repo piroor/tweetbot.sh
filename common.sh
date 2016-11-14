@@ -401,14 +401,13 @@ users_in_body() {
 post_replies() {
   local id="$1"
   local users="$2"
+  local body="$(cat)"
 
   if is_already_replied "$id"
   then
     log '  => already replied'
     return 1
   fi
-
-  local body="$(cat)"
 
   if echo "$body" | is_too_frequent_mention "$users"
   then
@@ -453,6 +452,7 @@ post_quotation() {
   local owner=$1
   local id=$2
   local url="https://twitter.com/$owner/status/$id"
+  local bodies="$(cat)"
 
   if is_already_replied "$id"
   then
@@ -467,7 +467,7 @@ post_quotation() {
   fi
 
   log "Quoting the tweet $id by $owner..."
-  while read -r body
+  echo "$bodies" | while read -r body
   do
     local result="$("$tweet_sh" reply "$id" "$body $url")"
     if [ $? = 0 ]
