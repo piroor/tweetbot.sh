@@ -145,6 +145,7 @@ periodical_search() {
     #      (sub-process loop produced by "tweet.sh | tac | while read..."
     #       cannot update the "last_id" in this scope.)
 
+    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
@@ -217,6 +218,7 @@ periodical_fetch_direct_messages() {
                 -s "$last_id" |
                 jq -c '.[]' |
                 tac)
+    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
     sleep 1m
   done
@@ -362,6 +364,7 @@ periodical_auto_follow() {
                 -s "$last_id" |
                 jq -c '.statuses[]' |
                 tac)
+    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     if [ "$last_id" != '' ]
     then
       # increment "since id" to bypass cached search results
