@@ -205,11 +205,12 @@ periodical_fetch_direct_messages() {
       debug "New DM detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
-      if [ $id -gt $last_id ]
+      if [ $id -le $last_id ]
       then
+        continue
+      fi
         last_id="$id"
         echo "$last_id" > "$last_id_file"
-      fi
       echo "$message" |
         env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm.sh"
       sleep 3s
