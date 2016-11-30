@@ -567,7 +567,7 @@ then
   query="$(echo "$WATCH_KEYWORDS" |
     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
-          -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g")"
+          -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g") -from:$MY_SCREEN_NAME"
   keywords="$(echo ",$WATCH_KEYWORDS," |
     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
