@@ -209,8 +209,8 @@ periodical_fetch_direct_messages() {
       then
         continue
       fi
-        last_id="$id"
-        echo "$last_id" > "$last_id_file"
+      last_id="$id"
+      echo "$last_id" > "$last_id_file"
       echo "$message" |
         env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm.sh"
       sleep 3s
