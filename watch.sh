@@ -81,7 +81,7 @@ periodical_search() {
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-  local keywords_for_search_results="$(echo "$query" | $esed -e 's/ OR /,/g' -e 's/-from:[^ ]+//)"
+  local keywords_for_search_results="$(echo "$query" | $esed -e 's/ OR /,/g' -e 's/-from:[^ ]+//')"
   local id
   local owner
   local type
