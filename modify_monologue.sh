@@ -23,8 +23,8 @@ then
           -e "s/(${non_whitespaces}+).*$/\1/")"
 fi
 body="$(echo "$input" |
-  $esed -e "s/^[-+]+[^${whitespaces}>&]+[$whitespaces]*((>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")" |
-  $tweet_sh resolve-all
+  $esed -e "s/^[-+]+[^${whitespaces}>&]+[$whitespaces]*((>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
+  $tweet_sh resolve-all)"
 
 log "  operation: $operation"
 log "  target   : $target"

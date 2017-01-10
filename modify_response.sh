@@ -25,8 +25,8 @@ then
           -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&$whitespaces]+([$whitespaces]*(>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//")" |
-  $tweet_sh resolve-all
+  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&$whitespaces]+([$whitespaces]*(>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
+  $tweet_sh resolve-all)"
 
 log "  operation: $operation"
 log "  keyword  : $keyword"
