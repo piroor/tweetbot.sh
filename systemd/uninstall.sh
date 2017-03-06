@@ -24,7 +24,7 @@ if echo "$confirmation" | egrep -i '^y' >/dev/null 2>&1
 then
   systemctl stop "${uninstall_name}_tweetbot"
   systemctl disable "${uninstall_name}_tweetbot"
-  rm "/etc/systemd/system/${uninstall_name}_tweetbot"
+  rm "/etc/systemd/system/${uninstall_name}_tweetbot.service"
   echo 'Done.'
 fi
 
