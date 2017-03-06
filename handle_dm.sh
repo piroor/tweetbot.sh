@@ -5,6 +5,9 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
 
+command_queue_dir="$status_dir/command_queue"
+mkdir -p "$command_queue_dir"
+
 administrators="$(echo "$ADMINISTRATORS" |
                     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
                           -e "s/[$whitespaces]*,[$whitespaces]*/|/g")"
@@ -12,6 +15,10 @@ if [ "$administrators" = '' ]
 then
   exit 1
 fi
+
+remove_first_arg() {
+  $esed 's/^[^ ]+ +//'
+}
 
 respond() {
   local sender="$1"
@@ -23,7 +30,7 @@ run_user_defined_command() {
   local sender="$1"
   local body="$2"
   log 'Running given command...'
-  local command="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  local command="$(echo "$body" | $esed "$REMOVE_FIRST_ARG")"
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
     log "Processing \"$path\"..."
@@ -47,7 +54,7 @@ do_echo() {
   local sender="$1"
   local body="$2"
   log 'Responding an echo...'
-  local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  local tweet_body="$(echo "$body" | remove_first_arg)"
   local result
   result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
@@ -64,7 +71,7 @@ test_response() {
   local body="$2"
   log 'Testing to reply...'
   cd $TWEET_BASE_DIR
-  local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
+  local tweet_body="$(echo "$body" | remove_first_arg | "$responder")"
   local result
   result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
@@ -138,17 +145,16 @@ post() {
   local sender="$1"
   local body="$2"
   log 'Posting new tweet...'
-  local tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
   local output
-  output="$("$tweet_sh" post "$tweet_body" 2>&1)"
+  output="$("$tweet_sh" post "$body" 2>&1)"
   if [ $? = 0 ]
   then
-    log "Successfully posted: \"$tweet_body\""
-    respond "$sender" "Successfully posted: \"$tweet_body\""
+    log "Successfully posted: \"$body\""
+    respond "$sender" "Successfully posted: \"$body\""
   else
     log "$output"
-    log "Failed to post \"$tweet_body\""
-    respond "$sender" "Failed to post \"$tweet_body\""
+    log "Failed to post \"$body\""
+    respond "$sender" "Failed to post \"$body\""
   fi
 }
 
@@ -193,7 +199,7 @@ handle_search_result() {
   local sender="$1"
   local body="$2"
   log 'Processing a search result...'
-  local target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
+  local target="$(echo "$body" | remove_first_arg)"
   local tweet="$("$tweet_sh" fetch "$target")"
   
   local output
@@ -268,12 +274,27 @@ do
       modify_monologue "$sender" "$body"
       ;;
     tweet|post )
+      body=$(echo "$body" | remove_first_arg)"
+      echo "post $body" > "$command_queue_dir/queued.$id"
+      respond "$sender" "Command queued: \"$body\""
+      ;;
+    tweet!|post! )
+      body=$(echo "$body" | remove_first_arg)"
       post "$sender" "$body"
       ;;
     reply )
       reply_to "$sender" "$body"
       ;;
-    del*|rem*|rt|retweet|unrt|unretweet|fav*|unfav*|follow|unfollow )
+    rt|retweet )
+      body=$(echo "$body" | remove_first_arg)"
+      echo "retweet $body" > "$command_queue_dir/queued.$id"
+      respond "$sender" "Command queued: \"$body\""
+      ;;
+    rt!|retweet! )
+      body=$(echo "$body" | remove_first_arg)"
+      process_generic_command "$sender" "retweet $body"
+      ;;
+    del*|rem*|unrt|unretweet|fav*|unfav*|follow|unfollow )
       process_generic_command "$sender" "$body"
       ;;
     search-result )
