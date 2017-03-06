@@ -219,16 +219,6 @@ follow() {
   local follow_target="$(echo "$1" | $esed 's/^[^ ]+ +//')"
   log "Following $follow_target..."
 
-  local tweet
-  if echo "$follow_target" | egrep '^https?:' >dev/null 2>&1
-  then
-    tweet="$("$tweet_sh" fetch "$follow_target")"
-    follow_target="$(echo "$tweet" | jq -r .user.screen_name)"
-    log "owner => $follow_target..."
-  fi
-
-  follow_target="$(echo "$follow_target" | $esed 's/^@//')"
-
   local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
   if [ $? = 0 ]
   then
