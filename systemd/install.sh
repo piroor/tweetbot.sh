@@ -107,7 +107,7 @@ cat "$tools_dir/systemd/service.sh" |
   tee "$service_script_path"
 echo '----------------------------------------------------------------'
 chmod +x "$service_script_path"
-chown "$(stat -c "%U:%G" "$data_dir")"
+chown "$(stat -c "%U:%G" "$data_dir")" "$service_script_path"
 
 echo "Installing new unit ${safe_name}_tweetbot..."
 echo '----------------------------------------------------------------'
