@@ -279,7 +279,7 @@ do
       ;;
     tweet|post )
       body="$(echo "$body" | remove_first_arg)"
-      local queue="post $body"
+      queue="post $body"
       echo "$queue" > "$command_queue_dir/queued.$id"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
@@ -293,7 +293,7 @@ do
       ;;
     rt|retweet )
       body="$(echo "$body" | remove_first_arg)"
-      local queue="retweet $body"
+      queue="retweet $body"
       echo "$queue" > "$command_queue_dir/queued.$id"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
