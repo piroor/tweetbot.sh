@@ -8,6 +8,34 @@ data_dir="$work_dir"
 tweetbot_dir="$tools_dir"
 owner="$USER"
 
+while getopts n:d:t:o:q OPT
+do
+  case $OPT in
+    n )
+      name="$OPTARG"
+      ;;
+    d )
+      data_dir="$OPTARG"
+      ;;
+    t )
+      tweetbot_dir="$OPTARG"
+      ;;
+    o )
+      owner="$OPTARG"
+      ;;
+    q )
+      quiet="true"
+      ;;
+  esac
+done
+
+validate() {
+  [ "$name" != '' ] &&
+    [ -d "$data_dir" ] &&
+    [ -d "$tweetbot_dir" ] &&
+    id "$owner" >/dev/null 2>&1
+}
+
 ask() {
   while true
   do
@@ -54,11 +82,16 @@ confirm() {
   echo "$confirmation" | egrep -i '^y' >/dev/null 2>&1
 }
 
-while true
-do
-  ask
-  confirm && break
-done
+if [ "$quiet" = 'true' ]
+then
+  validate || exit
+else
+  while true
+  do
+    ask
+    confirm && break
+  done
+fi
 
 safe_name="$(echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's|[ :/]|_|g')"
 
