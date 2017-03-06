@@ -480,6 +480,7 @@ You simply have to send DMs like following:
  * `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
  * `rt` / `retweet`: retweets the given tweet by the bot.
  * `fav` / `favorite`: add favorite to the given tweet by the bot.
+ * `follow`: follow the user.
  * `search-result`: treats the given tweet as a search result.
  * `run`: executes user defined commands.
 
@@ -631,6 +632,22 @@ Both alias and message are optional.
    * 1st argument: the ID of the tweet to be retweeted.
  * Example
    * `rt 0123456`
+
+#### `follow`: follows the user by the bot.
+
+ * Parameters
+   * 1st argument: a scren name or a URL of a tweet.
+ * Example
+   * `follow piro_or`
+   * `follow https://twitter.com/piro_or/status/838626584663748608`
+
+#### `unfollow`: unfollows the user by the bot.
+
+ * Parameters
+   * 1st argument: a scren name or a URL of a tweet.
+ * Example
+   * `unfollow piro_or`
+   * `unfollow https://twitter.com/piro_or/status/838626584663748608`
 
 #### `search-result`: treats the given tweet as a search result.
 
