@@ -117,6 +117,8 @@ then
   systemctl daemon-reload
   systemctl enable ${safe_name}_tweetbot
   echo 'Done.'
+  echo 'Please start the service manually via:'
+  echo "  systemctl start ${safe_name}_tweetbot"
 else
   echo 'Failed to install.'
 fi
