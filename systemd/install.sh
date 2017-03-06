@@ -94,21 +94,28 @@ else
 fi
 
 safe_name="$(echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's|[ :/]|_|g')"
-
 pid_file="$data_dir/.pidfile"
-set_env="env TWEETBOT_DIR=\"$tweetbot_dir\" DATA_DIR=\"$data_dir\" PID_FILE=\"$pid_file\""
-
 dist_path="/etc/systemd/system/${safe_name}_tweetbot.service"
+service_script_path="$data_dir/${safe_name}_tweetbot_service.sh"
+
+echo "Generatiing service runner script to $service_script_path..."
+echo '----------------------------------------------------------------'
+cat "$tools_dir/systemd/service.sh" |
+  sed -e "s|\${TWEETBOT_DIR}|$tweetbot_dir|g" \
+      -e "s|\${DATA_DIR}|$data_dir|g" \
+      -e "s|\${PID_FILE}|$pid_file|g" |
+  tee "$service_script_path"
+echo '----------------------------------------------------------------'
+chmod +x "$service_script_path"
+chown "$(stat -c "%U:%G" "$data_dir")"
 
 echo "Installing new unit ${safe_name}_tweetbot..."
 echo '----------------------------------------------------------------'
 cat "$tools_dir/systemd/tweetbot.service" |
   sed -e "s|\${NAME}|$name|g" \
-      -e "s|\${TWEETBOT_DIR}|$tweetbot_dir|g" \
-      -e "s|\${DATA_DIR}|$data_dir|g" \
+      -e "s|\${SERVICE_SCRIPT}|$service_script_path|g" \
       -e "s|\${PID_FILE}|$pid_file|g" \
-      -e "s|\${OWNER}|$owner|g" \
-      -e "s|\${SET_ENV}|$set_env|g" |
+      -e "s|\${OWNER}|$owner|g" |
   tee $dist_path
 echo '----------------------------------------------------------------'
 

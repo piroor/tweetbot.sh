@@ -4,9 +4,9 @@ Description=${NAME} Tweetbot
 [Service]
 Type=forking
 Restart=always
-ExecStart=${SET_ENV} ${TWEETBOT_DIR}/service.sh
-ExecReload=${SET_ENV} ${TWEETBOT_DIR}/service.sh
-ExecStop=${SET_ENV} ${TWEETBOT_DIR}/service.sh stop
+ExecStart=${SERVICE_SCRIPT}
+ExecReload=${SERVICE_SCRIPT}
+ExecStop=${SERVICE_SCRIPT} stop
 PIDFile=${PID_FILE}
 User=${OWNER}
 Group=${OWNER}
