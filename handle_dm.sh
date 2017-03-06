@@ -279,9 +279,10 @@ do
       ;;
     tweet|post )
       body="$(echo "$body" | remove_first_arg)"
-      echo "post $body" > "$command_queue_dir/queued.$id"
-      log "Command queued: \"$body\""
-      respond "$sender" "Command queued: \"$body\""
+      local queue="post $body"
+      echo "$queue" > "$command_queue_dir/queued.$id"
+      log "Command queued: \"$queue\""
+      respond "$sender" "Command queued: \"$queue\""
       ;;
     reply )
       reply_to "$sender" "$body"
@@ -292,9 +293,10 @@ do
       ;;
     rt|retweet )
       body="$(echo "$body" | remove_first_arg)"
-      echo "retweet $body" > "$command_queue_dir/queued.$id"
-      log "Command queued: \"$body\""
-      respond "$sender" "Command queued: \"$body\""
+      local queue="retweet $body"
+      echo "$queue" > "$command_queue_dir/queued.$id"
+      log "Command queued: \"$queue\""
+      respond "$sender" "Command queued: \"$queue\""
       ;;
     del*|rem*|unrt|unretweet|fav*|unfav*|follow|unfollow )
       process_generic_command "$sender" "$body"
