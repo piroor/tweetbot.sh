@@ -374,7 +374,7 @@ fi
 
 periodical_process_queue() {
   # minimum interval = 10minutes
-  [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_QUEUE_INTERVALL_MINUTES=10
+  [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 5 ] && PROCESS_QUEUE_INTERVALL_MINUTES=5
   while true
   do
     debug 'Processing queued search results...'
