@@ -16,6 +16,6 @@ fi
 if [ "$1" != 'stop' ]
 then
   #export TWEETBOT_DEBUG=1
-  "$tools_dir/tweetbot.sh/watch.sh" &
+  "$tools_dir/watch.sh" &
   echo "$!" > "$pidfile"
 fi
