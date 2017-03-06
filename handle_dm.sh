@@ -273,7 +273,7 @@ do
     +*|-* )
       modify_monologue "$sender" "$body"
       ;;
-    'tweet!|post!' )
+    'tweet!'|'post!' )
       body="$(echo "$body" | remove_first_arg)"
       post "$sender" "$body"
       ;;
@@ -287,7 +287,7 @@ do
     reply )
       reply_to "$sender" "$body"
       ;;
-    'rt!|retweet!' )
+    'rt!'|'retweet!' )
       body="$(echo "$body" | remove_first_arg)"
       process_generic_command "$sender" "retweet $body"
       ;;
