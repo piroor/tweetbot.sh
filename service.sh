@@ -3,6 +3,8 @@
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 pidfile="/tmp/.tweetbot.pidfile"
 
+cd "$tools_dir"
+
 if [ -f "$pidfile" ]
 then
   pid="$(cat "$pidfile")"
