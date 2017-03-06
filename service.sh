@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# This is a sample script to register a tweetbot instance as a service for systemd.
+
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 pidfile="/tmp/.tweetbot.pidfile"
 
