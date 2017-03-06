@@ -374,12 +374,12 @@ fi
 
 periodical_process_queue() {
   # minimum interval = 10minutes
-  [ $PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES=10
+  [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_QUEUE_INTERVALL_MINUTES=10
   while true
   do
     debug 'Processing queued search results...'
     env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-    sleep ${PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES}m
+    sleep ${PROCESS_QUEUE_INTERVALL_MINUTES}m
   done
 }
 periodical_process_queue &
