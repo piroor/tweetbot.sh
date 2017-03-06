@@ -223,7 +223,7 @@ follow() {
   log "Following $follow_target..."
   if echo "$follow_target" | egrep '^https?:' 2>&1 >dev/null
   then
-    # do something to extract user name
+    :# do something to extract user name
   fi
 
   local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
