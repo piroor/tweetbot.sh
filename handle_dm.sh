@@ -273,25 +273,27 @@ do
     +*|-* )
       modify_monologue "$sender" "$body"
       ;;
-    tweet\!|post\! )
-      body=$(echo "$body" | remove_first_arg)"
+    'tweet!|post!' )
+      body="$(echo "$body" | remove_first_arg)"
       post "$sender" "$body"
       ;;
     tweet|post )
-      body=$(echo "$body" | remove_first_arg)"
+      body="$(echo "$body" | remove_first_arg)"
       echo "post $body" > "$command_queue_dir/queued.$id"
+      log "Command queued: \"$body\""
       respond "$sender" "Command queued: \"$body\""
       ;;
     reply )
       reply_to "$sender" "$body"
       ;;
-    rt\!|retweet\! )
-      body=$(echo "$body" | remove_first_arg)"
+    'rt!|retweet!' )
+      body="$(echo "$body" | remove_first_arg)"
       process_generic_command "$sender" "retweet $body"
       ;;
     rt|retweet )
-      body=$(echo "$body" | remove_first_arg)"
+      body="$(echo "$body" | remove_first_arg)"
       echo "retweet $body" > "$command_queue_dir/queued.$id"
+      log "Command queued: \"$body\""
       respond "$sender" "Command queued: \"$body\""
       ;;
     del*|rem*|unrt|unretweet|fav*|unfav*|follow|unfollow )
