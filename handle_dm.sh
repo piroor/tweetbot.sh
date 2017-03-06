@@ -216,9 +216,6 @@ favorite() {
 }
 
 follow() {
-  log "Not implemented!"
-  return 0
-
   local follow_target="$1"
   log "Following $follow_target..."
 
