@@ -12,7 +12,8 @@ then
 fi
 
 echo "$names" | nl
-read -p "Input the number of the bot to be uninstalled: " uninstall_index
+read -p "Input the number of the bot to be uninstalled(1): " uninstall_index
+[ "$uninstall_index" = '' ] && uninstall_index=1
 
 uninstall_name="$(echo "$names" | sed -n "${uninstall_index}p")"
 
