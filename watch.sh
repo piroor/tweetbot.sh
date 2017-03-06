@@ -375,11 +375,15 @@ fi
 periodical_process_queue() {
   # minimum interval = 10minutes
   [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 5 ] && PROCESS_QUEUE_INTERVALL_MINUTES=5
+  local full_interval="${PROCESS_QUEUE_INTERVALL_MINUTES}m"
+  local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
   while true
   do
-    debug 'Processing queued search results...'
+    debug 'Processing queue...'
     env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-    sleep ${PROCESS_QUEUE_INTERVALL_MINUTES}m
+    sleep $half_interval
+    env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
+    sleep $half_interval
   done
 }
 periodical_process_queue &

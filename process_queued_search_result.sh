@@ -7,6 +7,7 @@ logfile="$log_dir/handle_queued_search_result.log"
 
 lock_key=''
 processed_users=' '
+tweeted='false'
 
 queue_dir="$status_dir/search_result_queue"
 mkdir -p "$queue_dir"
@@ -49,6 +50,7 @@ do
   if [ "$is_protected" != '1' ] && is_true "$RETWEET_SEARCH_RESULTS"
   then
     echo "$tweet" | retweet
+    tweeted='true'
   fi
 
   # If we include the screen name into the keywords, simple mentions
@@ -66,9 +68,12 @@ do
       else
         echo "$responses" |
           post_quotation "$screen_name" "$id"
+        tweeted='true'
       fi
     fi
   fi
 
   rm "$processed_path"
 done < <(find "$queue_dir" -name "queued.*" | sort)
+
+[ "$tweeted" = 'true' ]
