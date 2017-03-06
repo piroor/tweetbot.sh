@@ -26,6 +26,8 @@ Go to [the front page](https://apps.twitter.com/), create a new app, and generat
 
 If you hope to use DMs to control the running bot, you have to permit the app to access direct messages.
 
+There is installer and uninstaller for systemd. Run `sudo path/to/tweetbot.sh/systemd/install.sh` or `sudo path/to/tweetbot.sh/systemd/uninstall.sh`.
+
 ## Usage
 
 ~~~
