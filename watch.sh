@@ -379,11 +379,20 @@ periodical_process_queue() {
   local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
   while true
   do
-    debug 'Processing queue...'
-    env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-    sleep $half_interval
-    env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
-    sleep $half_interval
+    now="$(date +%H:%M | time_to_minutes)
+    for timespan in $(echo "$PROCESS_QUEUE_TIME_SPAN" | sed 's/,/ /g')
+    do
+      start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
+      end="$(echo "$timespan" | cut -d '-' -f 2 | time_to_minutes)"
+      if [ $now -ge $start -a $now -le $end ]
+      then
+        debug 'Processing queue...'
+        env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
+        sleep $half_interval
+        env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
+        sleep $half_interval
+      fi
+    done
   done
 }
 periodical_process_queue &
