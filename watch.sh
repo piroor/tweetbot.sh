@@ -379,7 +379,7 @@ periodical_process_queue() {
   local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
   while true
   do
-    now="$(date +%H:%M | time_to_minutes)
+    now="$(date +%H:%M | time_to_minutes)"
     processed='false'
     for timespan in $(echo "$PROCESS_QUEUE_TIME_SPAN" | sed 's/,/ /g')
     do
