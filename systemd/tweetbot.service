@@ -1,0 +1,15 @@
+[Unit]
+Description=${NAME} Tweetbot
+
+[Service]
+Type=forking
+Restart=always
+ExecStart=${SET_ENV} ${TWEETBOT_DIR}/service.sh
+ExecReload=${SET_ENV} ${TWEETBOT_DIR}/service.sh
+ExecStop=${SET_ENV} ${TWEETBOT_DIR}/service.sh stop
+PIDFile=${PID_FILE}
+User=${OWNER}
+Group=${OWNER}
+
+[Install]
+WantedBy=multi-user.target
