@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-tools_dir="$TWEETBOT_DIR"
-data_dir="$DATA_DIR"
-pidfile="$PID_FILE"
+tools_dir="${TWEETBOT_DIR}"
+data_dir="${DATA_DIR}"
+pidfile="${PID_FILE}"
 
 cd "$data_dir"
 
