@@ -93,7 +93,7 @@ else
   done
 fi
 
-safe_name="$(echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's|[ :/]|_|g')"
+safe_name="$(echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's|[ :/\.]|_|g')"
 pid_file="$data_dir/.pidfile"
 dist_path="/etc/systemd/system/${safe_name}_tweetbot.service"
 service_script_path="$data_dir/${safe_name}_tweetbot_service.sh"
