@@ -216,7 +216,7 @@ favorite() {
 }
 
 follow() {
-  local follow_target="$1"
+  local follow_target="$(echo "$1" | $esed 's/^[^ ]+ +//i')"
   log "Following $follow_target..."
 
   local tweet
