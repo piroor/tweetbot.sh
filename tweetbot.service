@@ -1,12 +1,15 @@
 # This is a sample unit file to register a tweetbot instance as a service for systemd.
 # How to use:
 #  1. Put this file under "/etc/systemd/system/".
-#     $ sudo ln -s $PWD/tweetbot.service /etc/systemd/system/tweetbot.service
+#     $ sudo cp $PWD/tweetbot.service /etc/systemd/system/tweetbot.service
+#     (Note: DO NOT do this as "ln -s", otherwise the step 4 will fail.)
 #  2. Reload all daemons.
 #     $ sudo systemctl daemon-reload
 #  3. Confirm that the service is correctly detected.
 #     $ systemctl status tweetbot
-#  4. Start the service.
+#  4. Enable the service for the next startup.
+#     $ sudo systemctl enable tweetbot
+#  5. Start the service manually.
 #     $ sudo systemctl start tweetbot
 
 [Unit]
