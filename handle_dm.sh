@@ -165,69 +165,18 @@ reply_to() {
   fi
 }
 
-delete() {
-  local sender="$1"
-  local body="$2"
-  log 'Deleting...'
-  local delete_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
-  local output="$("$tweet_sh" delete "$delete_target" 2>&1)"
-  if [ $? = 0 ]
-  then
-    log "Successfully deleted: \"$delete_target\""
-    respond "$sender" "Successfully deleted: \"$delete_target\""
-  else
-    log "$output"
-    log "Failed to delete \"$delete_target\""
-    respond "$sender" "Failed to delete \"$delete_target\""
-  fi
-}
-
-retweet() {
-  local sender="$1"
-  local body="$2"
-  log 'Retweeting...'
-  local retweet_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
-  local output="$("$tweet_sh" retweet "$retweet_target" 2>&1)"
-  if [ $? = 0 ]
-  then
-    log "Successfully retweeted: \"$retweet_target\""
-    respond "$sender" "Successfully retweeted: \"$retweet_target\""
-  else
-    log "$output"
-    log "Failed to retweet \"$retweet_target\""
-    respond "$sender" "Failed to retweet \"$retweet_target\""
-  fi
-}
-
-favorite() {
+process_generic_command() {
   local body="$1"
-  log 'Adding favorite...'
-  local favorite_target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
-  local output="$("$tweet_sh" favorite "$favorite_target" 2>&1)"
+  log 'Processing $body...'
+  local output="$("$tweet_sh" $body 2>&1)"
   if [ $? = 0 ]
   then
-    log "Successfully favorited: \"$favorite_target\""
-    respond "$sender" "Successfully favorited: \"$favorite_target\""
+    log "Successfully processed: \"$body\""
+    respond "$sender" "Successfully processed: \"$body\""
   else
     log "$output"
-    log "Failed to favorite \"$favorite_target\""
-    respond "$sender" "Failed to favorite \"$favorite_target\""
-  fi
-}
-
-follow() {
-  local follow_target="$(echo "$1" | $esed 's/^[^ ]+ +//')"
-  log "Following $follow_target..."
-
-  local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
-  if [ $? = 0 ]
-  then
-    log "Successfully followed: \"$follow_target\""
-    respond "$sender" "Successfully followed: \"$follow_target\""
-  else
-    log "$output"
-    log "Failed to follow \"$follow_target\""
-    respond "$sender" "Failed to follow \"$follow_target\""
+    log "Failed to process \"$body\""
+    respond "$sender" "Failed to process \"$body\""
   fi
 }
 
@@ -314,17 +263,8 @@ do
     reply )
       reply_to "$sender" "$body"
       ;;
-    del*|rem* )
-      delete "$sender" "$body"
-      ;;
-    rt|retweet )
-      retweet "$sender" "$body"
-      ;;
-    fav|favorite )
-      favorite "$body"
-      ;;
-    follow )
-      follow "$body"
+    del*|rem*|rt|retweet|unrt|unretweet|fav*|unfav*|follow|unfollow )
+      process_generic_command "$sender" "$body"
       ;;
     search-result )
       handle_search_result "$sender" "$body"
