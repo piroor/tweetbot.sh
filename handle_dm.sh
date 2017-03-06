@@ -168,7 +168,7 @@ reply_to() {
 process_generic_command() {
   local sender="$1"
   local body="$2"
-  log 'Processing $body...'
+  log "Processing $body..."
   local output="$("$tweet_sh" $body 2>&1)"
   if [ $? = 0 ]
   then
