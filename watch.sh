@@ -380,6 +380,7 @@ periodical_process_queue() {
   while true
   do
     now="$(date +%H:%M | time_to_minutes)
+    processed='false'
     for timespan in $(echo "$PROCESS_QUEUE_TIME_SPAN" | sed 's/,/ /g')
     do
       start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
@@ -388,11 +389,13 @@ periodical_process_queue() {
       then
         debug 'Processing queue...'
         env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-        sleep $half_interval
+        sleep "$half_interval"
         env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
-        sleep $half_interval
+        sleep "$half_interval"
+        processed='true'
       fi
     done
+    [ "$processed" != 'true' ] && sleep "$full_interval"
   done
 }
 periodical_process_queue &
