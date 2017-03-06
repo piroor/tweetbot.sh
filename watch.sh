@@ -156,30 +156,16 @@ periodical_search() {
   done
 }
 
-# Sub process 3: process queued search results
-
-periodical_process_queue() {
-  # minimum interval = 10minutes
-  [ $PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES=10
-  while true
-  do
-    debug 'Processing queued search results...'
-    env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-    sleep ${PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES}m
-  done
-}
-
 if [ "$query" != '' ]
 then
   log "Tracking search results with the query \"$query\"..."
   periodical_search &
-  periodical_process_queue &
 else
   log "No search queriy."
 fi
 
 
-# Sub process 4: polling for the REST direct messages API
+# Sub process 3: polling for the REST direct messages API
 #   This is required, because some direct messages can be dropped
 #   in the stream.
 
@@ -227,7 +213,7 @@ periodical_fetch_direct_messages() {
 periodical_fetch_direct_messages &
 
 
-# Sub process 5: posting monologue tweets
+# Sub process 4: posting monologue tweets
 # ・計算の始点は00:00
 # ・指定間隔の1/3か10分の短い方を、「投稿時間の振れ幅」とする。
 #   30分間隔なら、振れ幅は10分。00:25から00:35の間のどこかで投稿する。
@@ -325,7 +311,7 @@ periodical_monologue() {
 periodical_monologue &
 
 
-# Sub process 6: polling for the REST search API to follow new users
+# Sub process 5: polling for the REST search API to follow new users
 
 periodical_auto_follow() {
   logmodule='auto_follow'
@@ -382,6 +368,21 @@ then
 else
   log "No auto follow queriy."
 fi
+
+
+# Sub process 6: process queued search results
+
+periodical_process_queue() {
+  # minimum interval = 10minutes
+  [ $PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES=10
+  while true
+  do
+    debug 'Processing queued search results...'
+    env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
+    sleep ${PROCESS_SEARCH_RESULT_QUEUE_INTERVALL_MINUTES}m
+  done
+}
+periodical_process_queue &
 
 
 wait
