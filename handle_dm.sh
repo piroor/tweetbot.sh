@@ -28,7 +28,8 @@ run_user_defined_command() {
   do
     log "Processing \"$path\"..."
     cd $TWEET_BASE_DIR
-    local handler_result="$("$path" "$sender" "$command" 2>&1)"
+    local handler_result
+    handler_result="$("$path" "$sender" "$command" 2>&1)"
     if [ $? = 0 ]
     then
       log "$handler_result"
@@ -47,7 +48,8 @@ do_echo() {
   local body="$2"
   log 'Responding an echo...'
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
-  local result="$(respond "$sender" "$tweet_body")"
+  local result
+  result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
   then
     log "Successfully responded: \"$tweet_body\""
@@ -63,7 +65,8 @@ test_response() {
   log 'Testing to reply...'
   cd $TWEET_BASE_DIR
   local tweet_body="$(echo "$body" | $esed 's/^[^ ]+ +//i' | "$responder")"
-  local result="$(respond "$sender" "$tweet_body")"
+  local result
+  result="$(respond "$sender" "$tweet_body")"
   if [ $? = 0 ]
   then
     log "Successfully responded: \"$tweet_body\""
@@ -86,7 +89,8 @@ modify_response() {
     do
       log "Processing \"$path\"..."
       cd $TWEET_BASE_DIR
-      local handler_result="$("$path" 2>&1)"
+      local handler_result
+      handler_result="$("$path" 2>&1)"
       if [ $? = 0 ]
       then
         log 'Successfully proceeded.'
@@ -114,7 +118,8 @@ modify_monologue() {
     do
       log "Processing \"$path\"..."
       cd $TWEET_BASE_DIR
-      local handler_result="$("$path" 2>&1)"
+      local handler_result
+      handler_result="$("$path" 2>&1)"
       if [ $? = 0 ]
       then
         log 'Successfully proceeded.'
@@ -134,7 +139,8 @@ post() {
   local body="$2"
   log 'Posting new tweet...'
   local tweet_body="$(echo "$body" | $esed 's/^(tweet|post) +//i')"
-  local output="$("$tweet_sh" post "$tweet_body" 2>&1)"
+  local output
+  output="$("$tweet_sh" post "$tweet_body" 2>&1)"
   if [ $? = 0 ]
   then
     log "Successfully posted: \"$tweet_body\""
@@ -153,7 +159,8 @@ reply_to() {
   local reply_params="$(echo "$body" | $esed 's/^reply +//i')"
   local reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
   local reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
-  local output="$("$tweet_sh" reply "$reply_target" "$reply_body" 2>&1)"
+  local output
+  output="$("$tweet_sh" reply "$reply_target" "$reply_body" 2>&1)"
   if [ $? = 0 ]
   then
     log "Successfully replied to \"$reply_target\": \"$reply_body\""
@@ -189,7 +196,8 @@ handle_search_result() {
   local target="$(echo "$body" | $esed 's/^[^ ]+ +//i')"
   local tweet="$("$tweet_sh" fetch "$target")"
   
-  local output="$(echo "$tweet" | env FORCE_PROCESS=yes "$tools_dir/handle_search_result.sh" 2>&1)"
+  local output
+  output="$(echo "$tweet" | env FORCE_PROCESS=yes "$tools_dir/handle_search_result.sh" 2>&1)"
   if [ $? = 0 ]
   then
     log "Successfully processed a search result: \"$target\""
