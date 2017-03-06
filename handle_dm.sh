@@ -215,6 +215,29 @@ favorite() {
   fi
 }
 
+follow() {
+  log "Not implemented!"
+  return 0
+
+  local follow_target="$1"
+  log "Following $follow_target..."
+  if echo "$follow_target" | egrep '^https?:' 2>&1 >dev/null
+  then
+    # do something to extract user name
+  fi
+
+  local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
+  if [ $? = 0 ]
+  then
+    log "Successfully followed: \"$follow_target\""
+    respond "$sender" "Successfully followed: \"$follow_target\""
+  else
+    log "$output"
+    log "Failed to follow \"$follow_target\""
+    respond "$sender" "Failed to follow \"$follow_target\""
+  fi
+}
+
 handle_search_result() {
   local sender="$1"
   local body="$2"
@@ -306,6 +329,9 @@ do
       ;;
     fav|favorite )
       favorite "$body"
+      ;;
+    follow )
+      follow "$body"
       ;;
     search-result )
       handle_search_result "$sender" "$body"
