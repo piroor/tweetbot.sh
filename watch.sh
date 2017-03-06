@@ -370,7 +370,7 @@ else
 fi
 
 
-# Sub process 6: process queued search results
+# Sub process 6: process queued search results and commands
 
 periodical_process_queue() {
   # minimum interval = 10minutes
