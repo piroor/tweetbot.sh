@@ -1,0 +1,29 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          tweetbot
+# Required-Start:    $network
+# Required-Stop:
+# Should-Start:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description:
+# Description:
+### END INIT INFO
+
+cd /path/to/tweetbot
+user=(the username of the owner of this instance)
+
+case "$1" in
+  start|restart)
+    sudo -u $user -H ./service.sh
+    ;;
+  stop)
+    sudo -u $user -H ./watch.sh stop
+    ;;
+  *)
+    echo "Unknown command" 1>&2
+    exit 1
+    ;;
+esac
+
+exit 0
