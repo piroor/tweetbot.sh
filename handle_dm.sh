@@ -278,7 +278,7 @@ do
       echo "post $body" > "$command_queue_dir/queued.$id"
       respond "$sender" "Command queued: \"$body\""
       ;;
-    tweet!|post! )
+    tweet\!|post\! )
       body=$(echo "$body" | remove_first_arg)"
       post "$sender" "$body"
       ;;
@@ -290,7 +290,7 @@ do
       echo "retweet $body" > "$command_queue_dir/queued.$id"
       respond "$sender" "Command queued: \"$body\""
       ;;
-    rt!|retweet! )
+    rt\!|retweet\! )
       body=$(echo "$body" | remove_first_arg)"
       process_generic_command "$sender" "retweet $body"
       ;;
