@@ -220,7 +220,7 @@ follow() {
   log "Following $follow_target..."
 
   local tweet
-  if echo "$follow_target" | egrep '^https?:' 2>&1 >dev/null
+  if echo "$follow_target" | egrep '^https?:' >dev/null 2>&1
   then
     tweet="$("$tweet_sh" fetch "$follow_target")"
     follow_target="$(echo "$tweet" | jq -r .user.screen_name)"
