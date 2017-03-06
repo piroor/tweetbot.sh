@@ -216,7 +216,7 @@ favorite() {
 }
 
 follow() {
-  local follow_target="$(echo "$1" | $esed 's/^[^ ]+ +//i')"
+  local follow_target="$(echo "$1" | $esed 's/^[^ ]+ +//')"
   log "Following $follow_target..."
 
   local tweet
@@ -226,6 +226,8 @@ follow() {
     follow_target="$(echo "$tweet" | jq -r .user.screen_name)"
     log "owner => $follow_target..."
   fi
+
+  follow_target="$(echo "$follow_target" | $esed 's/^@//')"
 
   local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
   if [ $? = 0 ]
