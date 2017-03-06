@@ -221,9 +221,13 @@ follow() {
 
   local follow_target="$1"
   log "Following $follow_target..."
-  if echo "$follow_target" | egrep '^https?:' 2>&1 >dev/null
+
+  local tweet
+  if echo "$follow_target" | egrep '^https?://twitter.com/.+/status/' 2>&1 >dev/null
   then
-    :# do something to extract user name
+    tweet="$("$tweet_sh" fetch "$follow_target")"
+    follow_target="$(echo "$tweet" | jq -r .user.screen_name)"
+    log "owner => $follow_target..."
   fi
 
   local output="$("$tweet_sh" follow "$follow_target" 2>&1)"
