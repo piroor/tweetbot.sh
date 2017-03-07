@@ -381,11 +381,11 @@ periodical_process_queue() {
   do
     if is_in_time_range "$PROCESS_QUEUE_TIME_SPAN"
     then
-        debug 'Processing queue...'
-        env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-        sleep "$half_interval"
-        env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
-        sleep "$half_interval"
+      debug 'Processing queue...'
+      env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
+      sleep "$half_interval"
+      env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
+      sleep "$half_interval"
     else
       sleep "$full_interval"
     fi
