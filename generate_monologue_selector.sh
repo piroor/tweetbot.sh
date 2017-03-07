@@ -47,6 +47,22 @@ time_to_minutes() {
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
+is_in_time_range() {
+  local timespan_definitions="\$1"
+  local now=\$2\
+
+  local timespan
+  local start
+  local end
+  for timespan in \$(echo "\$timespan_definitions" | sed 's/,/ /g')
+  do
+    start="\$(echo "\$timespan" | cut -d '-' -f 1 | time_to_minutes)"
+    end="\$(echo "\$timespan" | cut -d '-' -f 2 | time_to_minutes)"
+    [ \$now -ge \$start -a \$now -le \$end ] && return 0
+  done
+  return 1
+}
+
 date_matcher='0*([0-9]+|\*).0*([0-9]+|\*).0*([0-9]+|\*)'
 
 date_to_serial() {
@@ -116,12 +132,8 @@ FIN
     group="$(echo "$group" | cut -d '/' -f 1)"
     if [ "$timespans" != "$group" ]
     then
-      for timespan in $(echo "$timespans" | sed 's/,/ /g')
-      do
-        start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
-        end="$(echo "$timespan" | cut -d '-' -f 2 | time_to_minutes)"
-        cat << FIN >> "$monologue_selector"
-if [ \$now -ge $start -a \$now -le $end ]
+      cat << FIN >> "$monologue_selector"
+if is_in_time_range "$timespans" \$now
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$group\"" 1>&2
   message="\$(extract_message_from_group '$group' | echo_with_probability 60)"
@@ -133,7 +145,6 @@ then
 fi
 
 FIN
-     done
     fi
   done
 
