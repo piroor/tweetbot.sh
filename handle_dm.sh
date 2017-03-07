@@ -306,5 +306,5 @@ do
       ;;
   esac
 
-  on_dm_processed
+  on_dm_processed "$id"
 done
