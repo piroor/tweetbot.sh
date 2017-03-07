@@ -281,6 +281,8 @@ do
       body="$(echo "$body" | remove_first_arg)"
       queue="post $body"
       echo "$queue" > "$command_queue_dir/queued.$id"
+      echo "dm $sender Queued command is processed: \"$queue\"" \
+        >> "$command_queue_dir/queued.$id"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
       ;;
@@ -295,6 +297,8 @@ do
       body="$(echo "$body" | remove_first_arg)"
       queue="retweet $body"
       echo "$queue" > "$command_queue_dir/queued.$id"
+      echo "dm $sender Queued command is processed: \"$queue\"" \
+        >> "$command_queue_dir/queued.$id"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
       ;;
