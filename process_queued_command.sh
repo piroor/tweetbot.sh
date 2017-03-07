@@ -21,7 +21,7 @@ do
   log '=============================================================='
   log "Processing queued command: \"$command\""
 
-  output="$(echo '' | "$tweet_sh" $command 2>&1)"
+  output="$("$tweet_sh" $command 2>&1)"
   if [ $? = 0 ]
   then
     log "Successfully processed: \"$command\""
