@@ -373,7 +373,7 @@ fi
 # Sub process 6: process queued search results and commands
 
 periodical_process_queue() {
-  # minimum interval = 10minutes
+  # minimum interval = 5minutes
   [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 5 ] && PROCESS_QUEUE_INTERVALL_MINUTES=5
   local full_interval="${PROCESS_QUEUE_INTERVALL_MINUTES}m"
   local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
