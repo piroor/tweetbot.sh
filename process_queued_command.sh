@@ -26,6 +26,7 @@ do
   then
     log "Successfully processed: \"$command\""
     rm "$path"
+    unlock "$lock_key"
     exit 0 # process only one queue!
   else
     log "$output"
