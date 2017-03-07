@@ -185,6 +185,25 @@ time_to_minutes() {
   echo $(( $hours * 60 + $minutes ))
 }
 
+is_in_time_range() {
+  local timespan_definitions="$1"
+  local now=$2
+
+  [ "$now" = '' ] && now="$(date +%H:%M)"
+  now=$(echo "$now" | time_to_minutes)
+
+  local timespan
+  local start
+  local end
+  for timespan in $(echo "$timespan_definitions" | sed 's/,/ /g')
+  do
+    start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
+    end="$(echo "$timespan" | cut -d '-' -f 2 | time_to_minutes)"
+    [ $now -ge $start -a $now -le $end ] && return 0
+  done
+  return 1
+}
+
 #=============================================================
 # Utilities to operate tweet JSON strings
 
