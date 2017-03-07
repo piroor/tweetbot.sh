@@ -13,7 +13,7 @@ mkdir -p "$queue_dir"
 while unlock "$lock_key" && read path
 do
   command="$(cat "$path")"
-  id="$(echo "$path" | basename | cut -d '.' -f 2)"
+  id="$(basename "$path" | cut -d '.' -f 2)"
 
   lock_key="queued_command.$id"
   try_lock_until_success "$lock_key"
