@@ -26,16 +26,16 @@ do
   failed='false'
   while read command
   do
-  output="$("$tweet_sh" $command 2>&1)"
-  if [ $? = 0 ]
-  then
-    log "Successfully processed: \"$command\""
-    processed='true'
-  else
-    log "$output"
-    log "Failed to process \"$command\""
-    failed='true'
-  fi
+    output="$("$tweet_sh" $command 2>&1)"
+    if [ $? = 0 ]
+    then
+      log "Successfully processed: \"$command\""
+      processed='true'
+    else
+      log "$output"
+      log "Failed to process \"$command\""
+      failed='true'
+    fi
   done < <(echo "$commands")
 
   rm "$path"
