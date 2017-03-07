@@ -49,8 +49,6 @@ time_to_minutes() {
 
 is_in_time_range() {
   local timespan_definitions="\$1"
-  local now=\$2\
-
   local timespan
   local start
   local end
@@ -133,7 +131,7 @@ FIN
     if [ "$timespans" != "$group" ]
     then
       cat << FIN >> "$monologue_selector"
-if is_in_time_range "$timespans" \$now
+if is_in_time_range "$timespans"
 then
   [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$group\"" 1>&2
   message="\$(extract_message_from_group '$group' | echo_with_probability 60)"
