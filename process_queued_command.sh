@@ -25,12 +25,12 @@ do
   if [ $? = 0 ]
   then
     log "Successfully processed: \"$command\""
-    rm "$processed_path"
+    rm "$path"
     exit 0 # process only one queue!
   else
     log "$output"
     log "Failed to process \"$command\""
-    rm "$processed_path"
+    rm "$path"
   fi
 done < <(find "$queue_dir" -name "queued.*" | sort)
 
