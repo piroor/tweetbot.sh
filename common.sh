@@ -146,7 +146,7 @@ ADMINISTRATORS=''
 WATCH_KEYWORDS=''
 AUTO_FOLLOW_QUERY=''
 PROCESS_QUEUE_INTERVALL_MINUTES=10
-PROCESS_QUEUE_TIME_RANGE="11:40-15:00,17:00-24:00"
+ACTIVE_TIME_RANGE="11:40-15:00,17:00-24:00"
 MONOLOGUE_INTERVAL_MINUTES=60
 MONOLOGUE_ACTIVE_TIME_RANGE="00:00-00:30,06:00-24:00"
 MONOLOGUE_TIME_RANGE_GROUPS="morning/06:00-07:00 \
@@ -370,7 +370,7 @@ retweet() {
   if echo "$tweet" | jq -r .retweeted | grep "false" > /dev/null
   then
     log " => retweet $id"
-    if is_in_time_range "$PROCESS_QUEUE_TIME_RANGE"
+    if is_in_time_range "$ACTIVE_TIME_RANGE"
     then
       result="$("$tweet_sh" retweet $id)"
       if [ $? != 0 ]

@@ -385,7 +385,7 @@ periodical_process_queue() {
   local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
   while true
   do
-    if is_in_time_range "$PROCESS_QUEUE_TIME_RANGE"
+    if is_in_time_range "$ACTIVE_TIME_RANGE"
     then
       debug 'Processing queue...'
       env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
