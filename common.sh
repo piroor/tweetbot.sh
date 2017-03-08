@@ -509,22 +509,22 @@ post_quotation() {
   log "Quoting the tweet $id by $owner..."
   if is_in_time_range "$ACTIVE_TIME_RANGE"
   then
-  local result
-  echo "$bodies" | while read -r body
-  do
-    result="$("$tweet_sh" reply "$id" "$body $url")"
-    if [ $? = 0 ]
-    then
-      log '  => successfully quoted'
-      echo "$body" | on_replied "$id" "$owner"
-      # send following resposnes as a sequential tweets
-      id="$(echo "$result" | jq -r .id_str)"
-      echo "$body $url" | cache_body "$id"
-    else
-      log '  => failed to quote'
-      log "     result: $result"
-    fi
-  done
+    local result
+    echo "$bodies" | while read -r body
+    do
+      result="$("$tweet_sh" reply "$id" "$body $url")"
+      if [ $? = 0 ]
+      then
+        log '  => successfully quoted'
+        echo "$body" | on_replied "$id" "$owner"
+        # send following resposnes as a sequential tweets
+        id="$(echo "$result" | jq -r .id_str)"
+        echo "$body $url" | cache_body "$id"
+      else
+        log '  => failed to quote'
+        log "     result: $result"
+      fi
+    done
   else
     local queue_file="$command_queue_dir/queued.$id"
     touch "$queue_file"
