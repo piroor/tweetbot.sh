@@ -372,12 +372,12 @@ retweet() {
     log " => retweet $id"
     if is_in_time_range "$PROCESS_QUEUE_TIME_RANGE"
     then
-    result="$("$tweet_sh" retweet $id)"
-    if [ $? != 0 ]
-    then
-      log '  => failed to retweet'
-      log "     result: $result"
-    fi
+      result="$("$tweet_sh" retweet $id)"
+      if [ $? != 0 ]
+      then
+        log '  => failed to retweet'
+        log "     result: $result"
+      fi
     else
       local queue="retweet $id"
       echo "$queue" > "$command_queue_dir/queued.$id"
