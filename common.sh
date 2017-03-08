@@ -102,6 +102,9 @@ mkdir -p "$already_processed_dir"
 body_cache_dir="$status_dir/body_cache"
 mkdir -p "$body_cache_dir"
 
+command_queue_dir="$status_dir/command_queue"
+mkdir -p "$command_queue_dir"
+
 responses_dir="$TWEET_BASE_DIR/responses"
 mkdir -p "$responses_dir"
 
@@ -367,11 +370,18 @@ retweet() {
   if echo "$tweet" | jq -r .retweeted | grep "false" > /dev/null
   then
     log " => retweet $id"
+    if is_in_time_range "$PROCESS_QUEUE_TIME_RANGE"
+    then
     result="$("$tweet_sh" retweet $id)"
     if [ $? != 0 ]
     then
       log '  => failed to retweet'
       log "     result: $result"
+    fi
+    else
+      local queue="retweet $id"
+      echo "$queue" > "$command_queue_dir/queued.$id"
+      log " => queued: \"$queue\""
     fi
   else
     log " => already retweeted"

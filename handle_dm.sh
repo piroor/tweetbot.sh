@@ -5,9 +5,6 @@ tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
 
-command_queue_dir="$status_dir/command_queue"
-mkdir -p "$command_queue_dir"
-
 administrators="$(echo "$ADMINISTRATORS" |
                     $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
                           -e "s/[$whitespaces]*,[$whitespaces]*/|/g")"

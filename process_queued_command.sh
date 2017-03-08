@@ -7,9 +7,6 @@ logfile="$log_dir/process_queued_command.log"
 
 lock_key=''
 
-queue_dir="$status_dir/command_queue"
-mkdir -p "$queue_dir"
-
 while unlock "$lock_key" && read path
 do
   commands="$(cat "$path")"
@@ -44,6 +41,6 @@ do
   then
     exit 0
   fi
-done < <(find "$queue_dir" -name "queued.*" | sort)
+done < <(find "$command_queue_dir" -name "queued.*" | sort)
 
 exit 1
