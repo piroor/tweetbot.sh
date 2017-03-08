@@ -143,10 +143,10 @@ ADMINISTRATORS=''
 WATCH_KEYWORDS=''
 AUTO_FOLLOW_QUERY=''
 PROCESS_QUEUE_INTERVALL_MINUTES=10
-PROCESS_QUEUE_TIME_SPAN="11:40-15:00,17:00-24:00"
+PROCESS_QUEUE_TIME_RANGE="11:40-15:00,17:00-24:00"
 MONOLOGUE_INTERVAL_MINUTES=60
-MONOLOGUE_ACTIVE_TIME_SPAN="00:00-00:30,06:00-24:00"
-MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
+MONOLOGUE_ACTIVE_TIME_RANGE="00:00-00:30,06:00-24:00"
+MONOLOGUE_TIME_RANGE_GROUPS="morning/06:00-07:00 \
                      noon/12:00-13:00 \
                      afternoon/15:00-15:30 \
                      evening/17:30-18:30 \
@@ -187,19 +187,19 @@ time_to_minutes() {
 }
 
 is_in_time_range() {
-  local timespan_definitions="$1"
+  local time_ranges="$1"
   local now=$2
 
   [ "$now" = '' ] && now="$(date +%H:%M)"
   now=$(echo "$now" | time_to_minutes)
 
-  local timespan
+  local time_range
   local start
   local end
-  for timespan in $(echo "$timespan_definitions" | sed 's/,/ /g')
+  for time_range in $(echo "$time_ranges" | sed 's/,/ /g')
   do
-    start="$(echo "$timespan" | cut -d '-' -f 1 | time_to_minutes)"
-    end="$(echo "$timespan" | cut -d '-' -f 2 | time_to_minutes)"
+    start="$(echo "$time_range" | cut -d '-' -f 1 | time_to_minutes)"
+    end="$(echo "$time_range" | cut -d '-' -f 2 | time_to_minutes)"
     [ $now -ge $start -a $now -le $end ] && return 0
   done
   return 1

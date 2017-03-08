@@ -48,14 +48,14 @@ time_to_minutes() {
 }
 
 is_in_time_range() {
-  local timespan_definitions="\$1"
-  local timespan
+  local time_ranges="\$1"
+  local time_range
   local start
   local end
-  for timespan in \$(echo "\$timespan_definitions" | sed 's/,/ /g')
+  for time_range in \$(echo "\$time_ranges" | sed 's/,/ /g')
   do
-    start="\$(echo "\$timespan" | cut -d '-' -f 1 | time_to_minutes)"
-    end="\$(echo "\$timespan" | cut -d '-' -f 2 | time_to_minutes)"
+    start="\$(echo "\$time_range" | cut -d '-' -f 1 | time_to_minutes)"
+    end="\$(echo "\$time_range" | cut -d '-' -f 2 | time_to_minutes)"
     [ \$now -ge \$start -a \$now -le \$end ] && return 0
   done
   return 1
@@ -82,11 +82,11 @@ read_messages() {
 
   while read directive
   do
-    local date_span="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
-    if [ "\$date_span" != '' ]
+    local date_range="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
+    if [ "\$date_range" != '' ]
     then
-      local start="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/" | date_to_serial)"
-      local end="\$(echo "\$date_span" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/" | date_to_serial)"
+      local start="\$(echo "\$date_range" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/" | date_to_serial)"
+      local end="\$(echo "\$date_range" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/" | date_to_serial)"
       local today="\$(echo "\$(date +%Y.%m.%d)" | date_to_serial)"
       [ \$start -gt \$today ] && return 0
       [ \$end -lt \$today ] && return 0
@@ -124,16 +124,16 @@ fi
 
 FIN
 
-  for group in $(echo "$MONOLOGUE_TIME_SPAN" | $esed "s/[$whitespaces]+/ /g") all
+  for group in $(echo "$MONOLOGUE_TIME_RANGE_GROUPS" | $esed "s/[$whitespaces]+/ /g") all
   do
-    timespans="$(echo "$group" | cut -d '/' -f 2-)"
+    time_ranges="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"
-    if [ "$timespans" != "$group" ]
+    if [ "$time_ranges" != "$group" ]
     then
       cat << FIN >> "$monologue_selector"
-if is_in_time_range "$timespans"
+if is_in_time_range "$time_ranges"
 then
-  [ "\$DEBUG" != '' ] && echo "$timespan: choosing message from \"$group\"" 1>&2
+  [ "\$DEBUG" != '' ] && echo "$time_range: choosing message from \"$group\"" 1>&2
   message="\$(extract_message_from_group '$group' | echo_with_probability 60)"
   if [ "\$message" != '' ]
   then

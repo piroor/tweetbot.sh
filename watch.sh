@@ -224,9 +224,9 @@ periodical_fetch_direct_messages &
 # minimum interval = 10minutes
 [ $MONOLOGUE_INTERVAL_MINUTES -le 10 ] && MONOLOGUE_INTERVAL_MINUTES=10
 
-period_span=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
-[ $period_span -gt 10 ] && period_span=10
-max_lag=$(( $period_span / 2 ))
+period_range=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
+[ $period_range -gt 10 ] && period_range=10
+max_lag=$(( $period_range / 2 ))
 half_interval=$(( $MONOLOGUE_INTERVAL_MINUTES / 2 ))
 
 abs() {
@@ -261,7 +261,7 @@ periodical_monologue() {
 
   while true
   do
-    if is_not_in_time_range "$MONOLOGUE_ACTIVE_TIME_SPAN"
+    if is_not_in_time_range "$MONOLOGUE_ACTIVE_TIME_RANGE"
     then
       sleep $process_interval
       continue
@@ -282,7 +282,7 @@ periodical_monologue() {
         delta=$(( $one_day_in_minutes - $last_post + $current_minutes ))
         debug "  delta => $delta"
       fi
-      if [ $delta -le $period_span ]
+      if [ $delta -le $period_range ]
       then
         debug 'Already posted in this period.'
         sleep $process_interval
@@ -385,7 +385,7 @@ periodical_process_queue() {
   local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
   while true
   do
-    if is_in_time_range "$PROCESS_QUEUE_TIME_SPAN"
+    if is_in_time_range "$PROCESS_QUEUE_TIME_RANGE"
     then
       debug 'Processing queue...'
       env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"

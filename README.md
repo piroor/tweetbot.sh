@@ -115,7 +115,7 @@ NEW_TOPIC=66
 CONVERSATION_PERSISTENCE=40
 
 MONOLOGUE_INTERVAL_MINUTES=60
-MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
+MONOLOGUE_TIME_RANGE_GROUPS="morning/06:00-07:00 \
                      noon/12:00-13:00 \
                      afternoon/15:00-15:30 \
                      evening/17:30-18:30 \
@@ -250,10 +250,10 @@ For example, if you specify the interval as `60`, then the probabilities of the 
  * 01:07 0%
  * ...
 
-Monologue messages are loaded from definition files, and you can define some special time span with the `MONOLOGUE_TIME_SPAN` parameter.
+Monologue messages are loaded from definition files, and you can define some special time range with the `MONOLOGUE_TIME_RANGE_GROUPS` parameter.
 
 ~~~
-MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
+MONOLOGUE_TIME_RANGE_GROUPS="morning/06:00-07:00 \
                      noon/12:00-13:00 \
                      afternoon/15:00-15:30 \
                      evening/17:30-18:30 \
@@ -261,8 +261,8 @@ MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
                      midnight/23:00-24:00,00:00-03:00"
 ~~~
 
-It is space-separated list of time span definitions with the format: `(name-of-the-span)/(beginning-1)-(end-1),(beginning-2)-(end-2),...,(beginning-N)-(end-N)`
-You can define special monologue messages for each special time span.
+It is space-separated list of time range definitions with the format: `(name-of-the-range)/(beginning-1)-(end-1),(beginning-2)-(end-2),...,(beginning-N)-(end-N)`
+You can define special monologue messages for each special time range.
 
 #### Administrators of the bot
 
@@ -441,7 +441,7 @@ There is no order.
 All definition files are used by the order:
 
  1. First, messages are found from the `timely` group. It will be used with the probability 20%.
- 2. Next, messages are found from groups defined by `MONOLOGUE_TIME_SPAN` for the time span.
+ 2. Next, messages are found from groups defined by `MONOLOGUE_TIME_RANGE_GROUPS` for the time range.
  3. Finally, messages are found from the `all` group.
 
 #### What you must do when you modify monologue definition files
@@ -474,7 +474,7 @@ You simply have to send DMs like following:
  * `echo`: returns an echo of the given message.
  * `test`: returns a response for the given message.
  * `+res` / `-res`: adds/removes keyword and message definitions for responses.
- * `+(name of a time span group)` / `-(name of a time span group)`: adds/removes message definitions for monologue.
+ * `+(name of a time range group)` / `-(name of a time range group)`: adds/removes message definitions for monologue.
  * `tweet` / `post`: posts the given message as a regular tweet of the bot.
  * `reply`: posts the given message as a reply by the bot.
  * `del` / `delete` / `rem` / `remove`: removes the specified tweet of the bot.
@@ -554,11 +554,11 @@ Both valiation and message are optional.
 This command unregisters an existing keyword, valiation of the keyword, and a response message.
 Both valiation and message are optional.
 
-#### `+(name of a time span group)`: adds message definitions for monologue.
+#### `+(name of a time range group)`: adds message definitions for monologue.
 
  * Parameters
-   * 1st argument: the name of the time span.
-   * 2nd argument: an alias of the time span. (optional)
+   * 1st argument: the name of the time range.
+   * 2nd argument: an alias of the time range. (optional)
    * Rest arguments: a monologue message. (optional)
  * Example
    * `+all > everytime Did you know? I'm a chatterbot!`
@@ -574,14 +574,14 @@ Both valiation and message are optional.
      * alias: nothing
      * monologue: `Good morning!`
 
-This command registers new monologue and alias of the time span group.
+This command registers new monologue and alias of the time range group.
 Both alias and message are optional.
 
-#### `-(name of a time span group)`: removes message definitions for monologue.
+#### `-(name of a time range group)`: removes message definitions for monologue.
 
  * Parameters
-   * 1st argument: the name of the time span.
-   * 2nd argument: an alias of the time span. (optional)
+   * 1st argument: the name of the time range.
+   * 2nd argument: an alias of the time range. (optional)
    * Rest arguments: a monologue message, or an index of an existing message to be removed. (optional)
  * Example
    * `-all > everytime Did you know? I'm a chatterbot!`
@@ -601,7 +601,7 @@ Both alias and message are optional.
      * valiation: nothing
      * response message: specified with the index `10`, so, the tenth message in the definition file will be removed.
 
-This command unregisters an existing monologue and alias of the time span group.
+This command unregisters an existing monologue and alias of the time range group.
 Both alias and message are optional.
 
 #### `tweet` / `post`: posts the given message as a regular tweet of the bot.
@@ -723,7 +723,7 @@ git push
 
 ### Callback script for DM commands to modify monologue message definitions
 
-If there is any executable file named with the prefix `on_monologue_modified` (like `on_monologue_modified.sh`, `on_monologue_modified.rb`, etc.), it is kicked by DM commands `+(tine span)` and `-(tine span)`.
+If there is any executable file named with the prefix `on_monologue_modified` (like `on_monologue_modified.sh`, `on_monologue_modified.rb`, etc.), it is kicked by DM commands `+(tine range)` and `-(tine range)`.
 For example, this is a sample script to do following:
 
  * Commits and pushes changes to the Git repository.
