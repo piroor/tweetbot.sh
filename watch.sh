@@ -261,6 +261,12 @@ periodical_monologue() {
 
   while true
   do
+    if is_not_in_time_range "$MONOLOGUE_ACTIVE_TIME_SPAN"
+    then
+      sleep $process_interval
+      continue
+    fi
+
     debug 'Processing monologue...'
 
     local current_minutes=$(date +%H:%M | time_to_minutes)

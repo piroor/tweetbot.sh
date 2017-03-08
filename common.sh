@@ -145,6 +145,7 @@ AUTO_FOLLOW_QUERY=''
 PROCESS_QUEUE_INTERVALL_MINUTES=10
 PROCESS_QUEUE_TIME_SPAN="11:40-15:00,17:00-24:00"
 MONOLOGUE_INTERVAL_MINUTES=60
+MONOLOGUE_ACTIVE_TIME_SPAN="00:00-00:30,06:00-24:00"
 MONOLOGUE_TIME_SPAN="morning/06:00-07:00 \
                      noon/12:00-13:00 \
                      afternoon/15:00-15:30 \
@@ -202,6 +203,15 @@ is_in_time_range() {
     [ $now -ge $start -a $now -le $end ] && return 0
   done
   return 1
+}
+
+is_not_in_time_range() {
+  if is_in_time_range "$@"
+  then
+    return 1
+  else
+    return 0
+  fi
 }
 
 #=============================================================
