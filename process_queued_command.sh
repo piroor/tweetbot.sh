@@ -41,6 +41,6 @@ do
   then
     exit 0
   fi
-done < <(find "$command_queue_dir" -name "queued.*" | sort)
+done < <(find "$command_queue_dir/*" -type f | sort)
 
 exit 1
