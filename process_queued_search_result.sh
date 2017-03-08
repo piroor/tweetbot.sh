@@ -3,7 +3,7 @@
 work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$tools_dir/common.sh"
-logfile="$log_dir/handle_queued_search_result.log"
+logfile="$log_dir/process_queued_search_result.log"
 
 lock_key=''
 processed_users=' '
