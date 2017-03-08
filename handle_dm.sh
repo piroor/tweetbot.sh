@@ -277,9 +277,9 @@ do
     tweet|post )
       body="$(echo "$body" | remove_first_arg)"
       queue="post $body"
-      echo "$queue" > "$command_queue_dir/queued.$id"
+      echo "$queue" > "$command_queue_dir/$id.post"
       echo "dm $sender Queued command is processed: \"$queue\"" \
-        >> "$command_queue_dir/queued.$id"
+        >> "$command_queue_dir/$id.post"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
       ;;
@@ -293,9 +293,9 @@ do
     rt|retweet )
       body="$(echo "$body" | remove_first_arg)"
       queue="retweet $body"
-      echo "$queue" > "$command_queue_dir/queued.$id"
+      echo "$queue" > "$command_queue_dir/$id.retweet"
       echo "dm $sender Queued command is processed: \"$queue\"" \
-        >> "$command_queue_dir/queued.$id"
+        >> "$command_queue_dir/$id.retweet"
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
       ;;

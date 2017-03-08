@@ -380,7 +380,7 @@ retweet() {
       fi
     else
       local queue="retweet $id"
-      echo "$queue" > "$command_queue_dir/queued.$id"
+      echo "$queue" > "$command_queue_dir/$id.retweet"
       log " => queued: \"$queue\""
     fi
   else
@@ -526,7 +526,7 @@ post_quotation() {
       fi
     done
   else
-    local queue_file="$command_queue_dir/queued.$id"
+    local queue_file="$command_queue_dir/$id.quote"
     touch "$queue_file"
     echo "$bodies" | while read -r body
     do

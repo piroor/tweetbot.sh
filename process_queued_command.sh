@@ -10,7 +10,7 @@ lock_key=''
 while unlock "$lock_key" && read path
 do
   commands="$(cat "$path")"
-  id="$(basename "$path" | cut -d '.' -f 2)"
+  id="$(basename "$path" | cut -d '.' -f 1)"
 
   lock_key="queued_command.$id"
   try_lock_until_success "$lock_key"
