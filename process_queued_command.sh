@@ -12,7 +12,7 @@ do
   commands="$(cat "$path")"
   id="$(basename "$path" | cut -d '.' -f 1)"
 
-  lock_key="queued_command.$id"
+  lock_key="queued_commands.$(basename "$path")"
   try_lock_until_success "$lock_key"
 
   log '=============================================================='
