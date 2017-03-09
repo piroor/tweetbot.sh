@@ -297,23 +297,42 @@ fi
 # Sub process 6: process queued search results and commands
 
 periodical_process_queue() {
-  # minimum interval = 5minutes
-  [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 5 ] && PROCESS_QUEUE_INTERVALL_MINUTES=5
-  local full_interval="${PROCESS_QUEUE_INTERVALL_MINUTES}m"
-  local half_interval="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
-  while true
+  logmodule='process_queue'
+  local last_process_file="$status_dir/queue_last_processed_time"
+  local last_process_time=''
+  [ -f "$last_process_file" ] && last_process_time=$(cat "$last_process_file")
+
+  # minimum interval = 10minutes
+  [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_QUEUE_INTERVALL_MINUTES=10
+
+  local queue_types
+  local interval_minutes="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
+
+  local next_process_type='search_result'
+  while read last_process_time
   do
-    if is_in_time_range "$ACTIVE_TIME_RANGE"
+    debug 'Processing queue...'
+
+    if [ "$next_process_type" = 'search_result' ]
     then
-      debug 'Processing queue...'
       env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-      sleep "$half_interval"
-      env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
-      sleep "$half_interval"
-    else
-      sleep "$full_interval"
+      next_process_type='command'
+      echo "$last_process_time" > "$last_process_file"
+      continue
     fi
-  done
+    next_process_type='command'
+
+    if [ "$next_process_type" = 'command' ]
+    then
+      env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
+      next_process_type='search_result'
+      echo "$last_process_time" > "$last_process_file"
+      continue
+    fi
+    next_process_type='search_result'
+
+    echo "$last_process_time" > "$last_process_file"
+  done < <(run_periodically "$interval_minutes" "$last_process_time" "$ACTIVE_TIME_RANGE")
 }
 periodical_process_queue &
 
