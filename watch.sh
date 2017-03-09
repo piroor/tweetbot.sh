@@ -229,10 +229,6 @@ period_range=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
 max_lag=$(( $period_range / 2 ))
 half_interval=$(( $MONOLOGUE_INTERVAL_MINUTES / 2 ))
 
-abs() {
-  echo "sqrt($1 ^ 2)" | bc
-}
-
 calculate_monologue_probability() {
   local target_minutes=$1
 

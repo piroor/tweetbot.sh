@@ -220,6 +220,10 @@ is_not_in_time_range() {
 #=============================================================
 # Utilities to operate tweet JSON strings
 
+abs() {
+  echo "sqrt($1 ^ 2)" | bc
+}
+
 expired_by_seconds() {
   local expire_seconds=$1
   local created_at="$(cat | jq -r .created_at | date -f - +%s)"
