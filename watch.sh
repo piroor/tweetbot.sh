@@ -305,9 +305,6 @@ periodical_process_queue() {
   # minimum interval = 10minutes
   [ $PROCESS_QUEUE_INTERVALL_MINUTES -le 10 ] && PROCESS_QUEUE_INTERVALL_MINUTES=10
 
-  local queue_types
-  local interval_minutes="$(echo "scale=2; $PROCESS_QUEUE_INTERVALL_MINUTES / 2" | bc)m"
-
   local next_process_type='search_result'
   while read last_process_time
   do
@@ -332,7 +329,7 @@ periodical_process_queue() {
     next_process_type='search_result'
 
     echo "$last_process_time" > "$last_process_file"
-  done < <(run_periodically "$interval_minutes" "$last_process_time" "$ACTIVE_TIME_RANGE")
+  done < <(run_periodically "$PROCESS_QUEUE_INTERVALL_MINUTES" "$last_process_time" "$ACTIVE_TIME_RANGE")
 }
 periodical_process_queue &
 
