@@ -628,7 +628,7 @@ run_periodically() {
         sleep $process_interval
         continue
       fi
-    end
+    fi
 
     debug 'Processing periodical task...'
 
