@@ -619,6 +619,11 @@ run_periodically() {
   local process_interval=1m
   local one_day_in_minutes=$(( 24 * 60 ))
 
+  debug 'Initiating new periodical task...'
+  debug "  interval    = $interval_minutes minutes"
+  debug "  last        = $last_processed"
+  debug "  active time = $active_time_range"
+
   while true
   do
     if [ "$active_time_range" != '' ]
