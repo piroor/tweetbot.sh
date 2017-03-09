@@ -313,18 +313,24 @@ periodical_process_queue() {
     if [ "$next_process_type" = 'search_result' ]
     then
       env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
-      next_process_type='command'
-      echo "$last_process_time" > "$last_process_file"
-      continue
+      if [ $? = 0 ]
+      then
+        next_process_type='command'
+        echo "$last_process_time" > "$last_process_file"
+        continue
+      fi
     fi
     next_process_type='command'
 
     if [ "$next_process_type" = 'command' ]
     then
       env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
-      next_process_type='search_result'
-      echo "$last_process_time" > "$last_process_file"
-      continue
+      if [ $? = 0 ]
+      then
+        next_process_type='search_result'
+        echo "$last_process_time" > "$last_process_file"
+        continue
+      fi
     fi
     next_process_type='search_result'
 
