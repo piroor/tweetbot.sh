@@ -308,13 +308,15 @@ periodical_process_queue() {
   local next_process_type='search_result'
   while read last_process_time
   do
-    debug 'Processing queue...'
+    debug "Processing queue... (next = $next_process_type)"
 
     if [ "$next_process_type" = 'search_result' ]
     then
+      debug '  trying to process quened search result...'
       env TWEET_LOGMODULE='queued_search_result' "$tools_dir/process_queued_search_result.sh"
       if [ $? = 0 ]
       then
+        debug '  => success!'
         next_process_type='command'
         echo "$last_process_time" > "$last_process_file"
         continue
@@ -324,9 +326,11 @@ periodical_process_queue() {
 
     if [ "$next_process_type" = 'command' ]
     then
+      debug '  trying to process quened command...'
       env TWEET_LOGMODULE='queued_command' "$tools_dir/process_queued_command.sh"
       if [ $? = 0 ]
       then
+        debug '  => success!'
         next_process_type='search_result'
         echo "$last_process_time" > "$last_process_file"
         continue
