@@ -214,101 +214,23 @@ periodical_fetch_direct_messages &
 
 
 # Sub process 4: posting monologue tweets
-# ・計算の始点は00:00
-# ・指定間隔の1/3か10分の短い方を、「投稿時間の振れ幅」とする。
-#   30分間隔なら、振れ幅は10分。00:25から00:35の間のどこかで投稿する。
-# ・指定間隔ちょうどを90％、振れ幅最大の時を10％として、その確率で投稿する。
-# ・その振れ幅の中のどこかで投稿済みであれば、その振れ幅の中では多重投稿はしない。
-# ・ただし、振れ幅の最後のタイミングでまだ投稿されていなければ、必ず投稿する。
-
-# minimum interval = 10minutes
-[ $MONOLOGUE_INTERVAL_MINUTES -le 10 ] && MONOLOGUE_INTERVAL_MINUTES=10
-
-period_range=$(( $MONOLOGUE_INTERVAL_MINUTES / 3 ))
-[ $period_range -gt 10 ] && period_range=10
-max_lag=$(( $period_range / 2 ))
-half_interval=$(( $MONOLOGUE_INTERVAL_MINUTES / 2 ))
-
-calculate_monologue_probability() {
-  local target_minutes=$1
-
-  # 目標時刻から何分ずれているかを求める
-  local lag=$(($target_minutes % $MONOLOGUE_INTERVAL_MINUTES))
-  # 目標時刻からのずれがhalf_intervalを超えている場合、目標時刻より手前方向のずれと見なす
-  [ $lag -gt $half_interval ] && lag=$(($MONOLOGUE_INTERVAL_MINUTES - $lag))
-
-  local probability=$(( (($max_lag - $lag) * 100 / $max_lag) * 80 / 100 + 10 ))
-  if [ $probability -lt 10 ]
-  then
-    echo 0
-  else
-    echo $probability
-  fi
-}
 
 periodical_monologue() {
   logmodule='monologue'
   local last_post_file="$status_dir/last_monologue"
-  local last_post=''
-  [ -f "$last_post_file" ] && last_post=$(cat "$last_post_file")
+  local last_post_time=''
+  [ -f "$last_post_file" ] && last_post_time=$(cat "$last_post_file")
 
-  local process_interval=1m
-  local one_day_in_minutes=$(( 24 * 60 ))
+  # minimum interval = 10minutes
+  [ $MONOLOGUE_INTERVAL_MINUTES -le 10 ] && MONOLOGUE_INTERVAL_MINUTES=10
 
-  while true
+  while read last_post_time
   do
-    if is_not_in_time_range "$MONOLOGUE_ACTIVE_TIME_RANGE"
-    then
-      sleep $process_interval
-      continue
-    fi
-
-    debug 'Processing monologue...'
-
-    local current_minutes=$(date +%H:%M | time_to_minutes)
-    debug "  $current_minutes minutes past from 00:00"
-
-    # 同じ振れ幅の中で既に投稿済みだったなら、何もしない
-    if [ "$last_post" != '' ]
-    then
-      local delta=$(($current_minutes - $last_post))
-      debug "  delta from $last_post: $delta"
-      if [ $delta -lt 0 ]
-      then
-        delta=$(( $one_day_in_minutes - $last_post + $current_minutes ))
-        debug "  delta => $delta"
-      fi
-      if [ $delta -le $period_range ]
-      then
-        debug 'Already posted in this period.'
-        sleep $process_interval
-        continue
-      fi
-    fi
-
-    # 振れ幅の最後のタイミングかどうかを判定
-    lag=$(($current_minutes % $MONOLOGUE_INTERVAL_MINUTES))
-    if [ $lag -eq $max_lag ]
-    then
-      debug "Nothing was posted in this period."
-      probability=100
-    else
-      probability=$(calculate_monologue_probability $current_minutes)
-    fi
-
-    debug "Posting probability: $probability %"
-    if run_with_probability $probability
-    then
-      debug "Let's post!"
-      local body="$("$monologue_selector")"
-      log "Posting monologue tweet: $body"
-      echo "$body" | $esed -e 's/\t/\n/gi' | post_sequential_tweets
-      last_post=$current_minutes
-      echo $current_minutes > "$last_post_file"
-    fi
-
-    sleep $process_interval
-  done
+    local body="$("$monologue_selector")"
+    log "Posting monologue tweet: $body"
+    echo "$body" | $esed -e 's/\t/\n/gi' | post_sequential_tweets
+    echo "$last_post_time" > "$last_post_file"
+  done < <(run_periodically "$MONOLOGUE_INTERVAL_MINUTES" "$last_post_time" "$MONOLOGUE_ACTIVE_TIME_RANGE")
 }
 periodical_monologue &
 
