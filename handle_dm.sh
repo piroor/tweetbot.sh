@@ -30,8 +30,9 @@ run_user_defined_command() {
   local command="$(echo "$body" | $esed "$REMOVE_FIRST_ARG")"
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
-    log "Processing \"$path\"..."
-    cd $TWEET_BASE_DIR
+    log 'Processing user defined command...'
+    log " command line: \"$path\"  \"$sender\" \"$command\""
+    cd "$TWEET_BASE_DIR"
     local handler_result
     handler_result="$("$path" "$sender" "$command" 2>&1)"
     if [ $? = 0 ]
