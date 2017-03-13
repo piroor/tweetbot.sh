@@ -27,7 +27,7 @@ run_user_defined_command() {
   local sender="$1"
   local body="$2"
   log 'Running given command...'
-  local command="$(echo "$body" | $esed "$REMOVE_FIRST_ARG")"
+  local command="$(echo "$body" | remove_first_arg)"
   find "$TWEET_BASE_DIR" -type f -name 'on_command*' | while read path
   do
     log 'Processing user defined command...'
