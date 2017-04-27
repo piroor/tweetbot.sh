@@ -300,6 +300,20 @@ do
       log "Command queued: \"$queue\""
       respond "$sender" "Command queued: \"$queue\""
       ;;
+    'favrt!'|'rtfav!'|'fr!'|'rf!' )
+      body="$(echo "$body" | remove_first_arg)"
+      process_generic_command "$sender" "favorite $body"
+      process_generic_command "$sender" "retweet $body"
+      ;;
+    favrt|rtfav|fr|rf )
+      body="$(echo "$body" | remove_first_arg)"
+      echo "favorite $body" > "$command_queue_dir/$id.retweet"
+      echo "retweet $body" >> "$command_queue_dir/$id.retweet"
+      echo "dm $sender Queued command is processed: \"fav and rt $body\"" \
+        >> "$command_queue_dir/$id.retweet"
+      log "Command queued: \"fav and rt $body\""
+      respond "$sender" "Command queued: \"fav and rt $body\""
+      ;;
     del*|rem*|unrt|unretweet|fav*|unfav*|follow|unfollow )
       process_generic_command "$sender" "$body"
       ;;
