@@ -186,7 +186,7 @@ is_true() {
 }
 
 is_false() {
-  if is_true
+  if is_true "$1"
   then
     return 1
   else
