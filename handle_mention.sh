@@ -82,20 +82,20 @@ do
     continue
   fi
 
-    other_replied_people="$(echo "$body" | other_replied_people)"
-    if [ "$other_replied_people" != '' ] && is_false "$RESPOND_TO_MULTIPLE_TARGETS_REPLY"
-    then
-      log " response for a mention with other people is not allowed"
-      continue
-    fi
+  other_replied_people="$(echo "$body" | other_replied_people)"
+  if [ "$other_replied_people" != '' ] && is_false "$RESPOND_TO_MULTIPLE_TARGETS_REPLY"
+  then
+    log " response for a mention with other people is not allowed"
+    continue
+  fi
 
   if is_true "$RETWEET_MENTIONS"
   then
     echo "$tweet" | retweet
   fi
 
-    echo "$responses" |
-      # make response body a mention
-      sed "s/^/@$owner $other_replied_people/" |
-      post_replies "$id" "@$owner $other_replied_people"
+  echo "$responses" |
+    # make response body a mention
+    sed "s/^/@$owner $other_replied_people/" |
+    post_replies "$id" "@$owner $other_replied_people"
 done
