@@ -78,7 +78,7 @@ do
   then
     other_replied_people="$(echo "$body" | other_replied_people)"
 
-    if is_false "$RESPOND_TO_MULTIPLE_TARGETS_MENTIONS"
+    if [ "$other_replied_people" != '' ] && is_false "$RESPOND_TO_MULTIPLE_TARGETS_MENTIONS"
     then
       log " response for a mention with other people is not allowed"
       continue
