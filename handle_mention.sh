@@ -20,6 +20,12 @@ do
   log '=============================================================='
   log "Mentioned by $owner at $url"
 
+  if is_false "$RESPOND_TO_MENTIONS"
+  then
+    log " => ignored, because any mention must be ignored by the setting"
+    continue
+  fi
+
   if [ "$owner" = "$MY_SCREEN_NAME" ]
   then
     log " => ignored, because this is my activity"
@@ -69,24 +75,27 @@ do
   then
     echo "$tweet" | favorite
   fi
-  if is_true "$RETWEET_MENTIONS"
+
+  if is_false "$RESPOND_TO_SIDE_MENTIONS" && (echo "$body" | egrep -v "^@$MY_SCREEN_NAME" > /dev/null)
   then
-    echo "$tweet" | retweet
+    log " response for a side mention is not allowed"
+    continue
   fi
 
-  if is_true "$RESPOND_TO_MENTIONS"
-  then
     other_replied_people="$(echo "$body" | other_replied_people)"
-
-    if [ "$other_replied_people" != '' ] && is_false "$RESPOND_TO_MULTIPLE_TARGETS_MENTIONS"
+    if [ "$other_replied_people" != '' ] && is_false "$RESPOND_TO_MULTIPLE_TARGETS_REPLY"
     then
       log " response for a mention with other people is not allowed"
       continue
     fi
 
+  if is_true "$RETWEET_MENTIONS"
+  then
+    echo "$tweet" | retweet
+  fi
+
     echo "$responses" |
       # make response body a mention
       sed "s/^/@$owner $other_replied_people/" |
       post_replies "$id" "@$owner $other_replied_people"
-  fi
 done

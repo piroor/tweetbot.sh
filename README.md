@@ -187,16 +187,18 @@ These parameters define the strategy to reply for tweets by other users.
 
 ~~~
 RESPOND_TO_MENTIONS=true
-RESPOND_TO_MULTIPLE_TARGETS_MENTIONS=false
+RESPOND_TO_SIDE_MENTIONS=false
+RESPOND_TO_MULTIPLE_TARGETS_REPLY=false
 RESPOND_TO_QUOTATIONS=true
 RESPOND_TO_SEARCH_RESULTS=true
 ~~~
 
 For mentions, this bot always respond to it as a reply.
 Otherwise, if the tweet is not a mention (including `@username` for your account), this bot will post an independent tweet including the URL of the detected tweet - in other words, retweet it with a comment.
+If you hope to reply a mention not starting with `@username`, set `RESPOND_TO_SIDE_MENTIONS` to `true`.
 
-By default, the bot doesn't respond to mentions with other people like `@username1 @username2 @username3 message body` to prevent unexpected spamming.
-If you hope to reply to such mentions aggressively, set `RESPOND_TO_MULTIPLE_TARGETS_MENTIONS` to `true`.
+By default, the bot doesn't respond to replied mentions with other people like `@username1 @username2 @username3 message body` to prevent unexpected spamming.
+If you hope to reply to such mentions aggressively, set `RESPOND_TO_MULTIPLE_TARGETS_REPLY` to `true`.
 
 #### Tendency of the chatterbot featrue
 
