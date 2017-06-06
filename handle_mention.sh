@@ -77,6 +77,13 @@ do
   if is_true "$RESPOND_TO_MENTIONS"
   then
     other_replied_people="$(echo "$body" | other_replied_people)"
+
+    if is_false "$RESPOND_TO_MULTIPLE_TARGETS_MENTIONS"
+    then
+      log " response for a mention with other people is not allowed"
+      continue
+    fi
+
     echo "$responses" |
       # make response body a mention
       sed "s/^/@$owner $other_replied_people/" |

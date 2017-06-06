@@ -130,6 +130,7 @@ RETWEET_QUOTATIONS=true
 RETWEET_SEARCH_RESULTS=true
 
 RESPOND_TO_MENTIONS=true
+RESPOND_TO_MULTIPLE_TARGETS_MENTIONS=false
 RESPOND_TO_QUOTATIONS=true
 RESPOND_TO_SEARCH_RESULTS=true
 
@@ -181,6 +182,15 @@ esac
 
 is_true() {
   echo "$1" | egrep -i "^(1|true|yes)$" > /dev/null
+}
+
+is_false() {
+  if is_true
+  then
+    return 1
+  else
+    return 0
+  fi
 }
 
 time_to_minutes() {
