@@ -78,7 +78,7 @@ do
 
   if is_true "$RESPOND_TO_QUOTATIONS"
   then
-    if echo "$body" | grep "^@$me" > /dev/null
+    if echo "$body" | head -n 1 | grep "^@$me" > /dev/null
     then
       log "Seems to be a reply."
       # regenerate responses with is_reply parameter

@@ -76,7 +76,7 @@ do
     echo "$tweet" | favorite
   fi
 
-  if is_false "$RESPOND_TO_SIDE_MENTIONS" && (echo "$body" | egrep -v "^@$MY_SCREEN_NAME" > /dev/null)
+  if is_false "$RESPOND_TO_SIDE_MENTIONS" && (echo "$body" | head -n 1 | egrep -v "^@$MY_SCREEN_NAME" > /dev/null)
   then
     log " response for a side mention is not allowed"
     continue
