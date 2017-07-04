@@ -1,3 +1,12 @@
 [submodule "tweet.sh"]
 	path = tweet.sh
 	url = https://github.com/piroor/tweet.sh.git
+[submodule "firefox/extlib/webextensions-lib-configs"]
+	path = firefox/extlib/webextensions-lib-configs
+	url = https://github.com/piroor/webextensions-lib-configs.git
+[submodule "firefox/extlib/webextensions-lib-l10n"]
+	path = firefox/extlib/webextensions-lib-l10n
+	url = https://github.com/piroor/webextensions-lib-l10n.git
+[submodule "firefox/extlib/webextensions-lib-options"]
+	path = firefox/extlib/webextensions-lib-options
+	url = https://github.com/piroor/webextensions-lib-options.git

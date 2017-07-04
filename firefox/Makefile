@@ -1,4 +1,19 @@
 .PHONY: xpi
 
 xpi:
-	zip -r -0 tweetbotsh-remote-controller.xpi *.json *.js _locale
+	makexpi/makexpi.sh extlib/webextensions-lib-configs/Configs.js extlib/webextensions-lib-options/Options.js extlib/webextensions-lib-l10n/l10n.js
+	git submodule update
+	cp extlib/webextensions-lib-configs/Configs.js common/
+	cp extlib/webextensions-lib-options/Options.js options/
+	cp extlib/webextensions-lib-l10n/l10n.js options/
+	zip -r -0 tweetbotsh-remote-controller.xpi *.json *.js _locale common options
+
+extlib/webextensions-lib-configs/Configs.js:
+	git submodule update --init
+
+extlib/webextensions-lib-options/Options.js:
+	git submodule update --init
+
+extlib/webextensions-lib-l10n/l10n.js:
+	git submodule update --init
+
