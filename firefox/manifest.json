@@ -1,12 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "tweetbot.sh remote controller",
+  "name": "__MSG_extensionName__",
   "version": "0.1",
-  "description": "Provide context menu commands to share tweets by tweetbot.sh",
-  "content_scripts": [
-    {
-      "matches": ["*://*.twitter.com/*"],
-      "js": ["contextmenu.js"]
-    }
-  ]
+  "description": "__MSG_extensionDescription__",
+  "permissions": ["contextMenus"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "default_locale": "en"
 }
