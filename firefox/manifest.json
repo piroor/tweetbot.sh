@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "tweetbot.sh remote controller",
+  "version": "0.1",
+  "description": "Provide context menu commands to share tweets by tweetbot.sh",
+  "content_scripts": [
+    {
+      "matches": ["*://*.twitter.com/*"],
+      "js": ["contextmenu.js"]
+    }
+  ]
+}
