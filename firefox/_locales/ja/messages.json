@@ -1,17 +1,6 @@
 {
-  "extensionName": {
-    "message": "tweetbot.shリモートコントローラー",
-    "description": "The Name"
-  },
+  "extensionName": { "message": "tweetbot.shリモートコントローラー" },
+  "extensionDescription": { "message": "tweetbot.shでツイートを共有するためのコンテキストメニュー項目を追加します" },
 
-  "extensionDescription": {
-    "message": "tweetbot.shでツイートを共有するためのコンテキストメニュー項目を追加します",
-    "description": "The Description"
-  },
-
-  "contextMenu": {
-    "dm": {
-      "label": "このツイートをDMする"
-    }
-  }
+  "contextMenu.dm.label": { "message": "このツイートをDMする" }
 }

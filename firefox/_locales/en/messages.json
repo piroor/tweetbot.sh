@@ -1,17 +1,6 @@
 {
-  "extensionName": {
-    "message": "tweetbot.sh remote controller",
-    "description": "The Name"
-  },
+  "extensionName": { "message": "tweetbot.sh remote controller" },
+  "extensionDescription": { "message": "Provide context menu commands to share tweets by tweetbot.sh" },
 
-  "extensionDescription": {
-    "message": "Provide context menu commands to share tweets by tweetbot.sh",
-    "description": "The Description"
-  },
-
-  "contextMenu": {
-    "dm": {
-      "label": "DM this tweet"
-    }
-  }
+  "contextMenu.dm.label": { "message": "DM this tweet" }
 }
