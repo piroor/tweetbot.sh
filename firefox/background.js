@@ -87,7 +87,7 @@ function send_dm(...aArgs) {
     (aError) => {
       notify(
         browser.i18n.getMessage('onError.title'),
-        browser.i18n.getMessage('onError.message', commandArgs.join(' '), aError)
+        browser.i18n.getMessage('onError.message', [commandArgs.join(' '), String(aError)])
       );
       log('Error: ', aError);
     }
