@@ -8,6 +8,43 @@
   "contextMenu.fav-and-rt.label": { "message": "このツイートにいいねしてRTする" },
   "contextMenu.fav-and-rt-now.label": { "message": "このツイートに今するいいねしてRTする" },
 
+  "notConfiguredError.title": { "message": "設定が未完了です!" },
+  "notConfiguredError.message": { "message": "tweet.shのパスと操作対象のアカウントのアカウント名を設定して下さい。" },
+
+  "notTweetError.message": { "message": "ツイートではありません!" },
+  "notTweetError.message": { "message": "$URL$ はツイートのURLではありません。",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "http://..."
+      }
+    }
+  },
+
+  "onResponse.title": { "message": "操作に成功しました" },
+  "onResponse.message": { "message": "コマンドが送信されました: $COMMAND$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "fav xxx"
+      }
+    }
+  },
+
+  "onError.title": { "message": "操作に失敗しました" },
+  "onError.message": { "message": "コマンド: $COMMAND$\nエラー: $ERROR$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "fav xxx"
+      },
+      "error": {
+        "content": "$2",
+        "example": "???"
+      }
+    }
+  },
+
   "config.tweetsh_path.label.before": { "message": "tweet.shのフルパス:" },
   "config.tweetsh_path.label.after": { "message": "" },
   "config.target_account.label.before": { "message": "操作するbotのアカウント名:" },

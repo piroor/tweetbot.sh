@@ -8,6 +8,43 @@
   "contextMenu.fav-and-rt.label": { "message": "Favorite and RT this" },
   "contextMenu.fav-and-rt-now.label": { "message": "Favorite and RT this immediately" },
 
+  "notConfiguredError.title": { "message": "Not configured!" },
+  "notConfiguredError.message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
+
+  "notTweetError.message": { "message": "Not a tweet!" },
+  "notTweetError.message": { "message": "$URL$ is not a tweet.",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "http://..."
+      }
+    }
+  },
+
+  "onResponse.title": { "message": "Operation succeeded." },
+  "onResponse.message": { "message": "Command successfully sent: $COMMAND$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "fav xxx"
+      }
+    }
+  },
+
+  "onError.title": { "message": "Operation failed." },
+  "onError.message": { "message": "Command: $COMMAND$\nError: $ERROR$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "fav xxx"
+      },
+      "error": {
+        "content": "$2",
+        "example": "???"
+      }
+    }
+  },
+
   "config.tweetsh_path.label.before": { "message": "Full path to the tweet.sh:" },
   "config.tweetjstweetsh_path_path.label.after": { "message": "" },
   "config.target_account.label.before": { "message": "Screnen name of the bot account to be controlled:" },

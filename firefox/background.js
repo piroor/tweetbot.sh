@@ -25,6 +25,10 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
 
   let id = detectStatusId(url);
   if (!id) {
+    notify(
+      browser.i18n.getMessage('notTweetError.title'),
+      browser.i18n.getMessage('notTweetError.message', url)
+    );
     log('not a tweet');
     return;
   }
@@ -32,19 +36,19 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
 
   switch (aInfo.menuItemId) {
     case 'fav':
-      send_dm('fav', id).then(onResponse, onError);
+      send_dm('fav', id);
       break;
     case 'rt':
-      send_dm('rt', id).then(onResponse, onError);
+      send_dm('rt', id);
       break;
     case 'rt-now':
-      send_dm('rt!', id).then(onResponse, onError);
+      send_dm('rt!', id);
       break;
     case 'fav-and-rt':
-      send_dm('fr', id).then(onResponse, onError);
+      send_dm('fr', id);
       break;
     case 'fav-and-rt-now':
-      send_dm('fr!', id).then(onResponse, onError);
+      send_dm('fr!', id);
       break;
   }
 });
@@ -55,22 +59,48 @@ function detectStatusId(aUrl) {
 }
 
 function send_dm(...aArgs) {
+  if (!configs.tweetsh_path || !configs.target_account) {
+    notify(
+      browser.i18n.getMessage('notConfiguredError.title'),
+      browser.i18n.getMessage('notConfiguredError.message')
+    );
+    return;
+  }
+
+  let commandArgs = [
+    'dm',
+    configs.target_account,
+    aArgs.join(' ')
+  ];
   return browser.runtime.sendNativeMessage('com.add0n.node', {
     cmd: 'exec',
     command: configs.tweetsh_path,
-    arguments: [
-      'dm',
-      configs.target_account,
-      aArgs.join(' ')
-    ]
-  })
+    arguments: commandArgs
+  }).then(
+    (aResponse) => {
+      notify(
+        browser.i18n.getMessage('onResponse.title'),
+        browser.i18n.getMessage('onResponse.message', commandArgs.join(' '))
+      );
+      log('Received: ', aResponse);
+    },
+    (aError) => {
+      notify(
+        browser.i18n.getMessage('onError.title'),
+        browser.i18n.getMessage('onError.message', commandArgs.join(' '), aError)
+      );
+      log('Error: ', aError);
+    }
+  );
 }
 
-function onResponse(aResponse) {
-  log('Received: ' + aResponse);
-}
-
-function onError(aError) {
-  log('Error: ' + aError);
+function notify(aTitle, aMessage) {
+  browser.notifications.create({
+    type:    'basic',
+    title:   aTitle,
+    message: aMessage
+  }).then((aId) => {
+    setTimeout(() => browser.notifications.clear(aId), 3000);
+  });
 }
 

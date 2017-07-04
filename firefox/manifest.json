@@ -6,7 +6,8 @@
   "permissions": [
     "contextMenus",
     "nativeMessaging",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "background": {
     "scripts": [
