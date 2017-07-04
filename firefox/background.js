@@ -20,23 +20,33 @@ function installMenuItems() {
 installMenuItems();
 
 browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
-  let url = aInfo.linkUrl;
+  let url = aInfo.linkUrl || aInfo.pageUrl || aTab.url;
   log('procesing url = ' + url);
+
+  let match = url.match(/^[^:]+:\/\/(?:[^/]*\.)?twitter.com\/(?:[^\/]+|i\/web)\/status\/([\d]+)/);
+  if (!match) {
+    log('not a tweet');
+    return;
+  }
+
+  let id = match[1];
+  log('processing id = ' + id);
+
   switch (aInfo.menuItemId) {
     case 'fav':
-      send_dm('fav', url).then(onResponse, onError);
+      send_dm('fav', id).then(onResponse, onError);
       break;
     case 'rt':
-      send_dm('rt', url).then(onResponse, onError);
+      send_dm('rt', id).then(onResponse, onError);
       break;
     case 'rt-now':
-      send_dm('rt!', url).then(onResponse, onError);
+      send_dm('rt!', id).then(onResponse, onError);
       break;
     case 'fav-and-rt':
-      send_dm('fr', url).then(onResponse, onError);
+      send_dm('fr', id).then(onResponse, onError);
       break;
     case 'fav-and-rt-now':
-      send_dm('fr!', url).then(onResponse, onError);
+      send_dm('fr!', id).then(onResponse, onError);
       break;
   }
 });
