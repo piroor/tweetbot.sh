@@ -2,5 +2,15 @@
   "extensionName": { "message": "tweetbot.shリモートコントローラー" },
   "extensionDescription": { "message": "tweetbot.shでツイートを共有するためのコンテキストメニュー項目を追加します" },
 
-  "contextMenu.dm.label": { "message": "このツイートをDMする" }
+  "contextMenu.fav.label": { "message": "このツイートにいいねする" },
+  "contextMenu.rt.label": { "message": "このツイートをRTする" },
+  "contextMenu.rt-now.label": { "message": "このツイートを今すぐRTする" },
+  "contextMenu.fav-and-rt.label": { "message": "このツイートにいいねしてRTする" },
+  "contextMenu.fav-and-rt-now.label": { "message": "このツイートに今するいいねしてRTする" },
+
+  "config.tweetsh_path.label.before": { "message": "tweet.shのフルパス:" },
+  "config.tweetsh_path.label.after": { "message": "" },
+  "config.target_account.label.before": { "message": "操作するbotのアカウント名:" },
+  "config.target_account.label.after": { "message": "" },
+  "config.debug.label": { "message": "デバッグログを出力" }
 }

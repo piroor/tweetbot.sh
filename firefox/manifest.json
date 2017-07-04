@@ -3,9 +3,21 @@
   "name": "__MSG_extensionName__",
   "version": "0.1",
   "description": "__MSG_extensionDescription__",
-  "permissions": ["contextMenus"],
+  "permissions": [
+    "contextMenus",
+    "nativeMessaging",
+    "storage"
+  ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "common/Configs.js",
+      "common/common.js",
+      "background.js"
+    ]
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "chrome_style": true
   },
   "default_locale": "en",
   "applications": {

@@ -2,5 +2,15 @@
   "extensionName": { "message": "tweetbot.sh remote controller" },
   "extensionDescription": { "message": "Provide context menu commands to share tweets by tweetbot.sh" },
 
-  "contextMenu.dm.label": { "message": "DM this tweet" }
+  "contextMenu.fav.label": { "message": "Favorite this" },
+  "contextMenu.rt.label": { "message": "RT this" },
+  "contextMenu.rt-now.label": { "message": "RT this immediately" },
+  "contextMenu.fav-and-rt.label": { "message": "Favorite and RT this" },
+  "contextMenu.fav-and-rt-now.label": { "message": "Favorite and RT this immediately" },
+
+  "config.tweetsh_path.label.before": { "message": "Full path to the tweet.sh:" },
+  "config.tweetjstweetsh_path_path.label.after": { "message": "" },
+  "config.target_account.label.before": { "message": "Screnen name of the bot account to be controlled:" },
+  "config.target_account.label.after": { "message": "" },
+  "config.debug.label": { "message": "Print debug log" }
 }
