@@ -1,4 +1,4 @@
 .PHONY: xpi
 
 xpi:
-	zip -r -0 tweetbotsh-remote-controller.xpi *.json
+	zip -r -0 tweetbotsh-remote-controller.xpi *.json *.js _locale
