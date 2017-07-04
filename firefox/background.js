@@ -23,13 +23,11 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let url = aInfo.linkUrl || aInfo.pageUrl || aTab.url;
   log('procesing url = ' + url);
 
-  let match = url.match(/^[^:]+:\/\/(?:[^/]*\.)?twitter.com\/(?:[^\/]+|i\/web)\/status\/([\d]+)/);
-  if (!match) {
+  let id = detectStatusId(url);
+  if (!id) {
     log('not a tweet');
     return;
   }
-
-  let id = match[1];
   log('processing id = ' + id);
 
   switch (aInfo.menuItemId) {
@@ -50,6 +48,11 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
       break;
   }
 });
+
+function detectStatusId(aUrl) {
+  let match = aUrl.match(/^[^:]+:\/\/(?:[^/]*\.)?twitter.com\/(?:[^\/]+|i\/web)\/status\/([\d]+)/);
+  return match ? match[1] : null;
+}
 
 function send_dm(...aArgs) {
   return browser.runtime.sendNativeMessage('com.add0n.node', {
