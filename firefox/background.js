@@ -1,28 +1,23 @@
-browser.contextMenus.create({
-  id: 'fav',
-  title: browser.i18n.getMessage('contextMenu.fav.label'),
-  contexts: ['link']
-});
-browser.contextMenus.create({
-  id: 'rt',
-  title: browser.i18n.getMessage('contextMenu.rt.label'),
-  contexts: ['link']
-});
-browser.contextMenus.create({
-  id: 'rt-now',
-  title: browser.i18n.getMessage('contextMenu.rt-now.label'),
-  contexts: ['link']
-});
-browser.contextMenus.create({
-  id: 'fav-and-rt',
-  title: browser.i18n.getMessage('contextMenu.fav-and-rt.label'),
-  contexts: ['link']
-});
-browser.contextMenus.create({
-  id: 'fav-and-rt-now',
-  title: browser.i18n.getMessage('contextMenu.fav-and-rt-now.label'),
-  contexts: ['link']
-});
+var menuItems = [
+  'fav',
+  'rt',
+  'rt-now',
+  'fav-and-rt',
+  'fav-and-rt-now'
+];
+
+function installMenuItems() {
+  for (let id of menuItems)
+  {
+    browser.contextMenus.create({
+      id: id,
+      title: browser.i18n.getMessage('contextMenu.' + id + '.label'),
+      contexts: ['page', 'tab', 'link']
+    });
+  }
+}
+
+installMenuItems();
 
 browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let url = aInfo.linkUrl;
