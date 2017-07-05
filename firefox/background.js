@@ -1,4 +1,4 @@
-var menuItems = [
+var baseMenuItems = [
   'fav',
   'rt',
   'fav-and-rt',
@@ -11,8 +11,13 @@ var menuItems = [
   'unfav',
   'unfollow'
 ];
+var debugMenuItems = [
+  '--separator-test--',
+  'test'
+];
 
 function installMenuItems() {
+  var menuItems = configs.debug ? baseMenuItems.concat(debugMenuItems) : baseMenuItems;
   for (let id of menuItems)
   {
     let isSeparator = id.charAt(0) == '-';
@@ -25,12 +30,12 @@ function installMenuItems() {
   }
 }
 
-configs.$load().then(() => {
-  if (configs.debug) {
-    menuItems.push('--separator-test--');
-    menuItems.push('test');
-  }
-  installMenuItems();
+configs.$load().then(installMenuItems);
+configs.$addObserver((aKey) => {
+  if (aKey == 'debug') {
+    browser.contextMenus.removeAll();
+    installMenuItems();
+  } 
 });
 
 browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
