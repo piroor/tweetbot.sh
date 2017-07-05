@@ -116,13 +116,17 @@ function dmCommand(...aArgs) {
   };
   browser.runtime.getPlatformInfo().then((aInfo) => {
     if (aInfo.os == browser.runtime.PlatformOs.WIN) {
+      // To communicate with Bash on Ubuntu on Windows, we have to execute the bash.exe via cmd.exe... why?
+      message.command = 'cmd.exe';
       message.arguments = [
+        '/Q',
+        '/C',
+        'bash.exe',
         '-c',
         [configs.tweetsh_path].concat(commandArgs).map((aPart) => {
           return '"' + aPart.replace(/"/g, '\\"') + '"';
         }).join(' ')
       ];
-      message.command = 'C:\\Windows\\System32\\bash.exe';
     }
     log('sending message: ', message);
     return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
