@@ -87,23 +87,23 @@ function send_dm(...aArgs) {
       ];
       message.command = 'C:\\Windows\\System32\\bash.exe';
     }
-  log('sending message: ', message);
-  return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
-    (aResponse) => {
-      notify(
-        browser.i18n.getMessage('onResponse.title'),
-        browser.i18n.getMessage('onResponse.message', commandArgs.join(' '))
-      );
-      log('Received: ', aResponse);
-    },
-    (aError) => {
-      notify(
-        browser.i18n.getMessage('onError.title'),
-        browser.i18n.getMessage('onError.message', [commandArgs.join(' '), String(aError)])
-      );
-      log('Error: ', aError);
-    }
-  );
+    log('sending message: ', message);
+    return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
+      (aResponse) => {
+        notify(
+          browser.i18n.getMessage('onResponse.title'),
+          browser.i18n.getMessage('onResponse.message', commandArgs.join(' '))
+        );
+        log('Received: ', aResponse);
+      },
+      (aError) => {
+        notify(
+          browser.i18n.getMessage('onError.title'),
+          browser.i18n.getMessage('onError.message', [commandArgs.join(' '), String(aError)])
+        );
+        log('Error: ', aError);
+      }
+    );
   });
 }
 
