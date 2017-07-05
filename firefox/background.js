@@ -11,6 +11,10 @@ var menuItems = [
   'unfav',
   'unfollow'
 ];
+if (configs.debug) {
+  menuItems.push('--separator-test--');
+  menuItems.push('test');
+}
 
 function installMenuItems() {
   for (let id of menuItems)
@@ -71,6 +75,10 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
       break;
     case 'unfollow':
       send_dm('unfollow', id);
+      break;
+
+    case 'test':
+      send_dm('test', id);
       break;
   }
 });
