@@ -15,7 +15,7 @@
   "notConfiguredError.title": { "message": "Not configured!" },
   "notConfiguredError.message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
 
-  "notTweetError.message": { "message": "Not a tweet!" },
+  "notTweetError.title": { "message": "Not a tweet!" },
   "notTweetError.message": { "message": "$URL$ is not a tweet.",
     "placeholders": {
       "url": {

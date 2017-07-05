@@ -15,7 +15,7 @@
   "notConfiguredError.title": { "message": "設定が未完了です!" },
   "notConfiguredError.message": { "message": "tweet.shのパスと操作対象のアカウントのアカウント名を設定して下さい。" },
 
-  "notTweetError.message": { "message": "ツイートではありません!" },
+  "notTweetError.title": { "message": "ツイートではありません!" },
   "notTweetError.message": { "message": "$URL$ はツイートのURLではありません。",
     "placeholders": {
       "url": {
