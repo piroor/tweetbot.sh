@@ -11,6 +11,7 @@
   "contextMenu.fav-and-rt-now.label": { "message": "Favorite and RT this immediately" },
   "contextMenu.follow.label": { "message": "Follow" },
   "contextMenu.unfollow.label": { "message": "Unfollow" },
+  "contextMenu.test.label": { "message": "Test" },
 
   "notConfiguredError.title": { "message": "Not configured!" },
   "notConfiguredError.message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
