@@ -11,10 +11,6 @@ var menuItems = [
   'unfav',
   'unfollow'
 ];
-if (configs.debug) {
-  menuItems.push('--separator-test--');
-  menuItems.push('test');
-}
 
 function installMenuItems() {
   for (let id of menuItems)
@@ -29,7 +25,13 @@ function installMenuItems() {
   }
 }
 
-installMenuItems();
+configs.$load().then(() => {
+  if (configs.debug) {
+    menuItems.push('--separator-test--');
+    menuItems.push('test');
+  }
+  installMenuItems();
+});
 
 browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let url = aInfo.linkUrl || aInfo.pageUrl || aTab.url;
