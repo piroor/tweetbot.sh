@@ -77,6 +77,16 @@ function send_dm(...aArgs) {
     command: configs.tweetsh_path,
     arguments: commandArgs
   };
+  browser.runtime.getPlatformInfo().then((aInfo) => {
+    if (aInfo.os == browser.runtime.PlatformOs.WIN) {
+      message.arguments = [
+        '-c',
+        [configs.tweetsh_path].concat(commandArgs).map((aPart) => {
+          return '"' + aPart.replace(/"/g, '\\"') + '"';
+        }).join(' ')
+      ];
+      message.command = 'C:\\Windows\\System32\\bash.exe';
+    }
   log('sending message: ', message);
   return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
     (aResponse) => {
@@ -94,6 +104,7 @@ function send_dm(...aArgs) {
       log('Error: ', aError);
     }
   );
+  });
 }
 
 function notify(aTitle, aMessage) {
