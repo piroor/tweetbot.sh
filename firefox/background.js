@@ -72,11 +72,13 @@ function send_dm(...aArgs) {
     configs.target_account,
     aArgs.join(' ')
   ];
-  return browser.runtime.sendNativeMessage('com.add0n.node', {
+  let message = {
     cmd: 'exec',
     command: configs.tweetsh_path,
     arguments: commandArgs
-  }).then(
+  };
+  log('sending message: ', message);
+  return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
     (aResponse) => {
       notify(
         browser.i18n.getMessage('onResponse.title'),
