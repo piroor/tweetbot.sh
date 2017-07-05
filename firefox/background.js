@@ -1,17 +1,20 @@
 var menuItems = [
   'fav',
   'rt',
-  'rt-now',
   'fav-and-rt',
+  '--separator-now--',
+  'rt-now',
   'fav-and-rt-now'
 ];
 
 function installMenuItems() {
   for (let id of menuItems)
   {
-    browser.contextMenus.create({
+    let isSeparator = id.charAt(0) == '-';
+     browser.contextMenus.create({
       id: id,
-      title: browser.i18n.getMessage('contextMenu.' + id + '.label'),
+      type: isSeparator ? 'separator' : 'normal',
+      title: isSeparator ? null : browser.i18n.getMessage('contextMenu.' + id + '.label'),
       contexts: ['page', 'tab', 'link']
     });
   }
