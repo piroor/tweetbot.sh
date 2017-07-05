@@ -55,37 +55,37 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
 
   switch (aInfo.menuItemId) {
     case 'fav':
-      send_dm('fav', id);
+      dmCommand('fav', id);
       break;
     case 'unfav':
-      send_dm('unfav', id);
+      dmCommand('unfav', id);
       break;
 
     case 'rt':
-      send_dm('rt', id);
+      dmCommand('rt', id);
       break;
     case 'unrt':
-      send_dm('unrt', id);
+      dmCommand('unrt', id);
       break;
     case 'rt-now':
-      send_dm('rt!', id);
+      dmCommand('rt!', id);
       break;
     case 'fav-and-rt':
-      send_dm('fr', id);
+      dmCommand('fr', id);
       break;
     case 'fav-and-rt-now':
-      send_dm('fr!', id);
+      dmCommand('fr!', id);
       break;
 
     case 'follow':
-      send_dm('follow', id);
+      dmCommand('follow', id);
       break;
     case 'unfollow':
-      send_dm('unfollow', id);
+      dmCommand('unfollow', id);
       break;
 
     case 'test':
-      send_dm('test', id);
+      dmCommand('test', id);
       break;
   }
 });
@@ -95,7 +95,7 @@ function detectStatusId(aUrl) {
   return match ? match[1] : null;
 }
 
-function send_dm(...aArgs) {
+function dmCommand(...aArgs) {
   if (!configs.tweetsh_path || !configs.target_account) {
     notify(
       browser.i18n.getMessage('notConfiguredError.title'),
