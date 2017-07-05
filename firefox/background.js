@@ -2,9 +2,14 @@ var menuItems = [
   'fav',
   'rt',
   'fav-and-rt',
+  'follow',
   '--separator-now--',
   'rt-now',
-  'fav-and-rt-now'
+  'fav-and-rt-now',
+  '--separator-cancel--',
+  'unrt',
+  'unfav',
+  'unfollow'
 ];
 
 function installMenuItems() {
@@ -41,8 +46,15 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
     case 'fav':
       send_dm('fav', id);
       break;
+    case 'unfav':
+      send_dm('unfav', id);
+      break;
+
     case 'rt':
       send_dm('rt', id);
+      break;
+    case 'unrt':
+      send_dm('unrt', id);
       break;
     case 'rt-now':
       send_dm('rt!', id);
@@ -52,6 +64,13 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
       break;
     case 'fav-and-rt-now':
       send_dm('fr!', id);
+      break;
+
+    case 'follow':
+      send_dm('follow', id);
+      break;
+    case 'unfollow':
+      send_dm('unfollow', id);
       break;
   }
 });

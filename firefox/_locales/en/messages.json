@@ -3,10 +3,14 @@
   "extensionDescription": { "message": "Provide context menu commands to share tweets by tweetbot.sh" },
 
   "contextMenu.fav.label": { "message": "Favorite this" },
+  "contextMenu.unfav.label": { "message": "Unfavorite this" },
   "contextMenu.rt.label": { "message": "RT this" },
+  "contextMenu.unrt.label": { "message": "Cancel RT of this" },
   "contextMenu.rt-now.label": { "message": "RT this immediately" },
   "contextMenu.fav-and-rt.label": { "message": "Favorite and RT this" },
   "contextMenu.fav-and-rt-now.label": { "message": "Favorite and RT this immediately" },
+  "contextMenu.follow.label": { "message": "Follow" },
+  "contextMenu.unfollow.label": { "message": "Unfollow" },
 
   "notConfiguredError.title": { "message": "Not configured!" },
   "notConfiguredError.message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
