@@ -91,7 +91,7 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let target = detectStatusId(url) || url;
   log('processing target = ' + target);
 
-  switch (aInfo.menuItemId.split(';')[0]) {
+  switch (aInfo.menuItemId.split(':')[0]) {
     case 'fav':
       dmCommand('fav', target);
       break;
