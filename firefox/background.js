@@ -91,7 +91,8 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let target = detectStatusId(url) || url;
   log('processing target = ' + target);
 
-  switch (aInfo.menuItemId.split(':')[0]) {
+  let command = aInfo.menuItemId.split(':')[0];
+  switch (command) {
     case 'fav':
       dmCommand('fav', target);
       break;
@@ -124,6 +125,13 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
 
     case 'test':
       dmCommand('test', target);
+      break;
+
+    default:
+      notify(
+        browser.i18n.getMessage('unknownCommand.title'),
+        browser.i18n.getMessage('unknownCommand.message', command)
+      );
       break;
   }
 });

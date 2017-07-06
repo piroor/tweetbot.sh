@@ -36,6 +36,16 @@
     }
   },
 
+  "unknownCommand.title": { "message": "不明なコマンド" },
+  "unknownCommand.message": { "message": "不明なコマンドの実行に失敗しました: $COMMAND$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "abc"
+      }
+    }
+  },
+
   "onError.title": { "message": "操作に失敗しました" },
   "onError.message": { "message": "コマンド: $COMMAND$\nエラー: $ERROR$",
     "placeholders": {

@@ -26,6 +26,16 @@
     }
   },
 
+  "unknownCommand.title": { "message": "Unknown command" },
+  "unknownCommand.message": { "message": "Failed to process unknown command: $COMMAND$",
+    "placeholders": {
+      "command": {
+        "content": "$1",
+        "example": "abc"
+      }
+    }
+  },
+
   "onResponse.title": { "message": "Operation succeeded." },
   "onResponse.message": { "message": "Command successfully sent: $COMMAND$",
     "placeholders": {
