@@ -40,9 +40,8 @@ var debugMenuItems = [
     matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) }
 ];
 
-function installMenuItems() {
-  var menuItems = configs.debug ? baseMenuItems.concat(debugMenuItems) : baseMenuItems;
-  for (let item of menuItems)
+function installMenuItems(aMenuItems) {
+  for (let item of aMenuItems)
   {
     let isSeparator = item.id.charAt(0) == '-';
     let type = isSeparator ? 'separator' : 'normal';
@@ -64,12 +63,25 @@ function installMenuItems() {
   }
 }
 
-configs.$load().then(installMenuItems);
+installMenuItems(baseMenuItems);
+
+configs.$load().then(() => {
+  if (configs.debug)
+    installMenuItems(debugMenuItems);
+});
 configs.$addObserver((aKey) => {
-  if (aKey == 'debug') {
-    browser.contextMenus.removeAll();
-    installMenuItems();
-  } 
+  if (aKey != 'debug')
+    return;
+
+  if (configs.debug) {
+    installMenuItems(debugMenuItems);
+  }
+  else {
+    debugMenuItems.forEach((aItem) => {
+      browser.contextMenus.remove(aItem.id + ':page');
+      browser.contextMenus.remove(aItem.id + ':link');
+    });
+  }
 });
 
 browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
