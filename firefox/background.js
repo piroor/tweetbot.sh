@@ -1,31 +1,65 @@
+var twitterMatchingPattenr = [
+  '*://twitter.com/*',
+  '*://*.twitter.com/*'
+];
+var tweetMatchingPattenr = [
+  '*://twitter.com/*/status/*',
+  '*://twitter.com/*/*/status/*',
+  '*://*.twitter.com/*/status/*',
+  '*://*.twitter.com/*/*/status/*'
+];
+
 var baseMenuItems = [
-  'fav',
-  'rt',
-  'fav-and-rt',
-  'follow',
-  '--separator-now--',
-  'rt-now',
-  'fav-and-rt-now',
-  '--separator-cancel--',
-  'unrt',
-  'unfav',
-  'unfollow'
+  { id: 'fav',
+    matching: tweetMatchingPattenr },
+  { id: 'rt',
+    matching: tweetMatchingPattenr },
+  { id: 'fav-and-rt',
+    matching: tweetMatchingPattenr },
+  { id: 'follow',
+    matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) },
+  { id: '--separator-regular-items--',
+    matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) },
+  { id: 'rt-now',
+    matching: tweetMatchingPattenr },
+  { id: 'fav-and-rt-now',
+    matching: tweetMatchingPattenr },
+  { id: '--separator-now-items--',
+    matching: tweetMatchingPattenr },
+  { id: 'unrt',
+    matching: tweetMatchingPattenr },
+  { id: 'unfav',
+    matching: tweetMatchingPattenr },
+  { id: 'unfollow',
+    matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) }
 ];
 var debugMenuItems = [
-  '--separator-test--',
-  'test'
+  { id: '--separator-test--',
+    matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) },
+  { id: 'test',
+    matching: twitterMatchingPattenr.concat(tweetMatchingPattenr) }
 ];
 
 function installMenuItems() {
   var menuItems = configs.debug ? baseMenuItems.concat(debugMenuItems) : baseMenuItems;
-  for (let id of menuItems)
+  for (let item of menuItems)
   {
-    let isSeparator = id.charAt(0) == '-';
-     browser.contextMenus.create({
-      id: id,
-      type: isSeparator ? 'separator' : 'normal',
-      title: isSeparator ? null : browser.i18n.getMessage('contextMenu.' + id + '.label'),
-      contexts: ['page', 'tab', 'link']
+    let isSeparator = item.id.charAt(0) == '-';
+    let type = isSeparator ? 'separator' : 'normal';
+    let title = isSeparator ? null : browser.i18n.getMessage('contextMenu.' + item.id + '.label');
+    browser.contextMenus.create({
+      id: item.id + ':page',
+      type,
+      title,
+      contexts: ['page', 'tab'],
+      documentUrlPatterns: item.matching
+    });
+    browser.contextMenus.create({
+      id: item.id + ':link',
+      type,
+      title,
+      contexts: ['link'],
+      targetUrlPatterns: item.matching
     });
   }
 }
@@ -42,50 +76,42 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
   let url = aInfo.linkUrl || aInfo.pageUrl || aTab.url;
   log('procesing url = ' + url);
 
-  let id = detectStatusId(url);
-  if (!id) {
-    notify(
-      browser.i18n.getMessage('notTweetError.title'),
-      browser.i18n.getMessage('notTweetError.message', url)
-    );
-    log('not a tweet');
-    return;
-  }
-  log('processing id = ' + id);
+  let target = detectStatusId(url) || url;
+  log('processing target = ' + target);
 
-  switch (aInfo.menuItemId) {
+  switch (aInfo.menuItemId.split(';')[0]) {
     case 'fav':
-      dmCommand('fav', id);
+      dmCommand('fav', target);
       break;
     case 'unfav':
-      dmCommand('unfav', id);
+      dmCommand('unfav', target);
       break;
 
     case 'rt':
-      dmCommand('rt', id);
+      dmCommand('rt', target);
       break;
     case 'unrt':
-      dmCommand('unrt', id);
+      dmCommand('unrt', target);
       break;
     case 'rt-now':
-      dmCommand('rt!', id);
+      dmCommand('rt!', target);
       break;
     case 'fav-and-rt':
-      dmCommand('fr', id);
+      dmCommand('fr', target);
       break;
     case 'fav-and-rt-now':
-      dmCommand('fr!', id);
+      dmCommand('fr!', target);
       break;
 
     case 'follow':
-      dmCommand('follow', id);
+      dmCommand('follow', target);
       break;
     case 'unfollow':
-      dmCommand('unfollow', id);
+      dmCommand('unfollow', target);
       break;
 
     case 'test':
-      dmCommand('test', id);
+      dmCommand('test', target);
       break;
   }
 });
