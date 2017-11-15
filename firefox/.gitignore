@@ -1,4 +1,4 @@
-*.xpi
+./*.xpi
 **/Configs.js
 **/Options.js
 **/l10n.js
