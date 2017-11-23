@@ -24,7 +24,7 @@ This bot watches events around the related your Twitter account, and will react 
 You need to prepare API keys at first.
 Go to [the front page](https://apps.twitter.com/), create a new app, and generate a new access token.
 
-If you hope to use DMs to control the running bot, you have to permit the app to access direct messages.
+If you want to use DMs to control the running bot, you have to permit the app to access direct messages.
 
 There are installer and uninstaller for systemd. Run `sudo path/to/tweetbot.sh/systemd/install.sh` or `sudo path/to/tweetbot.sh/systemd/uninstall.sh`.
 
@@ -195,10 +195,10 @@ RESPOND_TO_SEARCH_RESULTS=true
 
 For mentions, this bot always respond to it as a reply.
 Otherwise, if the tweet is not a mention (including `@username` for your account), this bot will post an independent tweet including the URL of the detected tweet - in other words, retweet it with a comment.
-If you hope to reply a mention not starting with `@username`, set `RESPOND_TO_SIDE_MENTIONS` to `true`.
+If you want to reply a mention not starting with `@username`, set `RESPOND_TO_SIDE_MENTIONS` to `true`.
 
 By default, the bot doesn't respond to replied mentions with other people like `@username1 @username2 @username3 message body` to prevent unexpected spamming.
-If you hope to reply to such mentions aggressively, set `RESPOND_TO_MULTIPLE_TARGETS_REPLY` to `true`.
+If you want to reply to such mentions aggressively, set `RESPOND_TO_MULTIPLE_TARGETS_REPLY` to `true`.
 
 #### Tendency of the chatterbot featrue
 
@@ -420,7 +420,7 @@ Did you know? I'm a chatterbot!
 
 All comment lines starting with `#` are ignored.
 
-If you hope to post multiple tweets sequentially, write them in one line delimiting with `\t` (`\u0009`, hard tab).
+If you want to post multiple tweets sequentially, write them in one line delimiting with `\t` (`\u0009`, hard tab).
 
 This file must be encoded in UTF-8.
 
@@ -663,7 +663,7 @@ Both alias and message are optional.
  * Example
    * `search-result 0123456`
 
-When you realized that there is a tweet which should be tracked as a search result but actually not processed, you'll hope to add new response keywords and the existing tweet is processed as a new search result.
+When you realized that there is a tweet which should be tracked as a search result but actually not processed, you'll want to add new response keywords and the existing tweet is processed as a new search result.
 This command just does it.
 Note that the feature possibly process the tweet multiple times.
 
