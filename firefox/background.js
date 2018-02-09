@@ -129,8 +129,8 @@ browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
 
     default:
       notify(
-        browser.i18n.getMessage('unknownCommand.title'),
-        browser.i18n.getMessage('unknownCommand.message', command)
+        browser.i18n.getMessage('unknownCommand_title'),
+        browser.i18n.getMessage('unknownCommand_message', command)
       );
       break;
   }
@@ -144,8 +144,8 @@ function detectStatusId(aUrl) {
 function dmCommand(...aArgs) {
   if (!configs.tweetsh_path || !configs.target_account) {
     notify(
-      browser.i18n.getMessage('notConfiguredError.title'),
-      browser.i18n.getMessage('notConfiguredError.message')
+      browser.i18n.getMessage('notConfiguredError_title'),
+      browser.i18n.getMessage('notConfiguredError_message')
     );
     return;
   }
@@ -178,15 +178,15 @@ function dmCommand(...aArgs) {
     return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
       (aResponse) => {
         notify(
-          browser.i18n.getMessage('onResponse.title'),
-          browser.i18n.getMessage('onResponse.message', commandArgs.join(' '))
+          browser.i18n.getMessage('onResponse_title'),
+          browser.i18n.getMessage('onResponse_message', commandArgs.join(' '))
         );
         log('Received: ', aResponse);
       },
       (aError) => {
         notify(
-          browser.i18n.getMessage('onError.title'),
-          browser.i18n.getMessage('onError.message', [commandArgs.join(' '), String(aError)])
+          browser.i18n.getMessage('onError_title'),
+          browser.i18n.getMessage('onError_message', [commandArgs.join(' '), String(aError)])
         );
         log('Error: ', aError);
       }

@@ -2,22 +2,22 @@
   "extensionName": { "message": "tweetbot.sh remote controller" },
   "extensionDescription": { "message": "Provide context menu commands to share tweets by tweetbot.sh" },
 
-  "contextMenu.fav.label": { "message": "Favorite this" },
-  "contextMenu.unfav.label": { "message": "Unfavorite this" },
-  "contextMenu.rt.label": { "message": "RT this" },
-  "contextMenu.unrt.label": { "message": "Cancel RT of this" },
-  "contextMenu.rt-now.label": { "message": "RT this immediately" },
-  "contextMenu.fav-and-rt.label": { "message": "Favorite and RT this" },
-  "contextMenu.fav-and-rt-now.label": { "message": "Favorite and RT this immediately" },
-  "contextMenu.follow.label": { "message": "Follow" },
-  "contextMenu.unfollow.label": { "message": "Unfollow" },
-  "contextMenu.test.label": { "message": "Test" },
+  "contextMenu_fav_label": { "message": "Favorite this" },
+  "contextMenu_unfav_label": { "message": "Unfavorite this" },
+  "contextMenu_rt_label": { "message": "RT this" },
+  "contextMenu_unrt_label": { "message": "Cancel RT of this" },
+  "contextMenu_rt_now_label": { "message": "RT this immediately" },
+  "contextMenu_fav_and_rt_label": { "message": "Favorite and RT this" },
+  "contextMenu_fav_and_rt_now_label": { "message": "Favorite and RT this immediately" },
+  "contextMenu_follow_label": { "message": "Follow" },
+  "contextMenu_unfollow_label": { "message": "Unfollow" },
+  "contextMenu_test_label": { "message": "Test" },
 
-  "notConfiguredError.title": { "message": "Not configured!" },
-  "notConfiguredError.message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
+  "notConfiguredError_title": { "message": "Not configured!" },
+  "notConfiguredError_message": { "message": "Please set path to the tweet.sh and the screen name of the account to be controlled." },
 
-  "notTweetError.title": { "message": "Not a tweet!" },
-  "notTweetError.message": { "message": "$URL$ is not a tweet.",
+  "notTweetError_title": { "message": "Not a tweet!" },
+  "notTweetError_message": { "message": "$URL$ is not a tweet.",
     "placeholders": {
       "url": {
         "content": "$1",
@@ -26,8 +26,8 @@
     }
   },
 
-  "unknownCommand.title": { "message": "Unknown command" },
-  "unknownCommand.message": { "message": "Failed to process unknown command: $COMMAND$",
+  "unknownCommand_title": { "message": "Unknown command" },
+  "unknownCommand_message": { "message": "Failed to process unknown command: $COMMAND$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -36,8 +36,8 @@
     }
   },
 
-  "onResponse.title": { "message": "Operation succeeded." },
-  "onResponse.message": { "message": "Command successfully sent: $COMMAND$",
+  "onResponse_title": { "message": "Operation succeeded." },
+  "onResponse_message": { "message": "Command successfully sent: $COMMAND$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -46,8 +46,8 @@
     }
   },
 
-  "onError.title": { "message": "Operation failed." },
-  "onError.message": { "message": "Command: $COMMAND$\nError: $ERROR$",
+  "onError_title": { "message": "Operation failed." },
+  "onError_message": { "message": "Command: $COMMAND$\nError: $ERROR$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -60,9 +60,9 @@
     }
   },
 
-  "config.tweetsh_path.label.before": { "message": "Full path to the tweet.sh:" },
-  "config.tweetsh_path.label.after": { "message": "" },
-  "config.target_account.label.before": { "message": "Screnen name of the bot account to be controlled:" },
-  "config.target_account.label.after": { "message": "" },
-  "config.debug.label": { "message": "Print debug log" }
+  "config_tweetsh_path_label_before": { "message": "Full path to the tweet.sh:" },
+  "config_tweetsh_path_label_after": { "message": "" },
+  "config_target_account_label_before": { "message": "Screnen name of the bot account to be controlled:" },
+  "config_target_account_label_after": { "message": "" },
+  "config_debug_label": { "message": "Print debug log" }
 }

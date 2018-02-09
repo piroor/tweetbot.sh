@@ -2,22 +2,22 @@
   "extensionName": { "message": "tweetbot.shリモートコントローラー" },
   "extensionDescription": { "message": "tweetbot.shでツイートを共有するためのコンテキストメニュー項目を追加します" },
 
-  "contextMenu.fav.label": { "message": "いいねする" },
-  "contextMenu.unfav.label": { "message": "いいねを取り消す" },
-  "contextMenu.rt.label": { "message": "RTする" },
-  "contextMenu.unrt.label": { "message": "RTを取り消す" },
-  "contextMenu.rt-now.label": { "message": "今すぐRTする" },
-  "contextMenu.fav-and-rt.label": { "message": "いいねしてRTする" },
-  "contextMenu.fav-and-rt-now.label": { "message": "今すぐいいねしてRTする" },
-  "contextMenu.follow.label": { "message": "フォローする" },
-  "contextMenu.unfollow.label": { "message": "フォローを解除する" },
-  "contextMenu.test.label": { "message": "テスト" },
+  "contextMenu_fav_label": { "message": "いいねする" },
+  "contextMenu_unfav_label": { "message": "いいねを取り消す" },
+  "contextMenu_rt_label": { "message": "RTする" },
+  "contextMenu_unrt_label": { "message": "RTを取り消す" },
+  "contextMenu_rt_now_label": { "message": "今すぐRTする" },
+  "contextMenu_fav_and_rt_label": { "message": "いいねしてRTする" },
+  "contextMenu_fav_and_rt_now_label": { "message": "今すぐいいねしてRTする" },
+  "contextMenu_follow_label": { "message": "フォローする" },
+  "contextMenu_unfollow_label": { "message": "フォローを解除する" },
+  "contextMenu_test_label": { "message": "テスト" },
 
-  "notConfiguredError.title": { "message": "設定が未完了です!" },
-  "notConfiguredError.message": { "message": "tweet.shのパスと操作対象のアカウントのアカウント名を設定して下さい。" },
+  "notConfiguredError_title": { "message": "設定が未完了です!" },
+  "notConfiguredError_message": { "message": "tweet.shのパスと操作対象のアカウントのアカウント名を設定して下さい。" },
 
-  "notTweetError.title": { "message": "ツイートではありません!" },
-  "notTweetError.message": { "message": "$URL$ はツイートのURLではありません。",
+  "notTweetError_title": { "message": "ツイートではありません!" },
+  "notTweetError_message": { "message": "$URL$ はツイートのURLではありません。",
     "placeholders": {
       "url": {
         "content": "$1",
@@ -26,8 +26,8 @@
     }
   },
 
-  "onResponse.title": { "message": "操作に成功しました" },
-  "onResponse.message": { "message": "コマンドが送信されました: $COMMAND$",
+  "onResponse_title": { "message": "操作に成功しました" },
+  "onResponse_message": { "message": "コマンドが送信されました: $COMMAND$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -36,8 +36,8 @@
     }
   },
 
-  "unknownCommand.title": { "message": "不明なコマンド" },
-  "unknownCommand.message": { "message": "不明なコマンドの実行に失敗しました: $COMMAND$",
+  "unknownCommand_title": { "message": "不明なコマンド" },
+  "unknownCommand_message": { "message": "不明なコマンドの実行に失敗しました: $COMMAND$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -46,8 +46,8 @@
     }
   },
 
-  "onError.title": { "message": "操作に失敗しました" },
-  "onError.message": { "message": "コマンド: $COMMAND$\nエラー: $ERROR$",
+  "onError_title": { "message": "操作に失敗しました" },
+  "onError_message": { "message": "コマンド: $COMMAND$\nエラー: $ERROR$",
     "placeholders": {
       "command": {
         "content": "$1",
@@ -60,9 +60,9 @@
     }
   },
 
-  "config.tweetsh_path.label.before": { "message": "tweet.shのフルパス:" },
-  "config.tweetsh_path.label.after": { "message": "" },
-  "config.target_account.label.before": { "message": "操作するbotのアカウント名:" },
-  "config.target_account.label.after": { "message": "" },
-  "config.debug.label": { "message": "デバッグログを出力" }
+  "config_tweetsh_path_label_before": { "message": "tweet.shのフルパス:" },
+  "config_tweetsh_path_label_after": { "message": "" },
+  "config_target_account_label_before": { "message": "操作するbotのアカウント名:" },
+  "config_target_account_label_after": { "message": "" },
+  "config_debug_label": { "message": "デバッグログを出力" }
 }
