@@ -499,6 +499,7 @@ post_sequential_tweets() {
       log "     result: $result"
       return 1
     fi
+    sleep 10s
   done
   return 0
 }
