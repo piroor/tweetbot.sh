@@ -481,6 +481,7 @@ post_sequential_tweets() {
   local result
   while read -r body
   do
+    body="$(echo "$body" | $esed -e 's/<br>/\n/g')"
     if [ "$previous_id" != '' ]
     then
       result="$("$tweet_sh" reply "$previous_id" "$body")"
