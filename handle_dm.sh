@@ -213,6 +213,11 @@ handle_search_result() {
   fi
 }
 
+delete_queued_command_for() {
+  local target="$1"
+  grep -r "$target" "$command_queue_dir" | cut -d ':' -f 1 | uniq | xargs rm -f
+}
+
 lock_key=''
 
 while unlock "$lock_key" && read -r message
@@ -314,7 +319,11 @@ do
       log "Command queued: \"fav and rt $body\""
       respond "$sender" "Command queued: \"fav and rt $body\""
       ;;
-    del*|rem*|unrt|unretweet|fav*|unfav*|follow|unfollow )
+    del*|rem* )
+      process_generic_command "$sender" "$body"
+      ;;
+    unrt|unretweet|fav*|unfav*|follow|unfollow )
+      delete_queued_command_for "$(echo "$body" | remove_first_arg)"
       process_generic_command "$sender" "$body"
       ;;
     search-result )
