@@ -484,9 +484,9 @@ post_sequential_tweets() {
     body="$(echo "$body" | $esed -e 's/<br>/\n/g')"
     if [ "$previous_id" != '' ]
     then
-      result="$("$tweet_sh" reply "$previous_id" "$body")"
+      result="$(echo -e "$body" | "$tweet_sh" reply "$previous_id")"
     else
-      result="$("$tweet_sh" post "$body")"
+      result="$(echo -e "$body" | "$tweet_sh" post)"
     fi
 
     if [ $? = 0 ]
@@ -529,7 +529,7 @@ post_quotation() {
     local result
     echo "$bodies" | while read -r body
     do
-      result="$("$tweet_sh" reply "$id" "$body $url")"
+      result="$(echo -e "$body $url" | "$tweet_sh" reply "$id")"
       if [ $? = 0 ]
       then
         log '  => successfully quoted'
