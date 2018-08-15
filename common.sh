@@ -610,7 +610,10 @@ get_screen_name() {
     fi
   fi
   name="$("$tweet_sh" get-screen-name "$id")"
-  echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  if [ "$name" != '' ]
+  then
+    echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  fi
   echo -n "$name"
 }
 
@@ -627,7 +630,10 @@ get_user_id() {
     fi
   fi
   id="$("$tweet_sh" get-user-id "$name")"
-  echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  if [ "$id" != '' ]
+  then
+    echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  fi
   echo -n "$id"
 }
 
