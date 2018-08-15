@@ -246,14 +246,15 @@ abs() {
 
 expired_by_seconds() {
   local expire_seconds=$1
-  # tweet
   local created_at="$(cat | jq -r .created_at)"
-  # event
-  if [ "$created_at" = '' ]
+  local created_timestamp="$(cat | jq -r .created_timestamp)"
+  if [ "$created_timestamp" != 'null' ]
   then
+    # event
     created_at="$(cat | jq -r .created_timestamp)"
     created_at="$(expr "$created_at" / 1000)"
   else
+    # tweet
     created_at="$(echo "$created_at" | date -f - +%s)"
   fi
   local now=$(date +%s)
