@@ -246,8 +246,9 @@ abs() {
 
 expired_by_seconds() {
   local expire_seconds=$1
-  local created_at="$(cat | jq -r .created_at)"
-  local created_timestamp="$(cat | jq -r .created_timestamp)"
+  local target="$(cat | jq -c .)"
+  local created_at="$(echo "$target" | jq -r .created_at)"
+  local created_timestamp="$(echo "$target" | jq -r .created_timestamp)"
   if [ "$created_timestamp" != 'null' ]
   then
     # event
