@@ -195,7 +195,8 @@ periodical_fetch_direct_messages() {
     while read -r message
     do
       [ "$message" = '' ] && continue
-      id="$(echo "$message" | jq -r .id_str)"
+      id="$(echo "$message" | jq -r .id)"
+      sender_id="$(echo "$message" | jq -r .message_create.sender_id)"
       debug "New DM detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
@@ -205,13 +206,14 @@ periodical_fetch_direct_messages() {
       fi
       last_id="$id"
       echo "$last_id" > "$last_id_file"
+      [ "$sender_id" = "$MY_USER_ID" ] && continue
       echo "$message" |
-        env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm.sh"
-      sleep 3s
+        env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm_events.sh"
+      sleep 2m
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
                 -s "$last_id" |
-                jq -c '.[]' |
+                jq -c '.events[]' |
                 tac)
     [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"

@@ -41,7 +41,7 @@ do
     continue
   fi
 
-  body="$(echo "$event" | "$tweet_sh" body)"
+  body="$(echo "$event" | jq -r .message_create.message_data.text)"
   log " body    : $body"
 
   command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
