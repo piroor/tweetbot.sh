@@ -252,8 +252,10 @@ expired_by_seconds() {
   if [ "$created_at" = '' ]
   then
     created_at="$(cat | jq -r .created_timestamp)"
+    created_at="$(expr "$created_at" / 1000)"
+  else
+    created_at="$(echo "$created_at" | date -f - +%s)"
   fi
-  created_at="$(echo "$created_at" | date -f - +%s)"
   local now=$(date +%s)
   [ $((now - created_at)) -gt $expire_seconds ]
 }
