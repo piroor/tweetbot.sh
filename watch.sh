@@ -18,8 +18,16 @@ fi
 
 log " my screen name: $MY_SCREEN_NAME"
 log " lang          : $MY_LANGUAGE"
+if [ "$MY_USER_ID" = '' ]
+then
+  export MY_USER_ID="$(get_user_id "$MY_SCREEN_NAME")"
+  client_key_path="$(detect_client_key_file)"
+  echo "MY_USER_ID=$MY_USER_ID" >> "$client_key_path"
+fi
+log " user id       : $MY_USER_ID"
 
 export TWEET_SCREEN_NAME="$MY_SCREEN_NAME"
+export TWEET_USER_ID="$MY_SCREEN_NAME"
 
 if [ "$WATCH_KEYWORDS" != '' ]
 then

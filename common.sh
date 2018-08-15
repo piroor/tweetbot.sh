@@ -7,29 +7,38 @@ work_dir="$(pwd)"
 tools_dir="$(cd "$(dirname "$0")" && pwd)"
 tweet_sh="$tools_dir/tweet.sh/tweet.sh"
 
+detect_client_key_file() {
+  local loaded_key=''
+  while read path
+  do
+    if [ -f "$path" ]
+    then
+      loaded_key="$(source "$path"; echo "$CONSUMER_KEY")"
+      if [ "$loaded_key" != '' ]
+      then
+        echo "$path"
+        return 0
+      fi
+    fi
+  done < <(cat << FIN
+$work_dir/tweet.client.key
+$HOME/.tweet.client.key
+$tools_dir/tweet.client.key
+FIN
+  )
+  echo ''
+}
+
 load_keys() {
-  if [ "$CONSUMER_KEY" = '' -a \
-       -f "$work_dir/tweet.client.key" ]
+  if [ "$CONSUMER_KEY" = '' ]
   then
-    echo 'Using client key at the current directory.' 1>&2
-    source "$work_dir/tweet.client.key"
-  fi
-
-  if [ "$CONSUMER_KEY" = '' -a \
-       -f ~/.tweet.client.key ]
-  then
-    echo 'Using client key at the home directory.' 1>&2
-    source ~/.tweet.client.key
-  fi
-
-  if [ "$CONSUMER_KEY" = '' -a \
-       -f "$tools_dir/tweet.client.key" ]
-  then
-    echo 'Using client key at the tools directory.' 1>&2
-    source "$tools_dir/tweet.client.key"
+    local path="$(detect_client_key_file)"
+    echo "Using client key at $path" 1>&2
+    source "$path"
   fi
 
   export MY_SCREEN_NAME
+  export MY_USER_ID
   export MY_LANGUAGE
   export CONSUMER_KEY
   export CONSUMER_SECRET
@@ -578,6 +587,33 @@ on_dm_processed() {
   do
     rm -rf "$path"
   done
+}
+
+
+get_screen_name() {
+  local id="$1"
+  local cached="$(egrep ":$id$" "$status_dir/screen_name_to_user_id" 2>/dev/null | tail -n 1 | tr -d '\n')"
+  if [ "$cached" != '' ]
+  then
+    echo -n "$(echo -n "$cached" | cut -d : -f 1)"
+    return 0
+  fi
+  local name="$("$tweet_sh" get-screen-name "$id")"
+  echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  echo -n "$name"
+}
+
+get_user_id() {
+  local name="$1"
+  local cached="$(egrep "^$name:" "$status_dir/screen_name_to_user_id" 2>/dev/null | tail -n 1 | tr -d '\n')"
+  if [ "$cached" != '' ]
+  then
+    echo -n "$(echo -n "$cached" | cut -d : -f 2)"
+    return 0
+  fi
+  local id="$("$tweet_sh" get-user-id "$name")"
+  echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
+  echo -n "$id"
 }
 
 
