@@ -606,6 +606,7 @@ get_screen_name() {
     name="$(echo -n "$(echo -n "$cached" | cut -d : -f 1)")"
     if [ "$name" != '' ]
     then
+      echo -n "$name"
       return 0
     fi
   fi
@@ -626,6 +627,7 @@ get_user_id() {
     id="$(echo -n "$(echo -n "$cached" | cut -d : -f 2)")"
     if [ "$id" != '' ]
     then
+      echo -n "$id"
       return 0
     fi
   fi
