@@ -209,7 +209,7 @@ periodical_fetch_direct_messages() {
       [ "$sender_id" = "$MY_USER_ID" ] && continue
       echo "$message" |
         env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm_events.sh"
-      sleep 2m
+      sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
                 -s "$last_id" |
@@ -217,7 +217,7 @@ periodical_fetch_direct_messages() {
                 tac)
     [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
-    sleep 1m
+    sleep 2m
   done
 }
 periodical_fetch_direct_messages &
