@@ -599,26 +599,34 @@ on_dm_processed() {
 
 get_screen_name() {
   local id="$1"
+  local name=''
   local cached="$(egrep ":$id$" "$status_dir/screen_name_to_user_id" 2>/dev/null | tail -n 1 | tr -d '\n')"
   if [ "$cached" != '' ]
   then
-    echo -n "$(echo -n "$cached" | cut -d : -f 1)"
-    return 0
+    name="$(echo -n "$(echo -n "$cached" | cut -d : -f 1)")"
+    if [ "$name" != '' ]
+    then
+      return 0
+    fi
   fi
-  local name="$("$tweet_sh" get-screen-name "$id")"
+  name="$("$tweet_sh" get-screen-name "$id")"
   echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
   echo -n "$name"
 }
 
 get_user_id() {
+  local id=''
   local name="$1"
   local cached="$(egrep "^$name:" "$status_dir/screen_name_to_user_id" 2>/dev/null | tail -n 1 | tr -d '\n')"
   if [ "$cached" != '' ]
   then
-    echo -n "$(echo -n "$cached" | cut -d : -f 2)"
-    return 0
+    id="$(echo -n "$(echo -n "$cached" | cut -d : -f 2)")"
+    if [ "$id" != '' ]
+    then
+      return 0
+    fi
   fi
-  local id="$("$tweet_sh" get-user-id "$name")"
+  id="$("$tweet_sh" get-user-id "$name")"
   echo "$name:$id" >> "$status_dir/screen_name_to_user_id"
   echo -n "$id"
 }
