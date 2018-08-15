@@ -251,8 +251,7 @@ expired_by_seconds() {
   if [ "$created_timestamp" != 'null' ]
   then
     # event
-    created_at="$(cat | jq -r .created_timestamp)"
-    created_at="$(expr "$created_at" / 1000)"
+    created_at="$(expr "$created_timestamp" / 1000)"
   else
     # tweet
     created_at="$(echo "$created_at" | date -f - +%s)"
