@@ -76,7 +76,7 @@ do
       respond "$sender_id" "Command queued: \"$queue\""
       ;;
     reply )
-      reply_to "$sender" "$body"
+      reply_to "$sender_id" "$body"
       ;;
     'rt!'|'retweet!' )
       body="$(echo "$body" | remove_first_arg)"
