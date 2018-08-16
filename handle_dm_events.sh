@@ -70,7 +70,7 @@ do
       body="$(echo "$body" | remove_first_arg)"
       queue="post $body"
       echo "$queue" > "$command_queue_dir/$id.post"
-      echo "dm $sender Queued command is processed: \"$queue\"" \
+      echo "dm $sender_id Queued command is processed: \"$queue\"" \
         >> "$command_queue_dir/$id.post"
       log "Command queued: \"$queue\""
       respond "$sender_id" "Command queued: \"$queue\""
@@ -86,7 +86,7 @@ do
       body="$(echo "$body" | remove_first_arg)"
       queue="retweet $body"
       echo "$queue" > "$command_queue_dir/$id.retweet"
-      echo "dm $sender Queued command is processed: \"$queue\"" \
+      echo "dm $sender_id Queued command is processed: \"$queue\"" \
         >> "$command_queue_dir/$id.retweet"
       log "Command queued: \"$queue\""
       respond "$sender_id" "Command queued: \"$queue\""
@@ -100,7 +100,7 @@ do
       body="$(echo "$body" | remove_first_arg)"
       echo "favorite $body" > "$command_queue_dir/$id.retweet"
       echo "retweet $body" >> "$command_queue_dir/$id.retweet"
-      echo "dm $sender Queued command is processed: \"fav and rt $body\"" \
+      echo "dm $sender_id Queued command is processed: \"fav and rt $body\"" \
         >> "$command_queue_dir/$id.retweet"
       log "Command queued: \"fav and rt $body\""
       respond "$sender_id" "Command queued: \"fav and rt $body\""
