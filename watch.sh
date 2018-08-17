@@ -74,7 +74,7 @@ watch_mentions() {
     sleep 10 # for safety
   done
 }
-watch_mentions &
+#watch_mentions &
 
 
 # Sub process 2: polling for the REST search API
