@@ -77,7 +77,89 @@ watch_mentions() {
 #watch_mentions &
 
 
-# Sub process 2: polling for the REST search API
+# Sub process 2: polling for the REST search API to find QTs
+
+recent_my_tweet_urls() {
+  "$tools_dir/tweet.sh/tweet.sh" fetch-tweets -u "$MY_SCREEN_NAME" -a -c 10 |
+    jq -r .[].id_str |
+    sed -e "s;^;https://twitter.com/$MY_SCREEN_NAME/status/;"
+}
+
+periodical_search_quotation() {
+  logmodule='search_quotation'
+  local count=100
+  local last_id_file="$status_dir/last_search_quotation_result"
+  local last_id=''
+  [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
+  local id
+  local owner
+  local type
+  if [ "$last_id" != '' ]
+  then
+    log "Doing search for quotations newer than $last_id"
+  fi
+
+  while true
+  do
+    debug "Processing results of REST search API for quotations (newer than $last_id)..."
+    while read -r tweet
+    do
+      [ "$tweet" = '' ] && continue
+      id="$(echo "$tweet" | jq -r .id_str)"
+      owner="$(echo "$tweet" | jq -r .user.screen_name)"
+      debug "New search resultfor quotations detected: https://twitter.com/$owner/status/$id"
+      [ "$id" = '' -o "$id" = 'null' ] && continue
+      [ "$last_id" = '' ] && last_id="$id"
+      if [ $id -gt $last_id ]
+      then
+        last_id="$id"
+        echo "$last_id" > "$last_id_file"
+      fi
+      type="$(echo "$tweet" |
+                "$tools_dir/tweet.sh/tweet.sh" type)"
+      debug "   type: $type"
+      if [ "$type" != '' ]
+      then
+        log "Processing $id as $type..."
+      fi
+      case "$type" in
+        quotation )
+          echo "$tweet" |
+            env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
+          ;;
+      esac
+      sleep 3s
+    done < <("$tools_dir/tweet.sh/tweet.sh" search \
+                -q "$(recent_my_tweet_urls | paste -s -d ',' | sed 's/,/ OR /g') -from:$MY_SCREEN_NAME" \
+                -c "$count" \
+                -s "$last_id" |
+                jq -c '.statuses[]' |
+                tac)
+    #NOTE: This must be done with a process substitution instead of
+    #      simple pipeline, because we need to execute the loop in
+    #      the same process, not a sub process.
+    #      (sub-process loop produced by "tweet.sh | tac | while read..."
+    #       cannot update the "last_id" in this scope.)
+
+    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
+    if [ "$last_id" != '' ]
+    then
+      # increment "since id" to bypass cached search results
+      last_id="$(($last_id + 1))"
+      echo "$last_id" > "$last_id_file"
+    fi
+    sleep 5m
+  done
+}
+
+if [ "$FAVORITE_QUOTATIONS" = 'true' -o "$RETWEET_QUOTATIONS" = 'true' -o "$RESPOND_TO_QUOTATIONS" = 'true' ]
+then
+  log "Tracking search results for quotations..."
+  periodical_search_quotation &
+fi
+
+
+# Sub process 3: polling for the REST search API
 #   This is required, because not-mention CJK tweets with keywords
 #   won't appear in the stream tracked by "watch-mentions" command.
 #   For more details of this limitation, see also:
@@ -173,7 +255,7 @@ else
 fi
 
 
-# Sub process 3: polling for the REST direct messages API
+# Sub process 4: polling for the REST direct messages API
 #   This is required, because some direct messages can be dropped
 #   in the stream.
 
@@ -223,7 +305,7 @@ periodical_fetch_direct_messages() {
 periodical_fetch_direct_messages &
 
 
-# Sub process 4: posting monologue tweets
+# Sub process 5: posting monologue tweets
 
 periodical_monologue() {
   logmodule='monologue'
@@ -245,7 +327,7 @@ periodical_monologue() {
 periodical_monologue &
 
 
-# Sub process 5: polling for the REST search API to follow new users
+# Sub process 6: polling for the REST search API to follow new users
 
 periodical_auto_follow() {
   logmodule='auto_follow'
@@ -304,7 +386,7 @@ else
 fi
 
 
-# Sub process 6: process queued search results and commands
+# Sub process 7: process queued search results and commands
 
 periodical_process_queue() {
   logmodule='process_queue'
