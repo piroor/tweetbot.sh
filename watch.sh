@@ -141,19 +141,19 @@ periodical_search_quotation() {
       tac |
       extract_new_tweets "$last_id" "$last_id_file" |
       while read -r tweet
-    do
-      id="$(echo "$tweet" | jq -r .id_str)"
-      type="$(echo "$tweet" |
-                "$tools_dir/tweet.sh/tweet.sh" type)"
-      debug "   type: $type"
-      if [ "$type" == 'quotation' ]
-      then
-        log "Processing $id as $type..."
-          echo "$tweet" |
-            env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
-      fi
-      sleep 3s
-    done
+      do
+        id="$(echo "$tweet" | jq -r .id_str)"
+        type="$(echo "$tweet" |
+                  "$tools_dir/tweet.sh/tweet.sh" type)"
+        debug "   type: $type"
+        if [ "$type" == 'quotation' ]
+        then
+          log "Processing $id as $type..."
+            echo "$tweet" |
+              env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
+        fi
+        sleep 3s
+      done
 
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 5m
@@ -198,36 +198,36 @@ periodical_search() {
       tac |
       extract_new_tweets "$last_id" "$last_id_file" |
       while read -r tweet
-    do
-      id="$(echo "$tweet" | jq -r .id_str)"
-      type="$(echo "$tweet" |
-                "$tools_dir/tweet.sh/tweet.sh" type \
-                  -k "$keywords_for_search_results")"
-      debug "   type: $type"
-      if [ "$type" != '' ]
-      then
-        log "Processing $id as $type..."
-      fi
-      case "$type" in
-        mention )
-          echo "$tweet" |
-            env TWEET_LOGMODULE='search' "$tools_dir/handle_mention.sh"
-          ;;
-        retweet )
-          echo "$tweet" |
-            env TWEET_LOGMODULE='search' "$tools_dir/handle_retweet.sh"
-          ;;
-        quotation )
-          echo "$tweet" |
-            env TWEET_LOGMODULE='search' "$tools_dir/handle_quotation.sh"
-          ;;
-        search-result )
-          echo "$tweet" |
-            env TWEET_LOGMODULE='search' "$tools_dir/handle_search_result.sh"
-          ;;
-      esac
-      sleep 3s
-    done
+      do
+        id="$(echo "$tweet" | jq -r .id_str)"
+        type="$(echo "$tweet" |
+                  "$tools_dir/tweet.sh/tweet.sh" type \
+                    -k "$keywords_for_search_results")"
+        debug "   type: $type"
+        if [ "$type" != '' ]
+        then
+          log "Processing $id as $type..."
+        fi
+        case "$type" in
+          mention )
+            echo "$tweet" |
+              env TWEET_LOGMODULE='search' "$tools_dir/handle_mention.sh"
+            ;;
+          retweet )
+            echo "$tweet" |
+              env TWEET_LOGMODULE='search' "$tools_dir/handle_retweet.sh"
+            ;;
+          quotation )
+            echo "$tweet" |
+              env TWEET_LOGMODULE='search' "$tools_dir/handle_quotation.sh"
+            ;;
+          search-result )
+            echo "$tweet" |
+              env TWEET_LOGMODULE='search' "$tools_dir/handle_search_result.sh"
+            ;;
+        esac
+        sleep 3s
+      done
 
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
@@ -345,11 +345,11 @@ periodical_auto_follow() {
       tac |
       extract_new_tweets "$last_id" "$last_id_file" |
       while read -r tweet
-    do
-      echo "$tweet" |
-        env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
-      sleep 3s
-    done
+      do
+        echo "$tweet" |
+          env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
+        sleep 3s
+      done
 
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
