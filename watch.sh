@@ -85,6 +85,25 @@ recent_my_tweet_urls() {
     sed -e "s;^;https://twitter.com/$MY_SCREEN_NAME/status/;"
 }
 
+detect_new_tweets() {
+  local last_id="$1"
+  local last_id_file="$2"
+  local id
+  local owner
+  while read -r tweet
+  do
+    [ "$tweet" = '' ] && continue
+    id="$(echo "$tweet" | jq -r .id_str)"
+    owner="$(echo "$tweet" | jq -r .user.screen_name)"
+    debug "New tweet detected: https://twitter.com/$owner/status/$id"
+    [ "$id" = '' -o "$id" = 'null' ] && continue
+    [ "$last_id" = '' ] && last_id="$id"
+    [ $id -gt $last_id ] && last_id="$id"
+    echo "$last_id" > "$last_id_file"
+    echo "$tweet"
+  done
+}
+
 next_last_id() {
   local last_id="$1"
   local last_id_file="$2"
@@ -105,7 +124,6 @@ periodical_search_quotation() {
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local id
-  local owner
   local type
   if [ "$last_id" != '' ]
   then
@@ -117,17 +135,7 @@ periodical_search_quotation() {
     debug "Processing results of REST search API for quotations (newer than $last_id)..."
     while read -r tweet
     do
-      [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
-      owner="$(echo "$tweet" | jq -r .user.screen_name)"
-      debug "New search result for quotations detected: https://twitter.com/$owner/status/$id"
-      [ "$id" = '' -o "$id" = 'null' ] && continue
-      [ "$last_id" = '' ] && last_id="$id"
-      if [ $id -gt $last_id ]
-      then
-        last_id="$id"
-        echo "$last_id" > "$last_id_file"
-      fi
       type="$(echo "$tweet" |
                 "$tools_dir/tweet.sh/tweet.sh" type)"
       debug "   type: $type"
@@ -143,7 +151,8 @@ periodical_search_quotation() {
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.statuses[]' |
-                tac)
+                tac |
+                extract_new_tweets "$last_id" "$last_id_file")
     #NOTE: This must be done with a process substitution instead of
     #      simple pipeline, because we need to execute the loop in
     #      the same process, not a sub process.
@@ -176,7 +185,6 @@ periodical_search() {
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
   local keywords_for_search_results="$(echo "$query" | $esed -e 's/ OR /,/g' -e 's/-from:[^ ]+//')"
   local id
-  local owner
   local type
   if [ "$last_id" != '' ]
   then
@@ -188,17 +196,7 @@ periodical_search() {
     debug "Processing results of REST search API (newer than $last_id)..."
     while read -r tweet
     do
-      [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
-      owner="$(echo "$tweet" | jq -r .user.screen_name)"
-      debug "New search result detected: https://twitter.com/$owner/status/$id"
-      [ "$id" = '' -o "$id" = 'null' ] && continue
-      [ "$last_id" = '' ] && last_id="$id"
-      if [ $id -gt $last_id ]
-      then
-        last_id="$id"
-        echo "$last_id" > "$last_id_file"
-      fi
       type="$(echo "$tweet" |
                 "$tools_dir/tweet.sh/tweet.sh" type \
                   -k "$keywords_for_search_results")"
@@ -231,7 +229,8 @@ periodical_search() {
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.statuses[]' |
-                tac)
+                tac |
+                extract_new_tweets "$last_id" "$last_id_file")
     #NOTE: This must be done with a process substitution instead of
     #      simple pipeline, because we need to execute the loop in
     #      the same process, not a sub process.
@@ -332,9 +331,6 @@ periodical_auto_follow() {
   local last_id_file="$status_dir/last_auto_follow"
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-  local id
-  local owner
-  local type
   if [ "$last_id" != '' ]
   then
     log "Doing search to auto-follow for newer than $last_id"
@@ -345,25 +341,16 @@ periodical_auto_follow() {
     debug "Processing results to auto-follow of REST search API (newer than $last_id)..."
     while read -r tweet
     do
-      [ "$tweet" = '' ] && continue
-      id="$(echo "$tweet" | jq -r .id_str)"
-      owner="$(echo "$tweet" | jq -r .user.screen_name)"
-      debug "New search result detected: https://twitter.com/$owner/status/$id"
-      [ "$id" = '' -o "$id" = 'null' ] && continue
-      [ "$last_id" = '' ] && last_id="$id"
-      if [ $id -gt $last_id ]
-      then
-        last_id="$id"
-        echo "$last_id" > "$last_id_file"
-      fi
-      env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
+      echo "$tweet" |
+        env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$AUTO_FOLLOW_QUERY" \
                 -c "$count" \
                 -s "$last_id" |
                 jq -c '.statuses[]' |
-                tac)
+                tac |
+                extract_new_tweets "$last_id" "$last_id_file")
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
   done
