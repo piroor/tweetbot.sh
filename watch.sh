@@ -133,7 +133,14 @@ periodical_search_quotation() {
   while true
   do
     debug "Processing results of REST search API for quotations (newer than $last_id)..."
-    while read -r tweet
+    "$tools_dir/tweet.sh/tweet.sh" search \
+      -q "$(recent_my_tweet_urls | paste -s -d ',' | sed 's/,/ OR /g') -from:$MY_SCREEN_NAME" \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.statuses[]' |
+      tac |
+      extract_new_tweets "$last_id" "$last_id_file" |
+      while read -r tweet
     do
       id="$(echo "$tweet" | jq -r .id_str)"
       type="$(echo "$tweet" |
@@ -146,18 +153,7 @@ periodical_search_quotation() {
             env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
       fi
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$(recent_my_tweet_urls | paste -s -d ',' | sed 's/,/ OR /g') -from:$MY_SCREEN_NAME" \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.statuses[]' |
-                tac |
-                extract_new_tweets "$last_id" "$last_id_file")
-    #NOTE: This must be done with a process substitution instead of
-    #      simple pipeline, because we need to execute the loop in
-    #      the same process, not a sub process.
-    #      (sub-process loop produced by "tweet.sh | tac | while read..."
-    #       cannot update the "last_id" in this scope.)
+    done
 
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 5m
@@ -194,7 +190,14 @@ periodical_search() {
   while true
   do
     debug "Processing results of REST search API (newer than $last_id)..."
-    while read -r tweet
+    "$tools_dir/tweet.sh/tweet.sh" search \
+      -q "$query" \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.statuses[]' |
+      tac |
+      extract_new_tweets "$last_id" "$last_id_file" |
+      while read -r tweet
     do
       id="$(echo "$tweet" | jq -r .id_str)"
       type="$(echo "$tweet" |
@@ -224,18 +227,7 @@ periodical_search() {
           ;;
       esac
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$query" \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.statuses[]' |
-                tac |
-                extract_new_tweets "$last_id" "$last_id_file")
-    #NOTE: This must be done with a process substitution instead of
-    #      simple pipeline, because we need to execute the loop in
-    #      the same process, not a sub process.
-    #      (sub-process loop produced by "tweet.sh | tac | while read..."
-    #       cannot update the "last_id" in this scope.)
+    done
 
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
@@ -293,6 +285,12 @@ periodical_fetch_direct_messages() {
                 -s "$last_id" |
                 jq -c '.events[]' |
                 tac)
+    #NOTE: This must be done with a process substitution instead of
+    #      simple pipeline, because we need to execute the loop in
+    #      the same process, not a sub process.
+    #      (sub-process loop produced by "tweet.sh | tac | while read..."
+    #       cannot update the "last_id" in this scope.)
+
     [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
     [ "$last_id" != '' ] && echo "$last_id" > "$last_id_file"
     sleep 2m
@@ -339,18 +337,20 @@ periodical_auto_follow() {
   while true
   do
     debug "Processing results to auto-follow of REST search API (newer than $last_id)..."
-    while read -r tweet
+    "$tools_dir/tweet.sh/tweet.sh" search \
+      -q "$AUTO_FOLLOW_QUERY" \
+      -c "$count" \
+      -s "$last_id" |
+      jq -c '.statuses[]' |
+      tac |
+      extract_new_tweets "$last_id" "$last_id_file" |
+      while read -r tweet
     do
       echo "$tweet" |
         env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
       sleep 3s
-    done < <("$tools_dir/tweet.sh/tweet.sh" search \
-                -q "$AUTO_FOLLOW_QUERY" \
-                -c "$count" \
-                -s "$last_id" |
-                jq -c '.statuses[]' |
-                tac |
-                extract_new_tweets "$last_id" "$last_id_file")
+    done
+
     last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
   done
@@ -410,6 +410,10 @@ periodical_process_queue() {
 
     echo "$last_process_time" > "$last_process_file"
   done < <(run_periodically "$PROCESS_QUEUE_INTERVALL_MINUTES" "$last_process_time" "$ACTIVE_TIME_RANGE")
+  #NOTE: This must be done with a process substitution instead of
+  #      simple pipeline, because we need to execute the loop in
+  #      the same process to update the "next_process_type",
+  #      not a sub process.
 }
 periodical_process_queue &
 
