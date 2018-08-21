@@ -146,12 +146,10 @@ periodical_search_quotation() {
         type="$(echo "$tweet" |
                   "$tools_dir/tweet.sh/tweet.sh" type)"
         debug "   type: $type"
-        if [ "$type" == 'quotation' ]
-        then
-          log "Processing $id as $type..."
-            echo "$tweet" |
-              env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
-        fi
+        [ "$type" != 'quotation' ] && continue
+        log "Processing $id as $type..."
+        echo "$tweet" |
+          env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
         sleep 3s
       done
 
@@ -204,10 +202,7 @@ periodical_search() {
                   "$tools_dir/tweet.sh/tweet.sh" type \
                     -k "$keywords_for_search_results")"
         debug "   type: $type"
-        if [ "$type" != '' ]
-        then
-          log "Processing $id as $type..."
-        fi
+        [ "$type" != '' ] && log "Processing $id as $type..."
         case "$type" in
           mention )
             echo "$tweet" |
@@ -270,10 +265,7 @@ periodical_fetch_direct_messages() {
       debug "New DM detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
-      if [ $id -le $last_id ]
-      then
-        continue
-      fi
+      [ $id -le $last_id ] && continue
       last_id="$id"
       echo "$last_id" > "$last_id_file"
       [ "$sender_id" = "$MY_USER_ID" ] && continue
