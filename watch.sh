@@ -85,7 +85,7 @@ recent_my_tweet_urls() {
     sed -e "s;^;https://twitter.com/$MY_SCREEN_NAME/status/;"
 }
 
-detect_new_tweets() {
+extract_new_tweets() {
   local last_id="$1"
   local last_id_file="$2"
   local id
