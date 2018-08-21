@@ -265,10 +265,10 @@ periodical_fetch_direct_messages() {
       [ "$message" = '' ] && continue
       id="$(echo "$message" | jq -r .id)"
       sender_id="$(echo "$message" | jq -r .message_create.sender_id)"
-      debug "New DM detected: $id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       [ $id -le $last_id ] && continue
+      debug "New DM detected: $id"
       last_id="$id"
       echo "$last_id" > "$last_id_file"
       [ "$sender_id" = "$MY_USER_ID" ] && continue
