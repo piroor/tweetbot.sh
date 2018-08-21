@@ -118,16 +118,12 @@ periodical_search_quotation() {
       type="$(echo "$tweet" |
                 "$tools_dir/tweet.sh/tweet.sh" type)"
       debug "   type: $type"
-      if [ "$type" != '' ]
+      if [ "$type" == 'quotation' ]
       then
         log "Processing $id as $type..."
-      fi
-      case "$type" in
-        quotation )
           echo "$tweet" |
             env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
-          ;;
-      esac
+      fi
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" search \
                 -q "$(recent_my_tweet_urls | paste -s -d ',' | sed 's/,/ OR /g') -from:$MY_SCREEN_NAME" \
