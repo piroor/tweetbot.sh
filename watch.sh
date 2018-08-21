@@ -119,6 +119,7 @@ next_last_id() {
 
 periodical_search_quotation() {
   logmodule='search_quotation'
+  export TWEET_LOGMODULE="$logmodule"
   local count=100
   local last_id_file="$status_dir/last_search_quotation_result"
   local last_id=''
@@ -149,7 +150,7 @@ periodical_search_quotation() {
         [ "$type" != 'quotation' ] && continue
         log "Processing $id as $type..."
         echo "$tweet" |
-          env TWEET_LOGMODULE='search_quotation' "$tools_dir/handle_quotation.sh"
+          "$tools_dir/handle_quotation.sh"
         sleep 3s
       done
 
@@ -173,6 +174,7 @@ fi
 
 periodical_search() {
   logmodule='search'
+  export TWEET_LOGMODULE="$logmodule"
   local count=100
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
@@ -206,19 +208,19 @@ periodical_search() {
         case "$type" in
           mention )
             echo "$tweet" |
-              env TWEET_LOGMODULE='search' "$tools_dir/handle_mention.sh"
+              "$tools_dir/handle_mention.sh"
             ;;
           retweet )
             echo "$tweet" |
-              env TWEET_LOGMODULE='search' "$tools_dir/handle_retweet.sh"
+              "$tools_dir/handle_retweet.sh"
             ;;
           quotation )
             echo "$tweet" |
-              env TWEET_LOGMODULE='search' "$tools_dir/handle_quotation.sh"
+              "$tools_dir/handle_quotation.sh"
             ;;
           search-result )
             echo "$tweet" |
-              env TWEET_LOGMODULE='search' "$tools_dir/handle_search_result.sh"
+              "$tools_dir/handle_search_result.sh"
             ;;
         esac
         sleep 3s
@@ -244,6 +246,7 @@ fi
 
 periodical_fetch_direct_messages() {
   logmodule='dm'
+  export TWEET_LOGMODULE="$logmodule"
   local count=100
   local last_id_file="$status_dir/last_fetched_dm"
   local last_id=''
@@ -270,7 +273,7 @@ periodical_fetch_direct_messages() {
       echo "$last_id" > "$last_id_file"
       [ "$sender_id" = "$MY_USER_ID" ] && continue
       echo "$message" |
-        env TWEET_LOGMODULE='dm' "$tools_dir/handle_dm_events.sh"
+        "$tools_dir/handle_dm_events.sh"
       sleep 3s
     done < <("$tools_dir/tweet.sh/tweet.sh" fetch-direct-messages \
                 -c "$count" \
@@ -317,6 +320,7 @@ periodical_monologue &
 
 periodical_auto_follow() {
   logmodule='auto_follow'
+  export TWEET_LOGMODULE="$logmodule"
   local count=100
   local last_id_file="$status_dir/last_auto_follow"
   local last_id=''
@@ -339,7 +343,7 @@ periodical_auto_follow() {
       while read -r tweet
       do
         echo "$tweet" |
-          env TWEET_LOGMODULE='auto_follow' "$tools_dir/handle_follow_target.sh"
+          "$tools_dir/handle_follow_target.sh"
         sleep 3s
       done
 
@@ -360,6 +364,7 @@ fi
 
 periodical_process_queue() {
   logmodule='process_queue'
+  export TWEET_LOGMODULE="$logmodule"
   local last_process_file="$status_dir/queue_last_processed_time"
   local last_process_time=''
   [ -f "$last_process_file" ] && last_process_time=$(cat "$last_process_file")
