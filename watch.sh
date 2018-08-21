@@ -120,7 +120,7 @@ periodical_search_quotation() {
       [ "$tweet" = '' ] && continue
       id="$(echo "$tweet" | jq -r .id_str)"
       owner="$(echo "$tweet" | jq -r .user.screen_name)"
-      debug "New search resultfor quotations detected: https://twitter.com/$owner/status/$id"
+      debug "New search result for quotations detected: https://twitter.com/$owner/status/$id"
       [ "$id" = '' -o "$id" = 'null' ] && continue
       [ "$last_id" = '' ] && last_id="$id"
       if [ $id -gt $last_id ]
