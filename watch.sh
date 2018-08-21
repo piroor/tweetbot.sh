@@ -85,6 +85,19 @@ recent_my_tweet_urls() {
     sed -e "s;^;https://twitter.com/$MY_SCREEN_NAME/status/;"
 }
 
+next_last_id() {
+  local last_id="$1"
+  local last_id_file="$2"
+  [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
+  if [ "$last_id" != '' ]
+  then
+    # increment "since id" to bypass cached search results
+    last_id="$(($last_id + 1))"
+    echo "$last_id" > "$last_id_file"
+  fi
+  echo -n "$last_id"
+}
+
 periodical_search_quotation() {
   logmodule='search_quotation'
   local count=100
@@ -137,13 +150,7 @@ periodical_search_quotation() {
     #      (sub-process loop produced by "tweet.sh | tac | while read..."
     #       cannot update the "last_id" in this scope.)
 
-    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-    if [ "$last_id" != '' ]
-    then
-      # increment "since id" to bypass cached search results
-      last_id="$(($last_id + 1))"
-      echo "$last_id" > "$last_id_file"
-    fi
+    last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 5m
   done
 }
@@ -231,13 +238,7 @@ periodical_search() {
     #      (sub-process loop produced by "tweet.sh | tac | while read..."
     #       cannot update the "last_id" in this scope.)
 
-    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-    if [ "$last_id" != '' ]
-    then
-      # increment "since id" to bypass cached search results
-      last_id="$(($last_id + 1))"
-      echo "$last_id" > "$last_id_file"
-    fi
+    last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
   done
 }
@@ -363,13 +364,7 @@ periodical_auto_follow() {
                 -s "$last_id" |
                 jq -c '.statuses[]' |
                 tac)
-    [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-    if [ "$last_id" != '' ]
-    then
-      # increment "since id" to bypass cached search results
-      last_id="$(($last_id + 1))"
-      echo "$last_id" > "$last_id_file"
-    fi
+    last_id="$(next_last_id "$last_id" "$last_id_file")"
     sleep 3m
   done
 }
