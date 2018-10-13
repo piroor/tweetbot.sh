@@ -65,7 +65,7 @@ function installMenuItems(aMenuItems) {
 
 installMenuItems(baseMenuItems);
 
-configs.$load().then(() => {
+configs.$loaded.then(() => {
   if (configs.debug)
     installMenuItems(debugMenuItems);
 });
