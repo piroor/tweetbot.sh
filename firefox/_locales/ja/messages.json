@@ -61,8 +61,8 @@
   },
 
   "config_tweetsh_path_label_before": { "message": "tweet.shのフルパス:" },
-  "config_tweetsh_path_label_after": { "message": "" },
+  "config_tweetsh_path_label_after": { "message": "\u200b" },
   "config_target_account_label_before": { "message": "操作するbotのアカウント名:" },
-  "config_target_account_label_after": { "message": "" },
+  "config_target_account_label_after": { "message": "\u200b" },
   "config_debug_label": { "message": "デバッグログを出力" }
 }

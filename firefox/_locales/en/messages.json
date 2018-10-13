@@ -61,8 +61,8 @@
   },
 
   "config_tweetsh_path_label_before": { "message": "Full path to the tweet.sh:" },
-  "config_tweetsh_path_label_after": { "message": "" },
+  "config_tweetsh_path_label_after": { "message": "\u200b" },
   "config_target_account_label_before": { "message": "Screnen name of the bot account to be controlled:" },
-  "config_target_account_label_after": { "message": "" },
+  "config_target_account_label_after": { "message": "\u200b" },
   "config_debug_label": { "message": "Print debug log" }
 }
