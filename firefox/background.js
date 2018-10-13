@@ -45,15 +45,15 @@ function installMenuItems(aMenuItems) {
   {
     let isSeparator = item.id.charAt(0) == '-';
     let type = isSeparator ? 'separator' : 'normal';
-    let title = isSeparator ? null : browser.i18n.getMessage('contextMenu.' + item.id + '.label');
-    browser.contextMenus.create({
+    let title = isSeparator ? null : browser.i18n.getMessage('menu_' + item.id + '_label');
+    browser.menus.create({
       id: item.id + ':page',
       type,
       title,
       contexts: ['page', 'tab'],
       documentUrlPatterns: item.matching
     });
-    browser.contextMenus.create({
+    browser.menus.create({
       id: item.id + ':link',
       type,
       title,
@@ -78,13 +78,13 @@ configs.$addObserver((aKey) => {
   }
   else {
     debugMenuItems.forEach((aItem) => {
-      browser.contextMenus.remove(aItem.id + ':page');
-      browser.contextMenus.remove(aItem.id + ':link');
+      browser.menus.remove(aItem.id + ':page');
+      browser.menus.remove(aItem.id + ':link');
     });
   }
 });
 
-browser.contextMenus.onClicked.addListener(function(aInfo, aTab) {
+browser.menus.onClicked.addListener(function(aInfo, aTab) {
   let url = aInfo.linkUrl || aInfo.pageUrl || aTab.url;
   log('procesing url = ' + url);
 
