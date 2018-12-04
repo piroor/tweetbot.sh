@@ -3,14 +3,14 @@
   "extensionDescription": { "message": "tweetbot.shでツイートを共有するためのコンテキストメニュー項目を追加します" },
 
   "menu_fav_label": { "message": "いいねする(&F)" },
-  "menu_unfav_label": { "message": "いいねを取り消す(&F)" },
+  "menu_unfav_label": { "message": "いいねを取り消す(&U)" },
   "menu_rt_label": { "message": "RTする(&R)" },
-  "menu_unrt_label": { "message": "RTを取り消す(&R)" },
+  "menu_unrt_label": { "message": "RTを取り消す(&C)" },
   "menu_rt_now_label": { "message": "今すぐRTする(&T)" },
   "menu_fav_and_rt_label": { "message": "いいねしてRTする(&A)" },
   "menu_fav_and_rt_now_label": { "message": "今すぐいいねしてRTする(&V)" },
   "menu_follow_label": { "message": "フォローする(&O)" },
-  "menu_unfollow_label": { "message": "フォローを解除する(&O)" },
+  "menu_unfollow_label": { "message": "フォローを解除する(&L)" },
   "menu_test_label": { "message": "テスト" },
 
   "notConfiguredError_title": { "message": "設定が未完了です!" },

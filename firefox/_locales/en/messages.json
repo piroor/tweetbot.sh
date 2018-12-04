@@ -3,14 +3,14 @@
   "extensionDescription": { "message": "Provide context menu commands to share tweets by tweetbot.sh" },
 
   "menu_fav_label": { "message": "&Favorite this" },
-  "menu_unfav_label": { "message": "Un&favorite this" },
+  "menu_unfav_label": { "message": "&Unfavorite this" },
   "menu_rt_label": { "message": "&RT this" },
-  "menu_unrt_label": { "message": "Cancel &RT of this" },
+  "menu_unrt_label": { "message": "&Cancel RT of this" },
   "menu_rt_now_label": { "message": "R&T this immediately" },
   "menu_fav_and_rt_label": { "message": "F&avorite and RT this" },
   "menu_fav_and_rt_now_label": { "message": "Fa&vorite and RT this immediately" },
   "menu_follow_label": { "message": "F&ollow" },
-  "menu_unfollow_label": { "message": "Unf&ollow" },
+  "menu_unfollow_label": { "message": "Unfo&llow" },
   "menu_test_label": { "message": "Test" },
 
   "notConfiguredError_title": { "message": "Not configured!" },
