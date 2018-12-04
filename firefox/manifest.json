@@ -24,7 +24,7 @@
   "applications": {
     "gecko": {
       "id": "tweetbotsh-remote-controller@piro.sakura.ne.jp",
-      "strict_min_version": "52.0"
+      "strict_min_version": "63.0"
     }
   }
 }
