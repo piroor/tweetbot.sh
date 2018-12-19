@@ -106,13 +106,13 @@ browser.menus.onClicked.addListener(function(aInfo, aTab) {
     case 'unrt':
       dmCommand('unrt', target);
       break;
-    case 'rt-now':
+    case 'rt_now':
       dmCommand('rt!', target);
       break;
-    case 'fav-and-rt':
+    case 'fav_and_rt':
       dmCommand('fr', target);
       break;
-    case 'fav-and-rt-now':
+    case 'fav_and_rt_now':
       dmCommand('fr!', target);
       break;
 
