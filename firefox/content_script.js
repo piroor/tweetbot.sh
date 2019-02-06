@@ -49,7 +49,7 @@ function updateTweets(node) {
     if (!footer)
       continue;
     const wrapper = document.createElement('small');
-    wrapper.style.floag = 'right';
+    wrapper.style.float = 'right';
     wrapper.style.marginTop = '1em';
     for (const button of buttons) {
       addButton(button, wrapper, { id, userId });
