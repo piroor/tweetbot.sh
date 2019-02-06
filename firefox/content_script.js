@@ -45,14 +45,16 @@ function updateTweets(node) {
     const userId = tweet.dataset.userId;
     if (!id)
       continue;
-    const header = tweet.querySelector('.stream-item-header');
-    if (!header)
+    const footer = tweet.querySelector('.stream-item-footer');
+    if (!footer)
       continue;
     const wrapper = document.createElement('small');
+    wrapper.style.floag = 'right';
+    wrapper.style.marginTop = '1em';
     for (const button of buttons) {
       addButton(button, wrapper, { id, userId });
     }
-    header.insertBefore(wrapper, header.querySelector('.time').nextSibling);
+    footer.insertBefore(wrapper, footer.firstChild);
   }
 }
 
