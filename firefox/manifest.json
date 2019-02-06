@@ -7,7 +7,9 @@
     "menus",
     "nativeMessaging",
     "storage",
-    "notifications"
+    "notifications",
+    "*://twitter.com/*",
+    "*://*.twitter.com/*"
   ],
   "background": {
     "scripts": [
@@ -16,6 +18,16 @@
       "background.js"
     ]
   },
+  "content_scripts" : [
+    { "matches": [
+        "*://twitter.com/*",
+        "*://*.twitter.com/*"
+      ],
+      "js": [
+        "content_script.js"
+      ],
+      "run_at": "document_end" }
+  ],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true
