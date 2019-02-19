@@ -23,9 +23,9 @@ do
     continue
   fi
 
-  if echo "$event" | expired_by_seconds $((30 * 60))
+  if echo "$event" | expired_by_seconds $((60 * 60 * 24))
   then
-    log " => ignored, because this is sent 30 minutes or more ago"
+    log " => ignored, because this is sent 24 hours or more ago"
     continue
   fi
 
