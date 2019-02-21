@@ -36,6 +36,8 @@ var buttons = [
 ];
 
 function updateTweets(node) {
+  if (!node.querySelectorAll)
+    return;
   const tweets = node.querySelectorAll('div.tweet');
   for (const tweet of tweets) {
     if (tweet.dataset.tweetbotRemoteControllerProcessed)
