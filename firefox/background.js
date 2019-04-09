@@ -175,7 +175,7 @@ function dmCommand(...aArgs) {
       ];
     }
     log('sending message: ', message);
-    return browser.runtime.sendNativeMessage('com.add0n.node', message).then(
+    return browser.runtime.sendNativeMessage('com.add0n.stylus', message).then(
       (aResponse) => {
         notify(
           browser.i18n.getMessage('onResponse_title'),
