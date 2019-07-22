@@ -38,17 +38,19 @@ var buttons = [
 function updateTweets(node) {
   if (!node.querySelectorAll)
     return;
-  const tweets = node.querySelectorAll('div.tweet');
+  const tweets = node.querySelectorAll('div.tweet, article [data-testid="tweet"]');
   for (const tweet of tweets) {
     if (tweet.dataset.tweetbotRemoteControllerProcessed)
       continue;
     tweet.dataset.tweetbotRemoteControllerProcessed = true;
-    const id = tweet.dataset.tweetId;
-    const userId = tweet.dataset.userId;
+    const permalink = tweet.querySelector('a[href^="/"][href*="/status/"]');
+    const permalinkMatchResult = permalink && permalink.href.match(/^https?:\/\/.+\/([^\/]+)\/status\/([^\/]+)/);
+    const id = tweet.dataset.tweetId || permalinkMatchResult && permalinkMatchResult[2];
+    const userId = tweet.dataset.userId || permalinkMatchResult && permalinkMatchResult[1];
     if (!id)
       continue;
-    const footer = tweet.querySelector('.stream-item-footer');
-    if (!footer)
+    const container = tweet.querySelector('.stream-item-footer, [role="group"]');
+    if (!container)
       continue;
     const wrapper = document.createElement('small');
     wrapper.style.float = 'right';
@@ -56,7 +58,7 @@ function updateTweets(node) {
     for (const button of buttons) {
       addButton(button, wrapper, { id, userId });
     }
-    footer.insertBefore(wrapper, footer.firstChild);
+    container.insertBefore(wrapper, tweet.dataset.tweetId && container.firstChild);
   }
 }
 
