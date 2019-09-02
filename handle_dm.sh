@@ -40,9 +40,12 @@ do
     continue
   fi
 
-  body="$(echo "$message" | "$tweet_sh" body)"
-  log " body    : $body"
+  all_body="$(echo "$message" | "$tweet_sh" body)"
+  log " body    : $all_body"
 
+  echo "$all_body" |
+    while read body
+    do
   command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
   log "command name = $command_name"
   case "$command_name" in
@@ -115,6 +118,7 @@ do
       handle_search_result "$sender" "$body"
       ;;
   esac
+    done
 
   on_dm_processed "$id"
 done
