@@ -42,13 +42,14 @@ do
   fi
 
   all_body="$(echo "$event" | jq -r .message_create.message_data.text)"
-  log " body    : $all_body"
+  log " all_body: $all_body"
 
   echo "$all_body" |
     while read body
     do
       command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
       log "command name = $command_name"
+      log "command body = $body"
       case "$command_name" in
         run )
           run_user_defined_command "$sender_id" "$body"
