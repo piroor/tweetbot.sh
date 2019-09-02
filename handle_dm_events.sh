@@ -120,6 +120,7 @@ do
           handle_search_result "$sender_id" "$body"
           ;;
       esac
+      log "one message body is processed."
     done
 
   on_dm_processed "$id"
