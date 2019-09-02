@@ -47,78 +47,78 @@ do
   echo "$all_body" |
     while read body
     do
-  command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
-  log "command name = $command_name"
-  case "$command_name" in
-    run )
-      run_user_defined_command "$sender_id" "$body"
-      ;;
-    echo )
-      do_echo "$sender_id" "$body"
-      ;;
-    test )
-      test_response "$sender_id" "$body"
-      ;;
-    +res*|-res* )
-      modify_response "$sender_id" "$body"
-      ;;
-    +*|-* )
-      modify_monologue "$sender_id" "$body"
-      ;;
-    'tweet!'|'post!' )
-      body="$(echo "$body" | remove_first_arg)"
-      post "$sender_id" "$body"
-      ;;
-    tweet|post )
-      body="$(echo "$body" | remove_first_arg)"
-      queue="post $body"
-      echo "$queue" > "$command_queue_dir/$id.post"
-      echo "dm $sender_id Queued command is processed: \"$queue\"" \
-        >> "$command_queue_dir/$id.post"
-      log "Command queued: \"$queue\""
-      respond "$sender_id" "Command queued: \"$queue\""
-      ;;
-    reply )
-      reply_to "$sender_id" "$body"
-      ;;
-    'rt!'|'retweet!' )
-      body="$(echo "$body" | remove_first_arg)"
-      process_generic_command "$sender_id" "retweet $body"
-      ;;
-    rt|retweet )
-      body="$(echo "$body" | remove_first_arg)"
-      queue="retweet $body"
-      echo "$queue" > "$command_queue_dir/$id.retweet"
-      echo "dm $sender_id Queued command is processed: \"$queue\"" \
-        >> "$command_queue_dir/$id.retweet"
-      log "Command queued: \"$queue\""
-      respond "$sender_id" "Command queued: \"$queue\""
-      ;;
-    'favrt!'|'rtfav!'|'fr!'|'rf!' )
-      body="$(echo "$body" | remove_first_arg)"
-      process_generic_command "$sender_id" "favorite $body"
-      process_generic_command "$sender_id" "retweet $body"
-      ;;
-    favrt|rtfav|fr|rf )
-      body="$(echo "$body" | remove_first_arg)"
-      echo "favorite $body" > "$command_queue_dir/$id.retweet"
-      echo "retweet $body" >> "$command_queue_dir/$id.retweet"
-      echo "dm $sender_id Queued command is processed: \"fav and rt $body\"" \
-        >> "$command_queue_dir/$id.retweet"
-      log "Command queued: \"fav and rt $body\""
-      respond "$sender_id" "Command queued: \"fav and rt $body\""
-      ;;
-    del*|rem* )
-      process_generic_command "$sender_id" "$body"
-      ;;
-    unrt|unretweet|fav*|unfav*|follow|unfollow )
-      delete_queued_command_for "$(echo "$body" | remove_first_arg)"
-      process_generic_command "$sender_id" "$body"
-      ;;
-    search-result )
-      handle_search_result "$sender_id" "$body"
-      ;;
-  esac
+      command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
+      log "command name = $command_name"
+      case "$command_name" in
+        run )
+          run_user_defined_command "$sender_id" "$body"
+          ;;
+        echo )
+          do_echo "$sender_id" "$body"
+          ;;
+        test )
+          test_response "$sender_id" "$body"
+          ;;
+        +res*|-res* )
+          modify_response "$sender_id" "$body"
+          ;;
+        +*|-* )
+          modify_monologue "$sender_id" "$body"
+          ;;
+        'tweet!'|'post!' )
+          body="$(echo "$body" | remove_first_arg)"
+          post "$sender_id" "$body"
+          ;;
+        tweet|post )
+          body="$(echo "$body" | remove_first_arg)"
+          queue="post $body"
+          echo "$queue" > "$command_queue_dir/$id.post"
+          echo "dm $sender_id Queued command is processed: \"$queue\"" \
+            >> "$command_queue_dir/$id.post"
+          log "Command queued: \"$queue\""
+          respond "$sender_id" "Command queued: \"$queue\""
+          ;;
+        reply )
+          reply_to "$sender_id" "$body"
+          ;;
+        'rt!'|'retweet!' )
+          body="$(echo "$body" | remove_first_arg)"
+          process_generic_command "$sender_id" "retweet $body"
+          ;;
+        rt|retweet )
+          body="$(echo "$body" | remove_first_arg)"
+          queue="retweet $body"
+          echo "$queue" > "$command_queue_dir/$id.retweet"
+          echo "dm $sender_id Queued command is processed: \"$queue\"" \
+            >> "$command_queue_dir/$id.retweet"
+          log "Command queued: \"$queue\""
+          respond "$sender_id" "Command queued: \"$queue\""
+          ;;
+        'favrt!'|'rtfav!'|'fr!'|'rf!' )
+          body="$(echo "$body" | remove_first_arg)"
+          process_generic_command "$sender_id" "favorite $body"
+          process_generic_command "$sender_id" "retweet $body"
+          ;;
+        favrt|rtfav|fr|rf )
+          body="$(echo "$body" | remove_first_arg)"
+          echo "favorite $body" > "$command_queue_dir/$id.retweet"
+          echo "retweet $body" >> "$command_queue_dir/$id.retweet"
+          echo "dm $sender_id Queued command is processed: \"fav and rt $body\"" \
+            >> "$command_queue_dir/$id.retweet"
+          log "Command queued: \"fav and rt $body\""
+          respond "$sender_id" "Command queued: \"fav and rt $body\""
+          ;;
+        del*|rem* )
+          process_generic_command "$sender_id" "$body"
+          ;;
+        unrt|unretweet|fav*|unfav*|follow|unfollow )
+          delete_queued_command_for "$(echo "$body" | remove_first_arg)"
+          process_generic_command "$sender_id" "$body"
+          ;;
+        search-result )
+          handle_search_result "$sender_id" "$body"
+          ;;
+      esac
     done
 
   on_dm_processed "$id"
