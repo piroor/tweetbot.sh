@@ -41,9 +41,12 @@ do
     continue
   fi
 
-  body="$(echo "$event" | jq -r .message_create.message_data.text)"
-  log " body    : $body"
+  all_body="$(echo "$event" | jq -r .message_create.message_data.text)"
+  log " body    : $all_body"
 
+  echo "$all_body" |
+    while read body
+    do
   command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
   log "command name = $command_name"
   case "$command_name" in
@@ -116,6 +119,7 @@ do
       handle_search_result "$sender_id" "$body"
       ;;
   esac
+    done
 
   on_dm_processed "$id"
 done
