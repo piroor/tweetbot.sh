@@ -6,7 +6,7 @@ source "$tools_dir/common.sh"
 logfile="$log_dir/handle_dm.log"
 
 administrators="$(echo "$ADMINISTRATORS" |
-                    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+                    sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
                           -e "s/[$whitespaces]*,[$whitespaces]*/|/g")"
 if [ "$administrators" = '' ]
 then
@@ -14,7 +14,7 @@ then
 fi
 
 remove_first_arg() {
-  $esed 's/^[^ ]+ +//'
+  sed -E 's/^[^ ]+ +//'
 }
 
 respond() {
@@ -160,9 +160,9 @@ reply_to() {
   local sender="$1"
   local body="$2"
   log 'Replying...'
-  local reply_params="$(echo "$body" | $esed 's/^reply +//i')"
-  local reply_target="$(echo "$reply_params" | $esed 's/^([^ ]+) .*/\1/')"
-  local reply_body="$(echo "$reply_params" | $esed 's/^[^ ]+ //')"
+  local reply_params="$(echo "$body" | sed -E 's/^reply +//i')"
+  local reply_target="$(echo "$reply_params" | sed -E 's/^([^ ]+) .*/\1/')"
+  local reply_body="$(echo "$reply_params" | sed -E 's/^[^ ]+ //')"
   local output
   output="$("$tweet_sh" reply "$reply_target" "$reply_body" 2>&1)"
   if [ $? = 0 ]

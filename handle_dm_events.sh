@@ -47,7 +47,7 @@ do
   echo "$all_body" |
     while read body
     do
-      command_name="$(echo "$body" | $esed "s/^([^ ]+).*$/\1/")"
+      command_name="$(echo "$body" | sed -E "s/^([^ ]+).*$/\1/")"
       log "command name = $command_name"
       log "command body = $body"
       case "$command_name" in

@@ -180,16 +180,6 @@ fi
 whitespaces=' \f\n\r\t　'
 non_whitespaces='[^ \f\n\r\t　]'
 
-# Custom version of sed with extended regexp, "$esed" (like "egerp")
-case $(uname) in
-  Darwin|*BSD|CYGWIN*)
-    esed="sed -E"
-    ;;
-  *)
-    esed="sed -r"
-    ;;
-esac
-
 is_true() {
   echo "$1" | egrep -i "^(1|true|yes)$" > /dev/null
 }
@@ -205,7 +195,7 @@ is_false() {
 
 time_to_minutes() {
   local hours minutes
-  read hours minutes <<< "$(cat | $esed 's/^0?([0-9]+):0?([0-9]+)$/\1 \2/')"
+  read hours minutes <<< "$(cat | sed -E 's/^0?([0-9]+):0?([0-9]+)$/\1 \2/')"
   echo $(( $hours * 60 + $minutes ))
 }
 
@@ -332,7 +322,7 @@ is_reply() {
 
 other_replied_people() {
   cat |
-    $esed -e "s/^((@[^$whitespaces]+[$whitespaces]+)+)?.*/\1/" \
+    sed -E -e "s/^((@[^$whitespaces]+[$whitespaces]+)+)?.*/\1/" \
           -e "s/@${MY_SCREEN_NAME}[$whitespaces]+//"
 }
 
@@ -435,7 +425,7 @@ is_too_frequent_mention() {
   local all_users="$(cat | unified_users_from_body_and_args "$users")"
   for user in $all_users
   do
-    user="$(echo "$user" | $esed -e 's/^@//')"
+    user="$(echo "$user" | sed -E -e 's/^@//')"
     mentions="$(cd "$already_replied_dir"; find . -name "*.$user.*" -cmin -$MENTION_LIMIT_PERIOD_MIN | wc -l)"
     if [ $mentions -gt $MAX_MENTIONS_IN_PERIOD ]
     then
@@ -450,7 +440,7 @@ on_replied() {
   local users="$2"
   local all_users="$(cat | unified_users_from_body_and_args "$users")"
 
-  touch "$already_replied_dir/$id.$(echo "$all_users" | $esed -e 's/ +/./g')."
+  touch "$already_replied_dir/$id.$(echo "$all_users" | sed -E -e 's/ +/./g')."
   # remove too old files
   find "$already_replied_dir" -ctime +1 | while read path
   do
@@ -461,14 +451,14 @@ on_replied() {
 unified_users_from_body_and_args() {
   local body="$(cat)"
   cat <(echo "$body" | users_in_body) \
-      <(echo "$users" | $esed -e 's/ +/\n/g' | $esed -e 's/^.*@//') | \
+      <(echo "$users" | sed -E -e 's/ +/\n/g' | sed -E -e 's/^.*@//') | \
     sort | uniq | tr -d '\n' | paste -s -d '.'
 }
 
 users_in_body() {
   while read -r body
   do
-    echo "$body" | $esed -e 's/ +/\n/g' | grep -E '^\.?@.' | $esed -e 's/^.*@//'
+    echo "$body" | sed -E -e 's/ +/\n/g' | grep -E '^\.?@.' | sed -E -e 's/^.*@//'
   done
 }
 
@@ -500,7 +490,7 @@ post_sequential_tweets() {
   local result
   while read -r body
   do
-    body="$(echo "$body" | $esed -e 's/<br>/\n/g')"
+    body="$(echo "$body" | sed -E -e 's/<br>/\n/g')"
     if [ "$previous_id" != '' ]
     then
       result="$(echo -e "$body" | "$tweet_sh" reply "$previous_id")"
@@ -795,15 +785,15 @@ keywords_matcher=''
 if [ "$WATCH_KEYWORDS" != '' ]
 then
   query="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+    sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
           -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g") -from:$MY_SCREEN_NAME"
   keywords="$(echo ",$WATCH_KEYWORDS," |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+    sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
           -e 's/^,|,$//g')"
   keywords_matcher="$(echo "$WATCH_KEYWORDS" |
-    $esed -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
+    sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
           -e 's/^\||\|$//g')"
 fi

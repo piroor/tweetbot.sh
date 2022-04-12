@@ -16,15 +16,6 @@ cat << FIN > "$monologue_selector"
 
 base_dir="\$(cd "\$(dirname "\$0")" && pwd)"
 
-case \$(uname) in
-  Darwin|*BSD|CYGWIN*)
-    esed="sed -E"
-    ;;
-  *)
-    esed="sed -r"
-    ;;
-esac
-
 extract_message_from_group() {
   local group="\$1"
   (cd "$TWEET_BASE_DIR"; ls ./monologues/\$group* |
@@ -43,7 +34,7 @@ echo_with_probability() {
 
 time_to_minutes() {
   local hours minutes
-  read hours minutes <<< "\$(cat | \$esed 's/^0?([0-9]+):0?([0-9]+)\$/\1 \2/')"
+  read hours minutes <<< "\$(cat | \sed -E 's/^0?([0-9]+):0?([0-9]+)\$/\1 \2/')"
   echo \$(( \$hours * 60 + \$minutes ))
 }
 
@@ -65,14 +56,14 @@ date_matcher='0*([0-9]+|\*).0*([0-9]+|\*).0*([0-9]+|\*)'
 
 date_to_serial() {
   local month year day
-  read year month day <<< "\$(cat | \$esed "s/^\$date_matcher\$/\1 \2 \3/")"
+  read year month day <<< "\$(cat | \sed -E "s/^\$date_matcher\$/\1 \2 \3/")"
 
   local current_year current_month current_day
   read current_year current_month current_day <<< "\$(date +'%Y %m %d')"
 
-  [ "\$year" = '*' ] && year=\$(echo "\$current_year" | \$esed 's/^0+//')
-  [ "\$month" = '*' ] && month=\$(echo "\$current_month" | \$esed 's/^0+//')
-  [ "\$day" = '*' ] && day=\$(echo "\$current_day" | \$esed 's/^0+//')
+  [ "\$year" = '*' ] && year=\$(echo "\$current_year" | \sed -E 's/^0+//')
+  [ "\$month" = '*' ] && month=\$(echo "\$current_month" | \sed -E 's/^0+//')
+  [ "\$day" = '*' ] && day=\$(echo "\$current_day" | \sed -E 's/^0+//')
 
   echo \$(( (\$year * 10000) + (\$month * 100) + \$day ))
 }
@@ -82,11 +73,11 @@ read_messages() {
 
   while read directive
   do
-    local date_range="\$(echo "\$directive" | \$esed 's/^#[^:]+:[^0-9*]*//')"
+    local date_range="\$(echo "\$directive" | \sed -E 's/^#[^:]+:[^0-9*]*//')"
     if [ "\$date_range" != '' ]
     then
-      local start="\$(echo "\$date_range" | \$esed "s/\$date_matcher-\$date_matcher/\1.\2.\3/" | date_to_serial)"
-      local end="\$(echo "\$date_range" | \$esed "s/\$date_matcher-\$date_matcher/\4.\5.\6/" | date_to_serial)"
+      local start="\$(echo "\$date_range" | \sed -E "s/\$date_matcher-\$date_matcher/\1.\2.\3/" | date_to_serial)"
+      local end="\$(echo "\$date_range" | \sed -E "s/\$date_matcher-\$date_matcher/\4.\5.\6/" | date_to_serial)"
       local today="\$(echo "\$(date +%Y.%m.%d)" | date_to_serial)"
       [ \$start -gt \$today ] && return 0
       [ \$end -lt \$today ] && return 0
@@ -124,7 +115,7 @@ fi
 
 FIN
 
-  for group in $(echo "$MONOLOGUE_TIME_RANGE_GROUPS" | $esed "s/[$whitespaces]+/ /g") all
+  for group in $(echo "$MONOLOGUE_TIME_RANGE_GROUPS" | sed -E "s/[$whitespaces]+/ /g") all
   do
     time_ranges="$(echo "$group" | cut -d '/' -f 2-)"
     group="$(echo "$group" | cut -d '/' -f 1)"

@@ -6,26 +6,26 @@ source "$tools_dir/common.sh"
 
 input="$(cat |
            # normalize waves
-           $esed 's/〜/～/g')"
+           sed -E 's/〜/～/g')"
 # +response filename-or-keyword(>(alias))?( +(response))?
 # -response filename-or-keyword(>(alias))?( +(response))?
 
 log 'Modifying keyword definitions...'
 
-operation="$(echo "$input" | $esed "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
+operation="$(echo "$input" | sed -E "s/^(${non_whitespaces}+)[$whitespaces].+$/\1/")"
 keyword="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+[$whitespaces]+//" \
+  sed -E -e "s/^${non_whitespaces}+[$whitespaces]+//" \
         -e "s/[$whitespaces]*((>|&gt;)${non_whitespaces}+)?([$whitespaces].*)?$//")"
 alias=''
 if echo "$input" |
      egrep "^${non_whitespaces}+[$whitespaces]+[^>&]+(>|&gt;)[$whitespaces]*${non_whitespaces}+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&]+(>|&gt;)[$whitespaces]*//" \
+    sed -E -e "s/^${non_whitespaces}+[$whitespaces]+[^>&]+(>|&gt;)[$whitespaces]*//" \
           -e "s/(${non_whitespaces}+)[$whitespaces]*([$whitespaces].*)?$/\1/")"
 fi
 response="$(echo "$input" |
-  $esed -e "s/^${non_whitespaces}+[$whitespaces]+[^>&$whitespaces]+([$whitespaces]*(>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
+  sed -E -e "s/^${non_whitespaces}+[$whitespaces]+[^>&$whitespaces]+([$whitespaces]*(>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
   $tweet_sh resolve-all)"
 
 log "  operation: $operation"
@@ -43,7 +43,7 @@ fi
 process_add_command() {
   local safe_keyword="$(echo "$keyword" |
                          # remove dangerous characters
-                         $esed -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
+                         sed -E -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
 
   # if there is any file including the keyword in its name, then reuse it.
   while read path
@@ -169,7 +169,7 @@ remove_definition() {
     if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
     then
       log "Removing alias \"$alias\" for \"$keyword\"..."
-      $esed -e "/^#[$whitespaces]*${alias}[$whitespaces]*$/d" -i "$path"
+      sed -E -e "/^#[$whitespaces]*${alias}[$whitespaces]*$/d" -i "$path"
       modified=1
     fi
   fi
@@ -179,7 +179,7 @@ remove_definition() {
     if egrep "^\s*${response}\s*$" "$path" > /dev/null
     then
       log "Removing response \"$response\"..."
-      $esed -e "/^[$whitespaces]*${response}[$whitespaces]*$/d" -i "$path"
+      sed -E -e "/^[$whitespaces]*${response}[$whitespaces]*$/d" -i "$path"
       modified=1
     else
       # specified by an index
@@ -189,7 +189,7 @@ remove_definition() {
         local line=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                      sed -n -e "${response}p")
         log " => \"$line\""
-        $esed -e "/^${line}$/d" -i "$path"
+        sed -E -e "/^${line}$/d" -i "$path"
         modified=1
       fi
     fi

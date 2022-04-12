@@ -63,7 +63,7 @@ then
         # extract comment lines as definitions of matching patterns
         grep '^#' |
         # remove comment marks
-        $esed -e "s/^#[$whitespaces]*//" \
+        sed -E -e "s/^#[$whitespaces]*//" \
               -e "/^[$whitespaces]$/d" |
         # concate them to a list of patterns
         paste -s -d '|')"

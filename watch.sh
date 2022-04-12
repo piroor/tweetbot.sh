@@ -179,7 +179,7 @@ periodical_search() {
   local last_id_file="$status_dir/last_search_result"
   local last_id=''
   [ -f "$last_id_file" ] && last_id="$(cat "$last_id_file")"
-  local keywords_for_search_results="$(echo "$query" | $esed -e 's/ OR /,/g' -e 's/-from:[^ ]+//')"
+  local keywords_for_search_results="$(echo "$query" | sed -E -e 's/ OR /,/g' -e 's/-from:[^ ]+//')"
   local id
   local type
   if [ "$last_id" != '' ]
@@ -309,7 +309,7 @@ periodical_monologue() {
   do
     local body="$("$monologue_selector")"
     log "Posting monologue tweet: $body"
-    echo "$body" | $esed -e 's/\t/\n/gi' | post_sequential_tweets
+    echo "$body" | sed -E -e 's/\t/\n/gi' | post_sequential_tweets
     echo "$last_post_time" > "$last_post_file"
   done < <(run_periodically "$MONOLOGUE_INTERVAL_MINUTES" "$last_post_time" "$MONOLOGUE_ACTIVE_TIME_RANGE")
 }

@@ -6,24 +6,24 @@ source "$tools_dir/common.sh"
 
 input="$(cat |
            # normalize waves
-           $esed 's/〜/～/g')"
+           sed -E 's/〜/～/g')"
 # +target(>(alias))?( +(body))?
 # -target(>(alias))?( +(body))?
 
 log 'Modifying monologue definitions...'
 
-operation="$(echo "$input" | $esed "s/^([-+]).*$/\1/")"
-target="$(echo "$input" | $esed "s/^[-+]([^${whitespaces}>&]+).*$/\1/")"
+operation="$(echo "$input" | sed -E "s/^([-+]).*$/\1/")"
+target="$(echo "$input" | sed -E "s/^[-+]([^${whitespaces}>&]+).*$/\1/")"
 alias=''
 if echo "$input" |
      egrep "^[^>&]+(>|&gt;)[$whitespaces]*${non_whitespaces}+" > /dev/null
 then
   alias="$(echo "$input" |
-    $esed -e "s/^[^>&]+(>|&gt;)[$whitespaces]*//" \
+    sed -E -e "s/^[^>&]+(>|&gt;)[$whitespaces]*//" \
           -e "s/(${non_whitespaces}+).*$/\1/")"
 fi
 body="$(echo "$input" |
-  $esed -e "s/^[-+]+[^${whitespaces}>&]+[$whitespaces]*((>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
+  sed -E -e "s/^[-+]+[^${whitespaces}>&]+[$whitespaces]*((>|&gt;)[$whitespaces]*${non_whitespaces}+)?[$whitespaces]*//" |
   $tweet_sh resolve-all)"
 
 log "  operation: $operation"
@@ -41,7 +41,7 @@ fi
 process_add_command() {
   local safe_target="$(echo "$target" |
                          # remove dangerous characters
-                         $esed -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
+                         sed -E -e "s/[!\[\]<>\{\}\/\\:;?*'\"|]+/_/g")"
 
   local exact_path="$monologues_dir/$target.txt"
   if [ -f "$exact_path" ]
@@ -165,7 +165,7 @@ remove_definition() {
     if egrep "^#\s*${alias}\s*$" "$path" > /dev/null
     then
       log "Removing alias \"$alias\" for \"$target\"..."
-      $esed -e "/^#[$whitespaces]*${alias}[$whitespaces]*$/d" -i "$path"
+      sed -E -e "/^#[$whitespaces]*${alias}[$whitespaces]*$/d" -i "$path"
       modified=1
     fi
   fi
@@ -175,7 +175,7 @@ remove_definition() {
     if egrep "^\s*${body}\s*$" "$path" > /dev/null
     then
       log "Removing body \"$body\"..."
-      $esed -e "/^[$whitespaces]*${body}[$whitespaces]*$/d" -i "$path"
+      sed -E -e "/^[$whitespaces]*${body}[$whitespaces]*$/d" -i "$path"
       modified=1
     else
       # specified by an index
@@ -185,7 +185,7 @@ remove_definition() {
         local line=$(cat "$path" | egrep -v "^#|^[$whitespaces]*$" | \
                      sed -n -e "${body}p")
         log " => \"$line\""
-        $esed -e "/^${line}$/d" -i "$path"
+        sed -E -e "/^${line}$/d" -i "$path"
         modified=1
       fi
     fi
