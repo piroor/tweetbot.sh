@@ -51,38 +51,25 @@ do
       log "command body = $body"
       case "$command_name" in
         run )
-          log "Processing as a user defined command..."
           run_user_defined_command "$sender" "$body"
-          log "User defined command proceeded."
           ;;
         echo )
-          log "Processing as an echo command..."
           do_echo "$sender" "$body"
-          log "Echo proceeded."
           ;;
         test )
-          log "Processing as a test command..."
           test_response "$sender" "$body"
-          log "Test proceeded."
           ;;
         +res*|-res* )
-          log "Processing as an adding/deleting response command..."
           modify_response "$sender" "$body"
-          log "Adding/deleting response proceeded."
           ;;
         +*|-* )
-          log "Processing as an adding/deleting monologue command..."
           modify_monologue "$sender" "$body"
-          log "Adding/deleting monologue proceeded."
           ;;
         'tweet!'|'post!' )
-          log "Processing as a tweet command immidiately..."
           body="$(echo "$body" | remove_first_arg)"
           post "$sender" "$body"
-          log "Tweet proceeded."
           ;;
         tweet|post )
-          log "Processing as a tweet command..."
           body="$(echo "$body" | remove_first_arg)"
           queue="post $body"
           echo "$queue" > "$command_queue_dir/$id.post"
@@ -92,18 +79,13 @@ do
           respond "$sender" "Command queued: \"$queue\""
           ;;
         reply )
-          log "Processing as a reply command..."
           reply_to "$sender" "$body"
-          log "Reply proceeded."
           ;;
         'rt!'|'retweet!' )
-          log "Processing as a RT command immidiately..."
           body="$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "retweet $body"
-          log "RT proceeded."
           ;;
         rt|retweet )
-          log "Processing as a RT command..."
           body="$(echo "$body" | remove_first_arg)"
           queue="retweet $body"
           echo "$queue" > "$command_queue_dir/$id.retweet"
@@ -113,14 +95,11 @@ do
           respond "$sender" "Command queued: \"$queue\""
           ;;
         'favrt!'|'rtfav!'|'fr!'|'rf!'|'fav_and_rt!' )
-          log "Processing as a favorite and RT command immidiately..."
           body="$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "favorite $body"
           process_generic_command "$sender" "retweet $body"
-          log "Favorite and RT proceeded."
           ;;
         favrt|rtfav|fr|rf|fav_and_rt )
-          log "Processing as a favorite and RT command..."
           body="$(echo "$body" | remove_first_arg)"
           echo "favorite $body" > "$command_queue_dir/$id.retweet"
           echo "retweet $body" >> "$command_queue_dir/$id.retweet"
@@ -130,20 +109,14 @@ do
           respond "$sender" "Command queued: \"fav and rt $body\""
           ;;
         del*|rem* )
-          log "Processing as a deletion command..."
           process_generic_command "$sender" "$body"
-          log "Deletion proceeded."
           ;;
         unrt|unretweet|fav*|unfav*|follow|unfollow )
-          log "Processing as a $command_name..."
           delete_queued_command_for "$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "$body"
-          log "$command_name proceeded."
           ;;
         search-result )
-          log "Processing as a search result..."
           handle_search_result "$sender" "$body"
-          log "Search results proceeded."
           ;;
       esac
       log "one message body is processed."
