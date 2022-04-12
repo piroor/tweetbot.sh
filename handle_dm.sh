@@ -52,22 +52,28 @@ do
       case "$command_name" in
         run )
           run_user_defined_command "$sender" "$body"
+          log "User defined command proceeded."
           ;;
         echo )
           do_echo "$sender" "$body"
+          log "Echo proceeded."
           ;;
         test )
           test_response "$sender" "$body"
+          log "Test proceeded."
           ;;
         +res*|-res* )
           modify_response "$sender" "$body"
+          log "Adding/deleting response proceeded."
           ;;
         +*|-* )
           modify_monologue "$sender" "$body"
+          log "Adding/deleting monologue proceeded."
           ;;
         'tweet!'|'post!' )
           body="$(echo "$body" | remove_first_arg)"
           post "$sender" "$body"
+          log "Tweet proceeded."
           ;;
         tweet|post )
           body="$(echo "$body" | remove_first_arg)"
@@ -80,10 +86,12 @@ do
           ;;
         reply )
           reply_to "$sender" "$body"
+          log "Reply proceeded."
           ;;
         'rt!'|'retweet!' )
           body="$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "retweet $body"
+          log "RT proceeded."
           ;;
         rt|retweet )
           body="$(echo "$body" | remove_first_arg)"
@@ -98,6 +106,7 @@ do
           body="$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "favorite $body"
           process_generic_command "$sender" "retweet $body"
+          log "Favorite and RT proceeded."
           ;;
         favrt|rtfav|fr|rf|fav_and_rt )
           body="$(echo "$body" | remove_first_arg)"
@@ -110,13 +119,16 @@ do
           ;;
         del*|rem* )
           process_generic_command "$sender" "$body"
+          log "Deletion proceeded."
           ;;
         unrt|unretweet|fav*|unfav*|follow|unfollow )
           delete_queued_command_for "$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "$body"
+          log "$command_name proceeded."
           ;;
         search-result )
           handle_search_result "$sender" "$body"
+          log "Search results proceeded."
           ;;
       esac
       log "one message body is processed."
