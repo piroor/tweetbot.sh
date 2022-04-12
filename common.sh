@@ -788,15 +788,15 @@ then
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
           -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g") -from:$MY_SCREEN_NAME" \
-          -e 's/"/\\"/g'
+          -e 's/"/\\\\"/g'
   keywords="$(echo ",$WATCH_KEYWORDS," |
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
           -e 's/^,|,$//g')" \
-          -e 's/"/\\"/g'
+          -e 's/"/\\\\"/g'
   keywords_matcher="$(echo "$WATCH_KEYWORDS" |
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
           -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
           -e 's/^\||\|$//g')" \
-          -e 's/"/\\"/g'
+          -e 's/"/\\\\"/g'
 fi
