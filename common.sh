@@ -784,22 +784,22 @@ keywords=''
 keywords_matcher=''
 if [ "$WATCH_KEYWORDS" != '' ]
 then
-  query="$(echo "$WATCH_KEYWORDS" |
+  query="$(echo $WATCH_KEYWORDS |
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
            -e "s/[$whitespaces]*,[$whitespaces]*/ OR /g" \
            -e "s/^[$whitespaces]*OR[$whitespaces]+|[$whitespaces]+OR[$whitespaces]*$//g" \
-           -e 's/"/\\\\"/g' \
+           -e 's/"/\\"/g' \
   ) -from:$MY_SCREEN_NAME"
-  keywords="$(echo ",$WATCH_KEYWORDS," |
+  keywords="$(echo ,$WATCH_KEYWORDS, |
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
            -e "s/[$whitespaces]*,+[$whitespaces]*/,/g" \
            -e 's/^,|,$//g' \
-           -e 's/"/\\\\"/g' \
+           -e 's/"/\\"/g' \
   )"
-  keywords_matcher="$(echo "$WATCH_KEYWORDS" |
+  keywords_matcher="$(echo $WATCH_KEYWORDS |
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
            -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
            -e 's/^\||\|$//g' \
-           -e 's/"/\\\\"/g' \
+           -e 's/"/\\"/g' \
   )"
 fi
