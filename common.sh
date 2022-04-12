@@ -801,6 +801,6 @@ then
            -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
            -e 's/^\||\|$//g' \
            -e 's/"//g' \
-           -e "s/ /[$whitespaces]+/g" \
+           -e "s/ /[ 　]+/g" \
   )"
 fi
