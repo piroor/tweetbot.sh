@@ -800,6 +800,7 @@ then
     sed -E -e "s/^[$whitespaces]*,[$whitespaces]*|[$whitespaces]*,[$whitespaces]*$//g" \
            -e "s/[$whitespaces]*,+[$whitespaces]*/|/g" \
            -e 's/^\||\|$//g' \
-           -e 's/"/\\"/g' \
+           -e 's/"//g' \
+           -e "s/ /[$whitespaces]+/g" \
   )"
 fi
