@@ -94,12 +94,12 @@ do
           log "Command queued: \"$queue\""
           respond "$sender" "Command queued: \"$queue\""
           ;;
-        'favrt!'|'rtfav!'|'fr!'|'rf!' )
+        'favrt!'|'rtfav!'|'fr!'|'rf!'|'fav_and_rt!' )
           body="$(echo "$body" | remove_first_arg)"
           process_generic_command "$sender" "favorite $body"
           process_generic_command "$sender" "retweet $body"
           ;;
-        favrt|rtfav|fr|rf )
+        favrt|rtfav|fr|rf|fav_and_rt )
           body="$(echo "$body" | remove_first_arg)"
           echo "favorite $body" > "$command_queue_dir/$id.retweet"
           echo "retweet $body" >> "$command_queue_dir/$id.retweet"
