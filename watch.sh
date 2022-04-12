@@ -32,7 +32,7 @@ export TWEET_USER_ID="$MY_SCREEN_NAME"
 if [ "$WATCH_KEYWORDS" != '' ]
 then
   log "Search queries from \"$WATCH_KEYWORDS\":"
-  log "  query for REST searc : $query"
+  log "  query for REST search: $query"
   log "  keywords for tracking: $keywords"
   log "  search result matcher: $keywords_matcher"
 fi
